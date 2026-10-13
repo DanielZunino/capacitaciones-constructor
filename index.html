@@ -108,6 +108,7 @@ input[type=text]:focus { outline:none; border-color:var(--yellow); }
 .homeL, .homeR { display:flex; flex-direction:column; gap:14px; }
 @media (min-width: 1000px) {
   #s-home .wrap { max-width:1240px; display:grid; grid-template-columns:400px 1fr; gap:32px; align-items:start; padding-top:30px; }
+  #s-home .homeL > * { flex-shrink:0; }
   #s-home .homeL { position:sticky; top:20px; max-height:calc(100vh - 40px); overflow:auto; scrollbar-width:none; }
   #s-home .homeL h1 { font-size:26px; } #s-home .homeL p { font-size:15px; }
   #s-home .logoBar { margin-top:0; }
@@ -3012,7 +3013,7 @@ nuevoTema({ id: 'camion_conduccion', title: 'Conducción segura de camiones', th
     { s: 'camion_conduccion_velocidad', t: 'Velocidad y distancia', x: 'Respeta los <b>límites de velocidad</b> y las reglas internas de la empresa. Deja <b>más distancia</b> con el vehículo de adelante que si manejaras un auto: con carga, el camión tarda más en detenerse. Baja la velocidad con <b>lluvia, neblina, ripio y curvas</b>, y cerca de colegios y obras. Llegar unos minutos tarde no es grave; un choque sí.', k: 'Con carga: más distancia y menos velocidad.' },
     { s: 'camion_conduccion_fatiga', t: 'Fatiga y sueño', x: 'El sueño al volante es traicionero: <b>cierras los ojos un segundo y el camión sigue avanzando</b>. Señales: bostezos, pestañeo seguido, no recordar los últimos kilómetros.<ul><li>Duerme bien antes de tu turno.</li><li>Respeta los descansos.</li><li>Si tienes sueño, <b>detente en un lugar seguro</b>.</li><li>Avisa si un medicamento te da sueño.</li></ul>', k: 'Si tienes sueño, detente en un lugar seguro.' },
     { s: 'camion_conduccion_cabina', t: 'Cinturón y celular', x: '<ul><li><b>Cinturón de seguridad</b> siempre, para ti y para tu <b>ayudante</b>, aunque el viaje sea corto.</li><li>El <b>celular</b> distrae: tus ojos y tu mente se van al teléfono y no al camino. Usarlo al conducir está <b>prohibido por la Ley de Tránsito</b>: ni llamar con la mano, ni chatear.</li><li>Si necesitas llamar o revisar una dirección, <b>detente en un lugar seguro</b>.</li></ul>', k: 'Cinturón puesto y celular guardado mientras conduces.' },
-    { s: 'camion_conduccion_alcohol', t: 'Cero alcohol y cero drogas', x: 'La Ley 20.580 ("Tolerancia Cero") establece:<ul><li>desde <b>0,3 g/l</b>: <b>bajo la influencia</b> del alcohol;</li><li>desde <b>0,8 g/l</b>: <b>estado de ebriedad</b>.</li></ul>En el trabajo, la regla es <b>cero alcohol y cero drogas</b>. El alcohol de la noche anterior puede seguir en tu sangre. Si alguien llega con hálito alcohólico, <b>no conduce</b>: se avisa a la jefatura.', k: 'Al trabajar: cero alcohol y cero drogas.' },
+    { s: 'camion_conduccion_alcohol', t: 'Cero alcohol y cero drogas', x: 'La Ley 20.580 ("Tolerancia Cero") establece:<ul><li>desde <b>0,3 g/l</b>: <b>bajo la influencia</b> del alcohol;</li><li>desde <b>0,8 g/l</b>: <b>estado de ebriedad</b>.</li></ul>En el trabajo, la regla es <b>cero alcohol y cero drogas</b>. El alcohol de la noche anterior puede seguir en tu sangre. Si alguien llega bajo los efectos del alcohol, <b>no conduce</b>: se avisa a la jefatura.', k: 'Al trabajar: cero alcohol y cero drogas.' },
     { s: 'camion_conduccion_obra', t: 'Al llegar a la obra', x: 'Antes de entrar, <b>mira el lugar</b>:<ul><li><b>Cables eléctricos</b> aéreos: la carga o la pluma del camión no deben acercarse.</li><li><b>Terreno blando</b>, zanjas o rellenos que pueden ceder.</li><li><b>Pendientes</b>: no descargues en desnivel.</li><li>Personas y niños alrededor.</li></ul>Si no es seguro, <b>no entres</b>: busca otro punto y coordina con el cliente.', k: 'Si el acceso no es seguro, no entres: coordina otro punto.' },
     { s: 'camion_conduccion_auto', t: 'Autocuidado al volante', x: 'La mayoría de los accidentes se relacionan con <b>acciones inseguras</b>. En el camión, la típica es <b>el apuro</b>: retroceder sin mirar, saltarse la revisión, contestar el celular. La decisión segura: <b>revisar, mirar y, si dudas, bajarte a ver</b>. Avisa también las condiciones inseguras: frenos raros, un espejo roto, un acceso peligroso.', k: 'El apuro no vale un accidente: si dudas, bájate y mira.' }
   ],
@@ -3045,7 +3046,7 @@ nuevoTema({ id: 'camion_estiba', title: 'Estiba y amarre de la carga', thumb: 'c
     { s: 'camion_estiba_peso', t: 'Distribuye el peso', x: '<ul><li>Lo <b>más pesado abajo</b> y al centro, sobre los ejes.</li><li>Lo liviano arriba.</li><li>Reparte el peso a ambos lados.</li><li>Apoya la carga contra la <b>cabecera</b>, sin espacios.</li></ul>¿Por qué? Si el peso va alto o cargado a un lado, el camión se inclina en las curvas y puede volcar. Si va todo atrás, la dirección se pone liviana.', k: 'Lo pesado abajo, al centro y contra la cabecera.' },
     { s: 'camion_estiba_larga', t: 'Fierro, tubos y perfiles', x: 'La carga larga es traicionera: <b>se desliza</b> al frenar y puede llegar a la cabina.<ul><li>Átala en paquetes y amárrala en <b>varios puntos</b>.</li><li>Lo que <b>sobresale atrás</b> se señaliza con <b>bandera o paño rojo</b> y, de noche, con luz roja.</li><li>Que no sobresalga hacia los lados.</li></ul>Si no cabe de forma segura, se busca otro camión o otro viaje.', k: 'Lo largo se amarra en varios puntos y lo que sobresale se señaliza.' },
     { s: 'camion_estiba_amarre', t: 'Eslingas, cintas y tensores', x: 'Antes de usarlos, revísalos:<ul><li>Cinta sin <b>cortes, quemaduras ni hilos sueltos</b>.</li><li><b>Etiqueta legible</b> con su capacidad.</li><li>Tensor y ganchos sin deformaciones.</li></ul>Usa <b>suficientes amarres</b> y engánchalos en los puntos de amarre del camión. Una cinta dañada <b>se retira</b>: no se "arregla" con nudos.', k: 'Cinta dañada o sin etiqueta no se usa.' },
-    { s: 'camion_estiba_canto_mal', t: 'Protege los cantos vivos', x: '<b>Caso real:</b> unas eslingas se cortaron al apoyarse en el <b>canto vivo</b> de la carga. El filo de un perfil, una plancha de zinc o el fierro corta la cinta con el roce y la tensión, y la carga queda suelta.<ul><li>Pon <b>cantoneras</b> o protectores en cada esquina con filo.</li><li>Revisa la cinta en esos puntos al llegar.</li></ul>', k: 'Donde hay filo, va cantonera.' },
+    { s: 'camion_estiba_canto_mal', t: 'Protege los cantos vivos', x: 'Si una eslinga se apoya en el <b>canto vivo</b> de la carga, se puede cortar. El filo de un perfil, una plancha de zinc o el fierro corta la cinta con el roce y la tensión, y la carga queda suelta.<ul><li>Pon <b>cantoneras</b> o protectores en cada esquina con filo.</li><li>Revisa la cinta en esos puntos al llegar.</li></ul>', k: 'Donde hay filo, va cantonera.' },
     { s: 'camion_estiba_frenado', t: 'Al frenar, la carga sigue', x: 'Cuando el camión frena de golpe, la carga <b>sigue avanzando</b> con la fuerza que llevaba. Si no está amarrada o hay espacios, <b>se corre hacia la cabina</b>, y en una curva se cae por los lados. Por eso: carga <b>apoyada contra la cabecera</b>, sin huecos y bien amarrada. Y maneja suave: <b>frena y dobla con anticipación</b>.', k: 'Sin huecos, contra la cabecera, y frena con anticipación.' },
     { s: 'camion_estiba_revisar', t: 'Revisa los amarres en el camino', x: 'Con las vibraciones y los baches, la carga se asienta y <b>los amarres se sueltan</b>.<ul><li>Revisa antes de salir.</li><li>Detente en un <b>lugar seguro</b> para revisar después de los primeros minutos de viaje y tras caminos malos.</li><li>Si la carga se movió, <b>reacomódala y vuelve a tensar</b>.</li></ul>', k: 'Los amarres se sueltan: revísalos también en el camino.' },
     { s: 'camion_estiba_sobrecarga', t: 'No sobrecargues', x: 'Cada camión tiene una <b>capacidad máxima de carga</b> indicada por el fabricante. Si la pasas:<ul><li>los <b>frenos</b> rinden menos;</li><li>los <b>neumáticos</b> y la suspensión se dañan;</li><li>el camión <b>vuelca</b> con más facilidad.</li></ul>Si te piden cargar más de lo que el camión soporta, <b>avisa a tu jefatura</b> y divide el despacho en dos viajes.', k: 'Respeta la capacidad del camión: si sobra carga, otro viaje.' },
@@ -4513,7 +4514,7 @@ mejorar('autocuidado', { sec: 'todos', thumb: 'c5au_cadena',
     { s: 'c5au_cadena', t: 'La mayoría de los accidentes empieza con una acción', x: '<b>La mayoría de los accidentes se relacionan con una acción insegura</b>: apurarse, saltarse un paso, no usar el EPP. Muchas veces se suma una condición insegura, como fichas de dominó que caen una tras otra. Si sacas una ficha, la cadena se corta, y esa ficha casi siempre está en tus manos.', k: 'Corta la cadena: tu decisión es la ficha clave.' },
     { s: 'c5au_porque', t: '¿Por qué cometemos actos inseguros?', x: '<ul><li><b>Apuro:</b> "el cliente está esperando", "hay que sacar el despacho".</li><li><b>Exceso de confianza:</b> "llevo años haciéndolo".</li><li><b>Costumbre:</b> el riesgo se vuelve invisible.</li><li><b>Cansancio:</b> baja la atención.</li><li><b>"Siempre se ha hecho así":</b> que nunca haya pasado nada no significa que sea seguro.</li></ul>', k: 'Que nunca haya pasado nada no significa que sea seguro.' },
     { s: 'c5au_ppa', t: 'Para, piensa, actúa', x: 'Antes de cada tarea, sobre todo si es nueva o si algo cambió:<ul><li><b>Para:</b> detente unos segundos.</li><li><b>Piensa:</b> ¿qué puede salir mal? ¿Tengo el EPP, la escala o la ayuda mecánica que necesito?</li><li><b>Actúa:</b> hazlo de forma segura o pide ayuda.</li></ul>', k: 'Unos segundos para pensar pueden evitar una lesión.' },
-    { s: 'c5au_alcohol', t: 'Cero alcohol y cero drogas', x: 'Llegar a trabajar con hálito alcohólico o "con la caña" es un acto inseguro grave: el alcohol baja reflejos y atención, aunque te sientas bien. Para conducir, la ley considera <b>bajo la influencia desde 0,3 g/l</b> y <b>ebriedad desde 0,8 g/l</b> (Ley 20.580). La regla segura es <b>cero alcohol y cero drogas al trabajar</b>. Si un compañero llega así, avisa a tu jefatura.', k: 'Cero alcohol, cero drogas: no manejes, no operes, avisa.' },
+    { s: 'c5au_alcohol', t: 'Cero alcohol y cero drogas', x: 'Llegar a trabajar bajo los efectos del alcohol o "con la caña" es un acto inseguro grave: el alcohol baja reflejos y atención, aunque te sientas bien. Para conducir, la ley considera <b>bajo la influencia desde 0,3 g/l</b> y <b>ebriedad desde 0,8 g/l</b> (Ley 20.580). La regla segura es <b>cero alcohol y cero drogas al trabajar</b>. Si un compañero llega así, avisa a tu jefatura.', k: 'Cero alcohol, cero drogas: no manejes, no operes, avisa.' },
     { s: 'c5au_companero', t: 'Me cuido y cuido a mi compañero', x: 'Si ves a un compañero a punto de hacer algo riesgoso, <b>avísale con respeto</b>: "¡Alto! El camión viene retrocediendo" o "Ponte el chaleco". No es meterse en lo ajeno: es cuidarnos entre todos. Y si te avisan a ti, agradece: te pueden estar salvando la vida.', k: 'Avisar a tiempo es cuidar, no acusar.' },
     { s: 'c5au_reporte', t: 'Reporta las condiciones inseguras', x: 'Avisar las condiciones inseguras es parte del autocuidado. Si ves una eslinga cortada, una viga del rack golpeada, un derrame o un casi accidente, <b>avisa a tu jefatura, al Comité Paritario (si tu sucursal o empresa lo tiene) o al asesor en prevención</b>. Si puedes, señaliza sin exponerte. Callar deja la trampa armada para el próximo.', k: 'Lo que no se reporta, no se corrige.' },
     { s: 'c5au_184', t: 'Derecho a interrumpir ante riesgo grave', x: 'Si hay un <b>riesgo grave e inminente</b> para tu vida o salud, tienes derecho a <b>interrumpir tus labores</b> y, si es necesario, abandonar el lugar, avisando a tu jefatura lo antes posible (Código del Trabajo, art. 184 bis). Por ejemplo, un rack que se dobla o una carga que se suelta en el camión. Ejercer este derecho no puede perjudicarte.', k: 'Ante riesgo grave e inminente: detente, aléjate y avisa.' },
@@ -4602,7 +4603,7 @@ mejorar('peligros', { sec: 'todos', thumb: 'c5pe_vs',
     { s: 'c5pe_miper', t: 'La matriz MIPER', x: 'La <b>Matriz de Identificación de Peligros y Evaluación de Riesgos</b> ordena cada tarea con sus peligros, sus riesgos y las medidas de control. Por ejemplo: "mover sacos" tiene el peligro del peso, el riesgo de un lumbago y el control de usar la transpaleta. <b>La empresa debe identificar los peligros, evaluar los riesgos e informártelos.</b>', k: 'Cada tarea: peligro, riesgo y su medida de control.' },
     { s: 'c5pe_eval', t: '¿Cómo se evalúa un riesgo?', x: 'Se hacen dos preguntas: <b>¿qué tan seguido puede pasar?</b> (probabilidad) y <b>¿qué tan grave sería?</b> (consecuencia). Que caiga una carga desde lo alto del rack quizás no es frecuente, pero puede ser mortal: por eso se controla con prioridad.', k: 'Probabilidad por gravedad: así se ordenan las prioridades.' },
     { s: 'c5pe_jer', t: 'Jerarquía de controles', x: 'De más a menos efectivo:<ul><li><b>Eliminar</b> el peligro: retirar de uso un pallet roto.</li><li><b>Sustituir</b> por algo menos peligroso.</li><li><b>Ingeniería:</b> barandas, topes, separación física de peatones.</li><li><b>Administrativos:</b> procedimientos, demarcación, señalización, capacitación.</li><li><b>EPP:</b> la última barrera.</li></ul>', k: 'Lo mejor es eliminar el peligro; el EPP es lo último.' },
-    { s: 'c5pe_eslinga', t: 'Ha pasado: la eslinga cortada', x: 'Una eslinga se cortó con el <b>canto vivo</b> de la carga. El peligro: el filo del fierro, el zinc o los perfiles. El riesgo: que la eslinga se corte y la carga caiga. Controles:<ul><li><b>Proteger los cantos</b> (cantoneras).</li><li><b>Revisar la eslinga</b> antes de usarla.</li><li><b>Nadie bajo la carga</b> suspendida.</li></ul>', k: 'Canto protegido, eslinga revisada y nadie bajo la carga.' },
+    { s: 'c5pe_eslinga', t: 'Ejemplo: la eslinga y el canto vivo', x: 'Una eslinga puede cortarse con el <b>canto vivo</b> de la carga. El peligro: el filo del fierro, el zinc o los perfiles. El riesgo: que la eslinga se corte y la carga caiga. Controles:<ul><li><b>Proteger los cantos</b> (cantoneras).</li><li><b>Revisar la eslinga</b> antes de usarla.</li><li><b>Nadie bajo la carga</b> suspendida.</li></ul>', k: 'Canto protegido, eslinga revisada y nadie bajo la carga.' },
     { s: 'c5pe_irl', t: 'Tu derecho a saber', x: 'El DS 44, art. 15, obliga a la empresa a <b>informarte los riesgos</b> de tu trabajo, las medidas preventivas y los métodos de trabajo correctos (IRL). Si cambias de cargo, de sucursal o llega un equipo nuevo, pregunta: <b>¿qué riesgos tiene y cómo me protejo?</b>', k: 'Tienes derecho a conocer los riesgos de tu puesto.' },
     { s: 'c5pe_auto', t: 'Autocuidado: no te acostumbres al peligro', x: 'La acción insegura típica es <b>acostumbrarse</b>: pasar bajo la carga "porque siempre pasa", bajar mercadería pesada sin escala o ignorar una viga golpeada. La mayoría de los accidentes se relacionan con una acción insegura. La decisión segura: <b>detente, mira y avisa</b> a tu jefatura, al Comité Paritario (si lo hay) o al asesor en prevención.', k: 'Tú decides: detente, mira y avisa.' }
   ],
@@ -6240,6 +6241,167 @@ function finRepaso() {
   show('s-result'); SFX.play('win');
   guiar('¡Repaso terminado! Tu registro no cambia.', 'bRetry', 'VOLVER', '');
 }
+// ===== Plan personal + Puntaje Seguro (mismo código en la app y en el servidor de Apps Script) =====
+// Día 0 = primera actividad de la persona. Mes 1: Autocuidado + Curso DS 44. Desde el mes 2: 2 charlas obligatorias al mes.
+// Las charlas de temporada se ubican en su época (el mes en que VENCE el plazo).
+var PLAN_DIA = 86400000, PLAN_MES = 30 * 86400000;
+var PLAN_TEMPORADA = {           // meses (0 = enero) en que conviene que venza el plazo
+  uv: [8, 9, 10, 11, 0, 1],      // septiembre a febrero: sube el índice UV
+  incendios: [9, 10, 11, 0],     // octubre a enero: antes y durante el verano
+  transito: [2, 3, 4, 5],        // marzo a junio: lluvia, barro y poca luz
+  orden: [2, 3, 4, 5]            // pisos mojados y barro en invierno
+};
+function planPersonal(cfg, temas, inicioMs, secs, extra) {
+  const pend = temas.filter(id => id !== 'autocuidado'), items = [], tiene = id => pend.indexOf(id) >= 0;
+  const crit = [];
+  (cfg.ordenSec || []).forEach(s => { if (s === 'todos' || (secs || []).indexOf(s) >= 0) (cfg.critico[s] || []).forEach(id => { if (tiene(id) && crit.indexOf(id) < 0) crit.push(id); }); });
+  (extra || []).forEach(id => { if (tiene(id) && crit.indexOf(id) < 0) crit.push(id); });
+  const base = cfg.base.filter(id => tiene(id) && crit.indexOf(id) < 0 && !PLAN_TEMPORADA[id]);
+  const cola = [];
+  for (let i = 0; i < Math.max(crit.length, base.length); i++) { if (crit[i] && !PLAN_TEMPORADA[crit[i]]) cola.push(crit[i]); if (base[i]) cola.push(base[i]); }
+  pend.forEach(id => { if (cola.indexOf(id) < 0 && !PLAN_TEMPORADA[id]) cola.push(id); });
+  const temp = pend.filter(id => PLAN_TEMPORADA[id]);
+  if (temas.indexOf('autocuidado') >= 0) items.push({ id: 'autocuidado', mes: 1, vence: inicioMs + PLAN_MES });
+  for (let k = 2; (cola.length || temp.length) && k < 40; k++) {
+    const vence = inicioMs + k * PLAN_MES, mes = new Date(vence).getMonth(); let cupos = 2;
+    for (let j = 0, t1 = 0; j < temp.length && cupos && (t1 < 1 || k > 14); j++) if (PLAN_TEMPORADA[temp[j]].indexOf(mes) >= 0 || k > 14) { items.push({ id: temp[j], mes: k, vence }); temp.splice(j--, 1); cupos--; t1++; }
+    while (cupos && cola.length) { items.push({ id: cola.shift(), mes: k, vence }); cupos--; }
+  }
+  return { ds44: inicioMs + PLAN_MES, items };
+}
+// Puntaje Seguro (0 a 100): 60 % avance de la ruta + 30 % promedio de notas + 10 % aprobadas al primer intento
+function puntajeSeguro(nReq, aprob) {
+  if (!nReq || !aprob.length) return 0;
+  const av = Math.min(aprob.length, nReq) / nReq, prom = aprob.reduce((s, a) => s + Number(a.n), 0) / aprob.length;
+  const pi = aprob.filter(a => Number(a.intentos || 1) <= 1).length / aprob.length;
+  return Math.round(60 * av + 30 * Math.max(0, Math.min(1, (prom - 4) / 3)) + 10 * pi);
+}
+var NIVELES = [
+  { min: 95, id: 'ejemplar', t: 'Trabajador Seguro Ejemplar', m: '¡Eres un ejemplo para tus compañeros! Sigue así.' },
+  { min: 85, id: 'seguro', t: 'Trabajador Seguro', m: 'Eres un trabajador seguro. ¡Puedes ser más seguro aún!' },
+  { min: 75, id: 'casi', t: 'Casi Trabajador Seguro', m: 'Estás muy cerca. Unas charlas más y lo logras.' },
+  { min: 65, id: 'camino', t: 'En camino', m: 'Vas bien. Cada charla te acerca a ser Trabajador Seguro.' },
+  { min: 0, id: 'partiendo', t: 'Partiendo con todo', m: 'Todos partimos por algo. ¡Vamos por la próxima!' }];
+function nivelSeguro(p) { for (let i = 0; i < NIVELES.length; i++) if (p >= NIVELES[i].min) return NIVELES[i]; return NIVELES[NIVELES.length - 1]; }
+function nombreCorto(n) { return (n => { const w = String(n || '').trim().split(/\s+/); return w.length > 2 ? w[0] + ' ' + w[w.length - 2].charAt(0) + '.' : w.length === 2 ? w[0] + ' ' + w[1].charAt(0) + '.' : w[0] || ''; })(n); }
+var PLAN_CFG = { ordenSec: ['todos', 'conductores', 'grua', 'bodega', 'ventas', 'admin'],
+  critico: { conductores: ['camion_conduccion', 'camion_estiba', 'camion_carga'], grua: ['horquilla', 'horquilla_checklist', 'horquilla_patio'],
+    bodega: ['racks', 'altura', 'herramientas', 'quimicos'], ventas: ['asaltos', 'atencion_publico', 'sala_ventas'], admin: ['pvd', 'oficina'] },
+  base: ['peligros', 'accidente', 'epp', 'cargas', 'emergencias', 'senaletica', 'karin', 'psicosocial', 'enfermedades'] };
+var INICIO_PROGRAMA = '19-10-2026';
+// ===== "Mi avance": carita del nivel, Puntaje Seguro, plan del mes, Top 3 y marcas de charla realizada (compartido PROSIP / Constructor) =====
+function caraSVG(id) {
+  const casco = c => `<path d="M14,44 Q14,12 50,10 Q86,12 86,44 Z" fill="${c}"/><rect x="8" y="42" width="84" height="8" rx="4" fill="${c}"/><rect x="46" y="12" width="8" height="30" rx="3" fill="#fff" opacity=".35"/>`;
+  const cara = `<circle cx="50" cy="62" r="30" fill="#F6C9A0"/><circle cx="21" cy="64" r="5" fill="#EDB98E"/><circle cx="79" cy="64" r="5" fill="#EDB98E"/>`;
+  const ojos = `<circle cx="39" cy="60" r="3.6" fill="#222"/><circle cx="61" cy="60" r="3.6" fill="#222"/>`;
+  const mejillas = `<circle cx="32" cy="72" r="5" fill="#F29A8A" opacity=".55"/><circle cx="68" cy="72" r="5" fill="#F29A8A" opacity=".55"/>`;
+  const sonrisa = w => `<path d="M${50 - w},71 Q50,${80 + w / 3} ${50 + w},71" stroke="#7A2E1F" stroke-width="3.5" fill="${w > 10 ? '#fff' : 'none'}" stroke-linecap="round"/>`;
+  const F = {
+    ejemplar: `<g class="an-pulse"><path d="M10,96 Q50,70 90,96 L96,100 L4,100 Z" fill="#DC281D"/></g>${cara}${ojos}${mejillas}${sonrisa(13)}${casco('#F2B705')}
+      <g class="an-spin-slow" style="transform-origin:50px 30px"><path d="M50,20 l3.5,7 7.5,1 -5.5,5 1.5,7.5 -7,-3.7 -7,3.7 1.5,-7.5 -5.5,-5 7.5,-1z" fill="#fff"/></g>
+      <g class="an-blink"><path d="M86,22 l2,5 5,2 -5,2 -2,5 -2,-5 -5,-2 5,-2z" fill="#FFE066"/><path d="M12,24 l1.5,4 4,1.5 -4,1.5 -1.5,4 -1.5,-4 -4,-1.5 4,-1.5z" fill="#FFE066"/></g>`,
+    seguro: `${cara}<rect x="28" y="54" width="18" height="11" rx="4" fill="#1F2328"/><rect x="54" y="54" width="18" height="11" rx="4" fill="#1F2328"/><rect x="45" y="57" width="10" height="3" fill="#1F2328"/>
+      <rect x="31" y="56" width="6" height="3" rx="1.5" fill="#fff" opacity=".6"/>${sonrisa(12)}${casco('#FFC20E')}`,
+    casi: `${cara}<path d="M33,52 q6,-5 12,0 M55,52 q6,-5 12,0" stroke="#5A3A22" stroke-width="2.5" fill="none" stroke-linecap="round"/>${ojos}${mejillas}${sonrisa(11)}${casco('#2E7D32')}`,
+    camino: `${cara}${ojos}${mejillas}${sonrisa(8)}${casco('#1565C0')}
+      <g class="an-bob"><rect x="74" y="74" width="16" height="18" rx="5" fill="#F6C9A0" stroke="#D9A57A"/><rect x="78" y="60" width="7" height="18" rx="3.5" fill="#F6C9A0" stroke="#D9A57A"/></g>`,
+    partiendo: `${cara}<path d="M34,54 l9,3 M66,54 l-9,3" stroke="#5A3A22" stroke-width="2.5" stroke-linecap="round"/>${ojos}${sonrisa(7)}${casco('#FF7A00')}
+      <g class="an-bob"><path d="M78,96 q-4,-16 6,-22 q10,-4 12,6 q-6,-4 -10,2 l2,14z" fill="#F6C9A0" stroke="#D9A57A"/></g>`
+  };
+  return `<svg viewBox="0 0 100 100" class="cara">${F[id] || F.partiendo}</svg>`;
+}
+const fmtCorta = ms => { const d = new Date(ms); return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear(); };
+// Calcula todo lo del avance a partir de la respuesta del servidor
+function calcAvance(R, temasReq, secs, extra) {
+  const ap = R.aprob || {}, ini = R.inicio || Date.now(), now = Date.now();
+  const plan = planPersonal(PLAN_CFG, temasReq.map(t => t.id), ini, secs, extra);
+  const mesActual = Math.max(1, Math.floor((now - ini) / PLAN_MES) + 1);
+  const due = {}; plan.items.forEach(x => due[x.id] = x);
+  const lista = temasReq.map(t => ({ id: t.id, nota: ap[t.id] ? ap[t.id].n || parseFloat(String(ap[t.id].nota).replace(',', '.')) : 0, intentos: ap[t.id] ? ap[t.id].intentos : 1 })).filter(x => x.nota);
+  const puntaje = puntajeSeguro(temasReq.length, lista.map(x => ({ n: x.nota, intentos: x.intentos })));
+  const atrasadas = plan.items.filter(x => !ap[x.id] && x.vence < now);
+  const esteMes = plan.items.filter(x => x.mes === mesActual);
+  const ds44ok = !!(R.ds44 && R.ds44.vigente), ds44Atr = !ds44ok && plan.ds44 < now;
+  return { plan, mesActual, due, puntaje, nivel: nivelSeguro(puntaje), aprobadas: lista.length, total: temasReq.length, atrasadas, esteMes, ds44ok, ds44Atr, lista };
+}
+function htmlAvance(R, A, opts) {
+  const p = R.persona, T = id => (TOPICS.find(t => t.id === id) || { title: id }).title, ap = R.aprob || {};
+  const pend = [];
+  if (!A.ds44ok) pend.push(`<li class="${A.ds44Atr ? 'atr' : ''}"><span class="pi">${A.ds44Atr ? '⏰' : '📘'}</span><span class="pt"><b>Curso DS 44</b> (${(R.ds44 && R.ds44.n) || 0} de 6 módulos)<small>${A.ds44Atr ? 'Atrasado · plazo era el ' : 'Hasta el '}${fmtCorta(A.plan.ds44)}</small></span><button class="pgo" data-ds44="1">Ir</button></li>`);
+  A.atrasadas.forEach(x => pend.push(`<li class="atr"><span class="pi">⏰</span><span class="pt">${T(x.id)}<small>Atrasada · plazo era el ${fmtCorta(x.vence)}</small></span><button class="pgo" data-id="${x.id}">Ir</button></li>`));
+  A.esteMes.filter(x => !A.atrasadas.includes(x)).forEach(x => pend.push(ap[x.id]
+    ? `<li class="ok"><span class="pi">✅</span><span class="pt">${T(x.id)}<small>Realizada · nota ${ap[x.id].nota}</small></span></li>`
+    : `<li><span class="pi">📌</span><span class="pt">${T(x.id)}<small>Hasta el ${fmtCorta(x.vence)}</small></span><button class="pgo" data-id="${x.id}">Ir</button></li>`));
+  const sig = A.plan.items.find(x => !ap[x.id] && x.mes > A.mesActual);
+  if (!pend.length && sig) pend.push(`<li class="ok"><span class="pi">🎉</span><span class="pt">¡Estás al día este mes!<small>Puedes adelantar: ${T(sig.id)}</small></span><button class="pgo" data-id="${sig.id}">Ir</button></li>`);
+  const rk = R.ranking || {}, gen = rk.general || [], suc = (opts.sucursal && rk.suc && p.sucursal) ? (rk.suc[p.sucursal] || []) : null;
+  const yo = nombreCorto(p.nombre), med = ['🥇', '🥈', '🥉'];
+  const podio = (l, tit) => `<div class="podio"><div class="ptit">${tit}</div>${l.length ? l.map((x, i) => `<div class="prow ${x.n === yo && (!x.s || x.s === (p.sucursal || '')) ? 'yo' : ''}"><span class="pm">${med[i]}</span><span class="pn">${x.n}${opts.sucursal && x.s && tit.indexOf('general') >= 0 ? `<small>${x.s}</small>` : ''}</span><span class="pp">${x.p}</span></div>`).join('') : '<div class="pvac">El podio se arma cuando haya compañeros con 3 o más charlas aprobadas. ¡Puedes ser el primero!</div>'}</div>`;
+  let falta = '';
+  const tercero = (suc && suc.length ? suc : gen)[2];
+  if (A.aprobadas < 3) falta = `Aprueba ${3 - A.aprobadas} charla${3 - A.aprobadas > 1 ? 's' : ''} más para entrar al ranking.`;
+  else if (tercero && A.puntaje <= tercero.p && !gen.concat(suc || []).some(x => x.n === yo)) {
+    const prom = A.lista.reduce((s, x) => s + x.nota, 0) / A.lista.length; let k = 0, sim = A.lista.slice();
+    while (k < A.total - A.aprobadas && puntajeSeguro(A.total, sim.map(x => ({ n: x.nota, intentos: x.intentos }))) <= tercero.p) { sim.push({ nota: prom, intentos: 1 }); k++; }
+    falta = k ? `Te faltan unas ${k} charla${k > 1 ? 's' : ''} para pelear el podio. ¡Vamos!` : 'Sube tus notas y aprueba al primer intento para alcanzar el podio.';
+  }
+  return `<div class="rhi">Hola, <b>${primerNombre(p.nombre)}</b> 👋</div>
+    <div class="rcargo">${p.cargo || ''}${p.sucursal ? ' · ' + p.sucursal : ''}${p.empresa ? ' · ' + p.empresa : ''}</div>
+    <div class="nivel nv-${A.nivel.id}">${caraSVG(A.nivel.id)}<div class="nvt"><small>TU NIVEL</small><b>${A.nivel.t}</b><span>${A.nivel.m}</span></div></div>
+    <div class="pscore"><span>Puntaje Seguro</span><b>${A.puntaje}<small>/100</small></b></div>
+    <div class="rbar"><i style="width:${A.puntaje}%"></i></div>
+    <div class="rnum"><b>${A.aprobadas} de ${A.total}</b> charlas de tu ruta realizadas ${A.aprobadas && A.aprobadas === A.total ? '🏆' : ''}</div>
+    <div class="plan"><div class="ptit">📅 TU PLAN · MES ${A.mesActual}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
+    ${podio(gen, '🏆 TOP 3 · ' + (opts.sucursal ? 'general' : opts.lugar || 'planta'))}${suc ? podio(suc, '📍 TOP 3 · ' + p.sucursal) : ''}
+    ${falta ? `<div class="falta">${falta}</div>` : ''}
+    <details class="como"><summary>¿Cómo se calcula?</summary>Tu Puntaje Seguro suma: <b>60 %</b> charlas de tu ruta realizadas, <b>30 %</b> tu promedio de notas y <b>10 %</b> charlas aprobadas al primer intento. Si hay empate, gana quien llegó primero.<br>Niveles: 95 Ejemplar · 85 Seguro · 75 Casi Seguro · 65 En camino.</details>
+    <button class="lnk" id="bNoSoy">No soy yo</button>`;
+}
+// Marca las tarjetas: realizada (sello verde), atrasada, este mes
+function marcarTarjetas(R, A) {
+  const ap = (R && R.aprob) || {};
+  document.querySelectorAll('.tcard').forEach(b => {
+    b.querySelectorAll('.tb,.sello').forEach(e => e.remove()); b.classList.remove('hecha');
+    const id = b.dataset.id, a = ap[id];
+    if (a) { b.classList.add('hecha'); b.insertAdjacentHTML('afterbegin', `<span class="sello"><span class="sc">✔</span><span class="st">REALIZADA<small>Nota ${a.nota}</small></span></span>`); return; }
+    if (!A) return;
+    const d = A.due[id];
+    if (A.atrasadas.some(x => x.id === id)) b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Atrasada</span>');
+    else if (d && d.mes === A.mesActual) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">📌 Este mes</span>`);
+    else if (d) b.insertAdjacentHTML('afterbegin', `<span class="tb mes">Mes ${d.mes}</span>`);
+  });
+}
+function enlazarAvance() {
+  document.querySelectorAll('.plan .pgo').forEach(b => b.onclick = () => b.dataset.ds44 ? openDS44() : pickTopic(b.dataset.id));
+}
+(function () {
+  const css = `
+.nivel { display:flex; align-items:center; gap:12px; border-radius:14px; padding:8px 12px 8px 6px; background:#F3F6FB; }
+.nivel .cara { width:84px; height:84px; flex:none; overflow:visible; }
+.nivel .nvt { display:flex; flex-direction:column; gap:2px; } .nivel .nvt small { font-size:10px; letter-spacing:2px; color:#6B7280; font-weight:bold; }
+.nivel .nvt b { font-size:18px; line-height:1.15; } .nivel .nvt span { font-size:13px; color:#4A5568; line-height:1.3; }
+.nv-ejemplar { background:linear-gradient(135deg,#FFF6D6,#FFE7A3); } .nv-ejemplar b { color:#9A6B00; }
+.nv-seguro { background:#E8F5E9; } .nv-seguro b { color:#1B5E20; } .nv-casi { background:#EAF4FF; } .nv-casi b { color:#0D47A1; }
+.nv-camino { background:#F1F3F9; } .nv-camino b { color:#283593; } .nv-partiendo { background:#FFF1E6; } .nv-partiendo b { color:#C25700; }
+.pscore { display:flex; justify-content:space-between; align-items:baseline; font-size:13px; color:#4A5568; font-weight:bold; }
+.pscore b { font-size:26px; color:#1F2328; } .pscore b small { font-size:13px; color:#6B7280; }
+.plan, .podio { border-top:1px solid #E5E7EB; padding-top:8px; } .ptit { font-size:11px; letter-spacing:2px; font-weight:bold; color:#6B7280; margin-bottom:6px; }
+.plan ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.plan li { display:flex; align-items:center; gap:8px; background:#F7F8FA; border-radius:10px; padding:7px 8px; font-size:14px; }
+.plan li .pi { font-size:18px; } .plan li .pt { flex:1; line-height:1.25; } .plan li .pt small { display:block; color:#6B7280; font-size:12px; }
+.plan li.atr { background:#FDECEC; } .plan li.atr small { color:#C62828; font-weight:bold; } .plan li.ok { background:#E8F5E9; }
+.plan .pgo { border:0; border-radius:8px; padding:7px 12px; font-weight:bold; background:#1F2328; color:#fff; cursor:pointer; }
+.prow { display:flex; align-items:center; gap:8px; padding:5px 6px; border-radius:8px; font-size:14px; } .prow.yo { background:#FFF6D6; font-weight:bold; }
+.prow .pm { font-size:20px; } .prow .pn { flex:1; } .prow .pn small { display:block; color:#6B7280; font-size:11px; } .prow .pp { font-weight:bold; color:#2E7D32; }
+.pvac { font-size:13px; color:#6B7280; } .falta { font-size:13px; color:#1F2328; background:#FFF6D6; border-radius:10px; padding:8px 10px; font-weight:bold; }
+.como { font-size:12px; color:#4A5568; } .como summary { cursor:pointer; color:#1565C0; font-weight:bold; }
+.tcard { position:relative; } .tcard .tb { position:absolute; top:8px; left:8px; z-index:2; font-size:11px; font-weight:bold; padding:4px 8px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.25); }
+.tb.pend { background:#FFC20E; color:#1F2328; } .tb.atr { background:#C62828; color:#fff; } .tb.mes { background:rgba(255,255,255,.92); color:#4A5568; }
+.tcard.hecha svg { filter:saturate(.35) brightness(1.05); opacity:.75; } .tcard.hecha { box-shadow:0 0 0 3px #2E7D32 inset; }
+.tcard .sello { position:absolute; top:10px; left:50%; transform:translateX(-50%) rotate(-6deg); z-index:3; display:flex; align-items:center; gap:8px; background:#2E7D32; color:#fff; border:3px solid #fff; border-radius:14px; padding:6px 12px 6px 8px; box-shadow:0 4px 12px rgba(0,0,0,.3); white-space:nowrap; }
+.tcard .sello .sc { font-size:26px; line-height:1; } .tcard .sello .st { font-weight:bold; font-size:13px; letter-spacing:1px; line-height:1.1; } .tcard .sello small { display:block; font-weight:normal; letter-spacing:0; font-size:12px; }`;
+  const s = document.createElement('style'); s.textContent = css; document.head.appendChild(s);
+})();
 // ===== Constructor Center: temas por sección, "Mi ruta" según el cargo, razón social y sucursal =====
 ['ruido', 'maquinas', 'polvo', 'tmert'].forEach(id => { const i = TOPICS.findIndex(t => t.id === id); if (i >= 0) TOPICS.splice(i, 1); });
 const SECCIONES = [
@@ -6276,30 +6438,22 @@ function renderHome() {
   if (!RUTA) $('ruta').innerHTML = `<div class="rq"><b>¿Quién eres?</b> Escribe tu RUT y te mostramos <b>tu ruta</b>: las charlas que te corresponden según tu cargo.</div>
     <div class="rrow"><input type="text" id="rutHome" inputmode="text" maxlength="12" placeholder="Tu RUT"><button class="btn sm" id="bRuta">Ver mi ruta</button></div><div class="err" id="rErr"></div>`;
   else if (!p) $('ruta').innerHTML = `<div class="rq"><b>No te encontramos en la nómina</b> con el RUT ${RUTA.rut}. Igual puedes hacer cualquier charla. Avisa a tu jefatura para que te inscriban.</div><button class="lnk" id="bNoSoy">Probar con otro RUT</button>`;
-  else { const mias = TOPICS.filter(esMia), ok = mias.filter(t => ap[t.id]).length, pc = mias.length ? Math.round(100 * ok / mias.length) : 0;
-    $('ruta').innerHTML = `<div class="rhi">Hola, <b>${primerNombre(p.nombre)}</b> 👋</div>
-      <div class="rcargo">${p.cargo}${p.sucursal ? ' · ' + p.sucursal : ''}${p.empresa ? ' · ' + p.empresa : ''}</div>
-      <div class="rbar"><i style="width:${pc}%"></i></div>
-      <div class="rnum"><b>${ok} de ${mias.length}</b> charlas de tu ruta aprobadas ${ok && ok === mias.length ? '🏆 ¡Ruta completa!' : ''}</div>
-      <div class="rsecs">${['todos'].concat(p.secs).map(id => { const sc = SEC(id), ts = TOPICS.filter(t => esMia(t) && (t.sec === id || (id === 'todos' ? false : false))), hh = ts.filter(t => ap[t.id]).length, q = ts.length ? Math.round(100 * hh / ts.length) : 0;
-        return ts.length ? `<div class="rsec"><span class="rsi">${sc.ic}</span><span class="rst">${sc.t}</span><span class="rsb"><i style="width:${q}%;background:${sc.c}"></i></span><span class="rsn">${hh}/${ts.length}</span></div>` : ''; }).join('')}
-        ${(p.extra || []).length ? (() => { const ts = TOPICS.filter(t => (p.extra || []).includes(t.id) && t.sec !== 'todos' && !p.secs.includes(t.sec)), hh = ts.filter(t => ap[t.id]).length; return ts.length ? `<div class="rsec"><span class="rsi">🚚</span><span class="rst">Estiba y carga de camión</span><span class="rsb"><i style="width:${Math.round(100*hh/ts.length)}%;background:#DC281D"></i></span><span class="rsn">${hh}/${ts.length}</span></div>` : ''; })() : ''}</div>
-      ${(() => { const sig = mias.find(t => !ap[t.id]); return sig ? `<button class="btn sig" id="bSig" data-id="${sig.id}">▶ Tu próxima charla: ${sig.title}</button>` : ''; })()}
-      <button class="lnk" id="bNoSoy">No soy yo</button>`; }
+  let AV = null;
+  if (p) { AV = calcAvance(RUTA, TOPICS.filter(esMia), p.secs, p.extra); $('ruta').innerHTML = htmlAvance(RUTA, AV, { sucursal: true }); }
   const orden = SECCIONES.slice().sort((a, b) => secMia(b) - secMia(a));
   $('secciones').innerHTML = orden.map(s => {
     const ts = TOPICS.filter(t => t.sec === s.id); if (!ts.length) return '';
     const mia = secMia(s), open = abiertas[s.id] ?? (mia || s.id === 'todos'), hechas = ts.filter(t => ap[t.id]).length;
     return `<div class="seccion${open ? ' open' : ''}" style="--sc:${s.c}">
-      <button class="shead" data-s="${s.id}"><span class="sic">${s.ic}</span><span class="stt">${s.t}<small>${s.d} · ${ts.length} charlas${hechas ? ' · ' + hechas + ' aprobadas' : ''}</small></span>
+      <button class="shead" data-s="${s.id}"><span class="sic">${s.ic}</span><span class="stt">${s.t}<small>${s.d} · ${ts.length} charlas${hechas ? ' · ✔ ' + hechas + ' realizadas' : ''}</small></span>
         ${p ? `<span class="spill ${mia ? 'mia' : ''}">${mia ? 'TU RUTA' : 'OPCIONAL'}</span>` : ''}<span class="sarr">▾</span></button>
       <div class="topics">${ts.map(t => { const a = ap[t.id], m = esMia(t);
-        return `<button class="tcard" data-id="${t.id}">${a ? `<span class="tb ok">✔ Aprobada ${a.nota}</span>` : m ? '<span class="tb pend">Pendiente</span>' : ''}${S[t.thumb]()}<div class="tt">${t.title}<div class="tm">${durTema(t)} min · ${t.quiz.length} preguntas</div></div></button>`; }).join('')}</div></div>`;
+        return `<button class="tcard" data-id="${t.id}">${S[t.thumb]()}<div class="tt">${t.title}<div class="tm">${durTema(t)} min · ${t.quiz.length} preguntas</div></div></button>`; }).join('')}</div></div>`;
   }).join('');
+  marcarTarjetas(RUTA, AV); enlazarAvance();
   document.querySelectorAll('.tcard').forEach(b => b.onclick = () => pickTopic(b.dataset.id));
   document.querySelectorAll('.shead').forEach(b => b.onclick = () => { const el = b.parentNode; el.classList.toggle('open'); abiertas[b.dataset.s] = el.classList.contains('open'); });
   if ($('bRuta')) { $('bRuta').onclick = () => identificar($('rutHome').value); $('rutHome').onkeydown = e => { if (e.key === 'Enter') identificar($('rutHome').value); }; }
-  if ($('bSig')) $('bSig').onclick = () => pickTopic($('bSig').dataset.id);
   if ($('bNoSoy')) $('bNoSoy').onclick = () => { RUTA = null; st.persona = null; try { localStorage.removeItem('cap_persona'); } catch (e) {} $('inName').value = ''; $('inRut').value = ''; renderHome(); };
 }
 async function identificar(rut, silencioso) {
@@ -6313,10 +6467,10 @@ async function identificar(rut, silencioso) {
   if (yo !== identificar.n) return;   // llegó una búsqueda más nueva: se ignora esta
   if (!d) { if (!silencioso && $('rErr')) { $('rErr').style.color = ''; $('rErr').textContent = 'No se pudo conectar. Revisa tu internet e intenta de nuevo.'; $('rErr').style.display = 'block'; $('bRuta').disabled = false; $('bRuta').textContent = 'Ver mi ruta'; } return; }
   const aprob = {}; (d.temas || []).forEach(t => aprob[t.tema_id] = t);
-  RUTA = { rut, persona: d.persona || null, aprob }; st.persona = d.persona || null;
+  RUTA = { rut, persona: d.persona || null, aprob, inicio: d.inicio, ds44: d.ds44, ranking: d.ranking }; st.persona = d.persona || null;
   if (d.persona) { $('inName').value = d.persona.nombre; $('inRut').value = rut; try { localStorage.setItem('cap_persona', JSON.stringify({ name: d.persona.nombre, rut })); } catch (e) {} }
   renderHome();
-  if (!silencioso && d.persona) { const n = TOPICS.filter(esMia).length; VOZ.say(`Hola ${primerNombre(d.persona.nombre)}. Tu ruta tiene ${n} charlas. Las que te corresponden están marcadas. Igual puedes hacer cualquier otra.`); }
+  if (!silencioso && d.persona) { const A = calcAvance(RUTA, TOPICS.filter(esMia), d.persona.secs, d.persona.extra); VOZ.say(`Hola ${primerNombre(d.persona.nombre)}. Tu nivel es: ${A.nivel.t}. ${A.nivel.m} Abajo tienes tu plan del mes.`); }
 }
 // al volver al inicio se refresca la ruta (para ver las charlas recién aprobadas)
 (function () {
