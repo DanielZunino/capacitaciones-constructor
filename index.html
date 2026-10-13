@@ -6185,7 +6185,7 @@ async function sesRetomar(s) {
 async function temaAprobado() {
   try {
     st.hash = await rutHash(st.rut);
-    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 8000);
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 25000);
     const d = await fetch(SCRIPT_URL + '?historial=' + st.hash, { signal: ctl.signal }).then(r => r.json());
     if (d.persona) st.persona = d.persona;
     return (d.temas || []).find(t => t.tema_id === st.topic.id) || null;
@@ -6279,9 +6279,12 @@ async function identificar(rut, silencioso) {
   if (!validRut(rut || '')) { if (!silencioso && $('rErr')) { $('rErr').textContent = 'Revisa el RUT (con guion y dígito verificador).'; $('rErr').style.display = 'block'; } return; }
   rut = fmtRut(rut);
   if (!silencioso && $('bRuta')) { $('bRuta').disabled = true; $('bRuta').textContent = 'Buscando…'; }
+  const yo = (identificar.n = (identificar.n || 0) + 1);
+  if (!silencioso && $('rErr')) { $('rErr').textContent = 'Buscando tu ruta… puede tardar unos segundos.'; $('rErr').style.display = 'block'; $('rErr').style.color = '#5A5F66'; }
   let d = null;
-  try { const ctl = new AbortController(); setTimeout(() => ctl.abort(), 12000); d = await fetch(SCRIPT_URL + '?historial=' + await rutHash(rut), { signal: ctl.signal }).then(r => r.json()); } catch (e) {}
-  if (!d) { if (!silencioso && $('rErr')) { $('rErr').textContent = 'No se pudo conectar. Revisa tu internet e intenta de nuevo.'; $('rErr').style.display = 'block'; $('bRuta').disabled = false; $('bRuta').textContent = 'Ver mi ruta'; } return; }
+  for (let k = 0; k < 2 && !d; k++) { try { const ctl = new AbortController(); setTimeout(() => ctl.abort(), 30000); d = await fetch(SCRIPT_URL + '?historial=' + await rutHash(rut), { signal: ctl.signal }).then(r => r.json()); } catch (e) {} }
+  if (yo !== identificar.n) return;   // llegó una búsqueda más nueva: se ignora esta
+  if (!d) { if (!silencioso && $('rErr')) { $('rErr').style.color = ''; $('rErr').textContent = 'No se pudo conectar. Revisa tu internet e intenta de nuevo.'; $('rErr').style.display = 'block'; $('bRuta').disabled = false; $('bRuta').textContent = 'Ver mi ruta'; } return; }
   const aprob = {}; (d.temas || []).forEach(t => aprob[t.tema_id] = t);
   RUTA = { rut, persona: d.persona || null, aprob }; st.persona = d.persona || null;
   if (d.persona) { $('inName').value = d.persona.nombre; $('inRut').value = rut; try { localStorage.setItem('cap_persona', JSON.stringify({ name: d.persona.nombre, rut })); } catch (e) {} }
