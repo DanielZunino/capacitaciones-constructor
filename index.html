@@ -6408,7 +6408,7 @@ var PLAN_TEMPORADA = {           // meses (0 = enero) en que conviene que venza 
   transito: [2, 3, 4, 5],        // marzo a junio: lluvia, barro y poca luz
   orden: [2, 3, 4, 5]            // pisos mojados y barro en invierno
 };
-function planPersonal(cfg, temas, inicioMs, secs, extra) {
+function planPersonal(cfg, temas, inicioMs, secs, extra, hechos) {
   const pend = temas.filter(id => id !== 'autocuidado' && id !== 'induccion'), items = [], tiene = id => pend.indexOf(id) >= 0;
   const crit = [];
   (cfg.ordenSec || []).forEach(s => { if (s === 'todos' || (secs || []).indexOf(s) >= 0) (cfg.critico[s] || []).forEach(id => { if (tiene(id) && crit.indexOf(id) < 0) crit.push(id); }); });
@@ -6424,6 +6424,13 @@ function planPersonal(cfg, temas, inicioMs, secs, extra) {
     const vence = inicioMs + k * PLAN_MES, mes = new Date(vence).getMonth(); let cupos = 2;
     for (let j = 0, t1 = 0; j < temp.length && cupos && (t1 < 1 || k > 14); j++) if (PLAN_TEMPORADA[temp[j]].indexOf(mes) >= 0 || k > 14) { items.push({ id: temp[j], mes: k, vence }); temp.splice(j--, 1); cupos--; t1++; }
     while (cupos && cola.length) { items.push({ id: cola.shift(), mes: k, vence }); cupos--; }
+  }
+  // Si la persona va adelantada (ya hizo charlas de meses futuros), las pendientes se adelantan para que cada mes que viene tenga sus 2 charlas.
+  if (hechos && hechos.length) {
+    const H = {}; hechos.forEach(id => H[id] = 1); const mesAct = Math.max(1, Math.floor((Date.now() - inicioMs) / PLAN_MES) + 1), cap = {}, mover = [];
+    items.forEach(x => { if (x.mes > mesAct && !H[x.id]) { if (PLAN_TEMPORADA[x.id]) cap[x.mes] = (cap[x.mes] || 0) + 1; else mover.push(x); } });
+    let k = Math.max(2, mesAct + 1);
+    mover.sort((a, b) => a.vence - b.vence).forEach(x => { while ((cap[k] || 0) >= 2) k++; if (k < x.mes) { x.mes = k; x.vence = inicioMs + k * PLAN_MES; } cap[x.mes] = (cap[x.mes] || 0) + 1; });
   }
   return { ds44: inicioMs + PLAN_MES, items };
 }
@@ -6474,7 +6481,7 @@ const fmtCorta = ms => { const d = new Date(ms); return String(d.getDate()).padS
 // Calcula todo lo del avance a partir de la respuesta del servidor
 function calcAvance(R, temasReq, secs, extra) {
   const ap = R.aprob || {}, ini = R.inicio || Date.now(), now = Date.now();
-  const plan = planPersonal(PLAN_CFG, temasReq.map(t => t.id), ini, secs, extra);
+  const plan = planPersonal(PLAN_CFG, temasReq.map(t => t.id), ini, secs, extra, Object.keys(ap));
   const mesActual = Math.max(1, Math.floor((now - ini) / PLAN_MES) + 1);
   const due = {}; plan.items.forEach(x => due[x.id] = x);
   const lista = temasReq.map(t => ({ id: t.id, nota: ap[t.id] ? ap[t.id].n || parseFloat(String(ap[t.id].nota).replace(',', '.')) : 0, intentos: ap[t.id] ? ap[t.id].intentos : 1 })).filter(x => x.nota);
@@ -6513,7 +6520,7 @@ function htmlAvance(R, A, opts) {
     <div class="pscore"><span>Puntaje Seguro</span><b>${A.puntaje}<small>/100</small></b></div>
     <div class="rbar"><i style="width:${A.puntaje}%"></i></div>
     <div class="rnum"><b>${A.aprobadas} de ${A.total}</b> charlas de tu ruta realizadas ${A.aprobadas && A.aprobadas === A.total ? '🏆' : ''}</div>
-    <div class="plan"><div class="ptit">📅 TU PLAN · ${MESES_ES[new Date().getMonth()].toUpperCase()}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
+    <div class="plan"><div class="ptit">📅 TU PLAN · HASTA ${mesNombre((R.inicio || Date.now()) + A.mesActual * PLAN_MES).toUpperCase()}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
     ${podio(gen, '🏆 TOP 3 · ' + (opts.sucursal ? 'general' : opts.lugar || 'planta'))}${suc ? podio(suc, '📍 TOP 3 · ' + p.sucursal) : ''}
     ${falta ? `<div class="falta">${falta}</div>` : ''}
     <details class="como"><summary>¿Cómo se calcula?</summary>Tu Puntaje Seguro suma: <b>60 %</b> charlas de tu ruta realizadas, <b>30 %</b> tu promedio de notas y <b>10 %</b> charlas aprobadas al primer intento. Si hay empate, gana quien llegó primero.<br>Niveles: 95 Ejemplar · 85 Seguro · 75 Casi Seguro · 65 En camino.</details>
@@ -6535,7 +6542,7 @@ function marcarTarjetas(R, A) {
     if (!A) return;
     const d = A.due[id];
     if (A.atrasadas.some(x => x.id === id)) b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Atrasada</span>');
-    else if (d && d.mes === A.mesActual) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">📌 Este mes</span>`);
+    else if (d && d.mes === A.mesActual) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">📌 ${mesNombre(d.vence)}</span>`);
     else if (d) b.insertAdjacentHTML('afterbegin', `<span class="tb mes">📅 ${mesNombre(d.vence)}</span>`);
   });
 }
