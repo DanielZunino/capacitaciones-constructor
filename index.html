@@ -6468,6 +6468,8 @@ function caraSVG(id) {
   };
   return `<svg viewBox="0 0 100 100" class="cara">${F[id] || F.partiendo}</svg>`;
 }
+const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const mesNombre = ms => { const d = new Date(ms); return MESES_ES[d.getMonth()] + (d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); };
 const fmtCorta = ms => { const d = new Date(ms); return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear(); };
 // Calcula todo lo del avance a partir de la respuesta del servidor
 function calcAvance(R, temasReq, secs, extra) {
@@ -6511,7 +6513,7 @@ function htmlAvance(R, A, opts) {
     <div class="pscore"><span>Puntaje Seguro</span><b>${A.puntaje}<small>/100</small></b></div>
     <div class="rbar"><i style="width:${A.puntaje}%"></i></div>
     <div class="rnum"><b>${A.aprobadas} de ${A.total}</b> charlas de tu ruta realizadas ${A.aprobadas && A.aprobadas === A.total ? '🏆' : ''}</div>
-    <div class="plan"><div class="ptit">📅 TU PLAN · MES ${A.mesActual}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
+    <div class="plan"><div class="ptit">📅 TU PLAN · ${MESES_ES[new Date().getMonth()].toUpperCase()}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
     ${podio(gen, '🏆 TOP 3 · ' + (opts.sucursal ? 'general' : opts.lugar || 'planta'))}${suc ? podio(suc, '📍 TOP 3 · ' + p.sucursal) : ''}
     ${falta ? `<div class="falta">${falta}</div>` : ''}
     <details class="como"><summary>¿Cómo se calcula?</summary>Tu Puntaje Seguro suma: <b>60 %</b> charlas de tu ruta realizadas, <b>30 %</b> tu promedio de notas y <b>10 %</b> charlas aprobadas al primer intento. Si hay empate, gana quien llegó primero.<br>Niveles: 95 Ejemplar · 85 Seguro · 75 Casi Seguro · 65 En camino.</details>
@@ -6534,7 +6536,7 @@ function marcarTarjetas(R, A) {
     const d = A.due[id];
     if (A.atrasadas.some(x => x.id === id)) b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Atrasada</span>');
     else if (d && d.mes === A.mesActual) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">📌 Este mes</span>`);
-    else if (d) b.insertAdjacentHTML('afterbegin', `<span class="tb mes">Mes ${d.mes}</span>`);
+    else if (d) b.insertAdjacentHTML('afterbegin', `<span class="tb mes">📅 ${mesNombre(d.vence)}</span>`);
   });
 }
 function enlazarAvance() {
@@ -6609,6 +6611,7 @@ function renderHome() {
   const orden = SECCIONES.slice().sort((a, b) => secMia(b) - secMia(a));
   $('secciones').innerHTML = orden.map(s => {
     const ts = TOPICS.filter(t => t.sec === s.id); if (!ts.length) return '';
+    if (AV) { const k = t => t.id === 'induccion' ? -2 : ap[t.id] ? 9e15 : AV.due[t.id] ? AV.due[t.id].vence : 8e15; ts.sort((a, b) => k(a) - k(b)); }   // ordenadas por mes de plazo; las realizadas al final
     const mia = secMia(s), open = abiertas[s.id] ?? (mia || s.id === 'todos'), hechas = ts.filter(t => ap[t.id]).length;
     return `<div class="seccion${open ? ' open' : ''}" style="--sc:${s.c}">
       <button class="shead" data-s="${s.id}"><span class="sic">${s.ic}</span><span class="stt">${s.t}<small>${s.d} · ${ts.length} charlas${hechas ? ' · ✔ ' + hechas + ' realizadas' : ''}</small></span>
@@ -6736,7 +6739,7 @@ function aviso(txt) { let a = document.getElementById('avisoTop'); if (!a) { a =
   const entrar = async () => { const c = $('jefCl').value.trim().toLowerCase(); if (!c) return; $('jefErr').style.color = '#5A5F66'; $('jefErr').textContent = 'Verificando…';
     try { const r = await fetch(SCRIPT_URL + '?panel=' + encodeURIComponent(c)).then(x => x.json());
       if (!r.ok) { $('jefErr').style.color = ''; $('jefErr').textContent = 'Clave no válida.'; return; }
-      try { localStorage.setItem('panel_clave', c); } catch (e) {} location.href = 'panel.html'; }
+      try { localStorage.setItem('panel_clave', c); sessionStorage.setItem('panel_data', JSON.stringify(r)); } catch (e) {} location.href = 'panel.html'; }
     catch (e) { $('jefErr').style.color = ''; $('jefErr').textContent = 'No se pudo conectar. Intenta de nuevo.'; } };
   b.onclick = () => { m.classList.add('on'); $('jefErr').textContent = ''; setTimeout(() => $('jefCl').focus(), 50); };
   $('jefNo').onclick = () => m.classList.remove('on'); $('jefOk').onclick = entrar; $('jefCl').onkeydown = e => { if (e.key === 'Enter') entrar(); };

@@ -55,14 +55,14 @@ function login(msg) {
   const go = () => { clave = $('#cl').value.trim().toLowerCase(); if (clave) cargar(); };
   $('#ent').onclick = go; $('#cl').onkeydown = e => { if (e.key === 'Enter') go(); };
 }
-async function cargar() {
-  $('#app').innerHTML = '<div class="cargando">Cargando datos…</div>';
+async function cargar(enFondo) {
+  if (!enFondo) $('#app').innerHTML = '<div class="cargando">Cargando datos…</div>';
   try {
     const r = await fetch(URL_API + '?panel=' + encodeURIComponent(clave)).then(r => r.json());
-    if (!r.ok) { try { localStorage.removeItem('panel_clave'); } catch (e) {} return login('Clave no válida o desactivada.'); }
+    if (!r.ok) { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); } catch (e) {} return login('Clave no válida o desactivada.'); }
     try { localStorage.setItem('panel_clave', clave); } catch (e) {}
-    D = r; pintar();
-  } catch (e) { login('No se pudo conectar. Revisa tu internet e intenta de nuevo.'); }
+    D = r; try { localStorage.setItem('panel_cache', JSON.stringify(r)); } catch (e) {} pintar();
+  } catch (e) { if (!enFondo) login('No se pudo conectar. Revisa tu internet e intenta de nuevo.'); }
 }
 function resumenDe(ps, reps) {
   const s = k => ps.reduce((a, p) => a + (p[k] || 0), 0);
@@ -75,7 +75,7 @@ function pintar() {
     <span style="font-size:12px;color:#6B7280">Datos al ${esc(D.act || '—')}</span><button class="lnk" id="ref">↻ Actualizar</button><a class="lnk" href="./">Charlas</a><button class="lnk" id="sal">Salir</button></div>
     <div class="wrap"><div class="tabs">${[['resumen', 'Resumen'], ['personas', 'Trabajadores']].concat(D.reportes.length ? [['reportes', 'Reportes', T.rep]] : []).map(([k, t, c]) => `<button class="tab${vista === k ? ' on' : ''}" data-v="${k}">${t}${c ? `<span class="ct">${c}</span>` : ''}</button>`).join('')}</div><div id="cont"></div></div>`;
   document.querySelectorAll('.tab').forEach(b => b.onclick = () => { vista = b.dataset.v; pintar(); });
-  $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('panel_clave'); } catch (e) {} clave = ''; login(); };
+  $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); } catch (e) {} clave = ''; login(); };
   ({ resumen: vResumen, personas: vPersonas, reportes: vReportes })[vista](T);
 }
 function vResumen(T) {
@@ -130,5 +130,11 @@ function vReportes() {
     fetch(URL_API, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: 'reporte_estado', clave, id, estado: 'Resuelto', com }) }).catch(() => {});
     const r = D.reportes.find(x => x.id === id); Object.assign(r, { estado: 'Resuelto', por: D.user.nombre, fc: new Date().toLocaleDateString('es-CL'), com }); pintar(); });
 }
-if (clave) cargar(); else login();
+// Inicio rápido: usa los datos que ya trajo el ingreso (o los últimos guardados) y actualiza en segundo plano
+(function () { let pre = null;
+  try { pre = JSON.parse(sessionStorage.getItem('panel_data') || 'null'); sessionStorage.removeItem('panel_data'); } catch (e) {}
+  if (pre && pre.ok && clave) { D = pre; try { localStorage.setItem('panel_cache', JSON.stringify(pre)); } catch (e) {} return pintar(); }
+  if (!clave) return login();
+  try { pre = JSON.parse(localStorage.getItem('panel_cache') || 'null'); } catch (e) {}
+  if (pre && pre.ok) { D = pre; pintar(); cargar(true); } else cargar(); })();
 </script></body></html>
