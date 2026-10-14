@@ -548,7 +548,7 @@ function forklift(x,y,o={}) {
     + `<rect x="${x+72}" y="${y-92}" width="6" height="80" fill="#455A64"/><rect x="${x+78}" y="${y-92}" width="4" height="80" fill="#607D8B"/>`
     + `<rect x="${x+80}" y="${y-lift-5}" width="40" height="5" fill="#37474F"/><rect x="${x+80}" y="${y-lift-26}" width="4" height="26" fill="#37474F"/>`
     + `<circle cx="${x+20}" cy="${y-11}" r="11" fill="#263238"/><circle cx="${x+20}" cy="${y-11}" r="4" fill="#90A4AE"/><circle cx="${x+60}" cy="${y-11}" r="11" fill="#263238"/><circle cx="${x+60}" cy="${y-11}" r="4" fill="#90A4AE"/>`;
-  g += `<circle cx="${x+42}" cy="${y-56}" r="7" fill="${SK}"/><path d="M${x+34.5},${y-57} A7.5,7.5 0 0 1 ${x+49.5},${y-57} Z" fill="#FFC20E"/><rect x="${x+37}" y="${y-49}" width="10" height="10" fill="#1565C0"/>`;
+  g += `<circle cx="${x+42}" cy="${y-56}" r="7" fill="${SK}"/><path d="M${x+34.5},${y-57} A7.5,7.5 0 0 1 ${x+49.5},${y-57} Z" fill="#1565C0"/><rect x="${x+37}" y="${y-49}" width="10" height="10" fill="#1F4E9E"/>`;
   if (o.belt) g += `<line x1="${x+37}" y1="${y-49}" x2="${x+47}" y2="${y-40}" stroke="#E53935" stroke-width="2.5"/>`;
   if (o.load) g += box(x+84,y-lift-5,34,o.load,'',o.loadColor);
   if (o.light) g += `<circle cx="${x+56}" cy="${y-82}" r="4" fill="#FF6F00"/>`;
@@ -3168,15 +3168,15 @@ function grua(x, y, o = {}) {
   // operador sentado (chaleco reflectante sobre polera azul)
   if (o.op !== false) {
     const hx = x + 56, hy = y - 62, nx = x + 59, ny = y - 88, hdx = x + 61, hdy = y - 98;
-    g += `<polyline points="${hx},${hy} ${x + 78},${y - 62} ${x + 80},${y - 44}" fill="none" stroke="${OL}" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${hx},${hy} ${x + 78},${y - 62} ${x + 80},${y - 44}" fill="none" stroke="#37474F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
-    g += `<rect x="${x + 76}" y="${y - 46}" width="11" height="5" rx="2" fill="#3E2723"/>`;
-    g += `<line x1="${hx}" y1="${hy}" x2="${nx}" y2="${ny}" stroke="${OL}" stroke-width="17" stroke-linecap="round"/><line x1="${hx}" y1="${hy}" x2="${nx}" y2="${ny}" stroke="#FF8F00" stroke-width="14.5" stroke-linecap="round"/>`;
-    g += `<line x1="${hx - 6}" y1="${hy - 14}" x2="${hx + 7}" y2="${hy - 15}" stroke="#ECEFF1" stroke-width="2.4"/><line x1="${hx - 5}" y1="${hy - 20}" x2="${hx + 8}" y2="${hy - 21}" stroke="#ECEFF1" stroke-width="2.4"/>`;
-    g += `<polyline points="${nx + 1},${ny + 3} ${x + 70},${y - 74} ${x + 81},${y - 76}" fill="none" stroke="${OL}" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${nx + 1},${ny + 3} ${x + 70},${y - 74} ${x + 81},${y - 76}" fill="none" stroke="${AZ}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`;
+    g += `<polyline points="${hx},${hy} ${x + 78},${y - 62} ${x + 80},${y - 44}" fill="none" stroke="${OL}" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${hx},${hy} ${x + 78},${y - 62} ${x + 80},${y - 44}" fill="none" stroke="#1F4E9E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
+    g += `<rect x="${x + 76}" y="${y - 46}" width="11" height="5" rx="2" fill="#1B1B1B"/>`;
+    g += `<line x1="${hx}" y1="${hy}" x2="${nx}" y2="${ny}" stroke="${OL}" stroke-width="17" stroke-linecap="round"/><line x1="${hx}" y1="${hy}" x2="${nx}" y2="${ny}" stroke="#1F4E9E" stroke-width="14.5" stroke-linecap="round"/>`;
+    g += `<line x1="${hx - 6}" y1="${hy - 14}" x2="${hx + 7}" y2="${hy - 15}" stroke="#E8EEF2" stroke-width="2.6"/><line x1="${hx - 5}" y1="${hy - 20}" x2="${hx + 8}" y2="${hy - 21}" stroke="#E8EEF2" stroke-width="2.6"/>`;
+    g += `<polyline points="${nx + 1},${ny + 3} ${x + 70},${y - 74} ${x + 81},${y - 76}" fill="none" stroke="${OL}" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${nx + 1},${ny + 3} ${x + 70},${y - 74} ${x + 81},${y - 76}" fill="none" stroke="#1F4E9E" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`;
     g += `<circle cx="${x + 82}" cy="${y - 76}" r="3.6" fill="#FDD835" stroke="${OL}" stroke-width=".8"/>`;
     g += `<line x1="${nx}" y1="${ny}" x2="${hdx}" y2="${hdy + 6}" stroke="${SK}" stroke-width="5"/><circle cx="${hdx}" cy="${hdy}" r="8.5" fill="${SK}" stroke="${OL}" stroke-width="1.1"/><ellipse cx="${hdx + 3.5}" cy="${hdy - .5}" rx="1.1" ry="1.5" fill="${OL}"/>`;
     g += o.face === 'worried' ? `<line x1="${hdx + 2.5}" y1="${hdy + 4}" x2="${hdx + 6}" y2="${hdy + 4}" stroke="${OL}" stroke-width="1"/>` : `<path d="M${hdx + 2.5},${hdy + 3.5} q2,2 4,0" stroke="${OL}" stroke-width="1" fill="none"/>`;
-    g += `<path d="M${hdx - 9.5},${hdy - 2} A9.5,9.6 0 0 1 ${hdx + 9.5},${hdy - 2} Z" fill="#fff" stroke="${OL}" stroke-width="1"/><rect x="${hdx - 11}" y="${hdy - 3.2}" width="22" height="3" rx="1.5" fill="#fff" stroke="${OL}" stroke-width=".9"/>`;
+    g += `<path d="M${hdx - 9.5},${hdy - 2} A9.5,9.6 0 0 1 ${hdx + 9.5},${hdy - 2} Z" fill="#1565C0" stroke="${OL}" stroke-width="1"/><rect x="${hdx - 11}" y="${hdy - 3.2}" width="22" height="3" rx="1.5" fill="#1565C0" stroke="${OL}" stroke-width=".9"/>`;
     if (o.belt) g += `<g class="${o.beltAnim ? 'an-pulse' : ''}"><line x1="${hx - 6}" y1="${hy - 3}" x2="${hx + 9}" y2="${hy - 2}" stroke="${RJ}" stroke-width="4" stroke-linecap="round"/><rect x="${hx + 1}" y="${hy - 5.5}" width="6" height="6" rx="1" fill="#B0BEC5" stroke="${OL}" stroke-width=".6"/></g>`;
   }
   // volante y tablero
@@ -3312,7 +3312,7 @@ mejorar('horquilla', {
     { s: 'horquilla_bajas', t: 'Horquillas bajas al circular', x: '<ul><li>Lleva las horquillas <b>bajas, cerca del piso</b>, y el mástil inclinado hacia atrás.</li><li>Sube la carga <b>solo frente al rack</b>, detenido.</li><li>No gires con la carga en alto.</li><li>Ve a velocidad moderada, según las reglas internas.</li></ul>Carga baja: la grúa es más estable y ves mejor.', k: 'Carga baja, velocidad moderada, atención alta.' },
     { s: 'horquilla_rampa', t: 'Pendientes y rampas', x: 'En una rampa, <b>con carga, la carga siempre va hacia arriba</b>: sube de frente y baja en reversa. Así no se cae de las horquillas. <ul><li>Nunca gires ni cruces de lado en una pendiente.</li><li>Sin carga, las horquillas van hacia abajo de la pendiente.</li></ul>', k: 'Con carga en rampa: la carga mira hacia arriba.' },
     { s: 'horquilla_vuelco', t: 'Volcamiento lateral', x: 'La grúa se puede volcar hacia el lado al <b>girar rápido</b>, al girar con la <b>carga en alto</b>, al pasar por <b>hoyos o lomos</b>, o al andar de lado en una pendiente. Si se vuelca: <b>no saltes</b>. Quédate dentro con el cinturón, <b>afírmate al volante</b>, apoya los pies e inclínate al lado contrario.', k: 'Si se vuelca: no saltes, afírmate y quédate dentro.' },
-    { s: 'horquilla_personas', t: 'Nunca levantar personas', x: 'Las horquillas son para cargas. <b>Nunca levantes a una persona</b> sobre las horquillas ni sobre un pallet para alcanzar algo del rack, ni la lleves de pasajero. No tiene baranda ni sujeción: un movimiento y cae desde altura. Para subir, se usa el <b>equipo diseñado para personas</b>.', k: 'Las horquillas son para cargas, nunca para personas.' },
+    { s: 'horquilla_personas', t: 'Nunca levantar personas', x: 'Las horquillas son para cargas. <b>Nunca levantes a una persona</b> sobre las horquillas ni sobre un pallet para alcanzar algo del rack, ni la lleves de pasajero. No tiene baranda ni sujeción: un movimiento y cae desde altura. Para subir, se usa el <b>equipo diseñado para personas</b>. <b>Subirse a las horquillas es una falta grave que puede ser sancionada drásticamente.</b>', k: 'Las horquillas son para cargas, nunca para personas.' },
     { s: 'horquilla_estacionar', t: 'Al estacionar', x: '<ul><li>Horquillas <b>apoyadas en el piso</b>.</li><li><b>Freno de estacionamiento</b> puesto.</li><li>Motor apagado y <b>llave retirada</b>.</li><li>Lejos de salidas, extintores, pasillos y cruces.</li></ul>Así nadie tropieza con las horquillas y nadie no autorizado la puede mover.', k: 'Horquillas al piso, freno puesto y llave fuera.' },
     { s: 'horquilla_auto', t: 'Autocuidado: tú decides', x: AUTO + '. Con la grúa, las típicas son <b>apurarse</b> porque hay un camión o un cliente esperando, girar rápido con carga y <b>no ponerse el cinturón</b> "porque es corto". La decisión segura: <b>trabajar con calma</b>. Avisa a tu jefatura o al asesor en prevención los pisos dañados y las fallas.', k: 'El apuro no carga más rápido: carga accidentes.' }
   ],
@@ -4377,8 +4377,8 @@ const okRing = (x, y, r = 22) => `<circle cx="${x}" cy="${y}" r="${r}" fill="non
 // ---------- personas ----------
 const ROLE = {
   vend: { shirt: AZ, helmet: false }, adm: { shirt: '#ECEFF1', helmet: false, pants: '#455A64' },
-  bod: { shirt: '#455A64', vest: true, helmet: false }, patio: { shirt: '#455A64', vest: true, helmet: AM },
-  cond: { shirt: RJ, vest: true, helmet: false }, jefe: { shirt: '#FFFFFF', helmet: false, pants: '#263238' },
+  bod: { shirt: '#455A64', vest: true, helmet: AM }, patio: { shirt: '#455A64', vest: true, helmet: AM },
+  cond: { shirt: RJ, vest: true, helmet: AM }, jefe: { shirt: '#FFFFFF', helmet: false, pants: '#263238' },
   cli: { shirt: '#7CB342', helmet: false, pants: '#5D4037' }
 };
 function P(x, y, o = {}) {
@@ -4681,7 +4681,7 @@ NORMAS.accidente = { obj: 'Que la persona trabajadora conozca sus derechos ante 
     'DS 44/2023 MINTRAB, art. 16: capacitación en seguridad y salud en el trabajo.'] };
 // ====================== EPP ======================
 const glowVest = (x, y) => G('an-flash', `<rect x="${x - 8}" y="${f1(y - 46)}" width="16" height="3.4" fill="#FFFDE7"/><rect x="${x - 8}" y="${f1(y - 53.8)}" width="16" height="3.4" fill="#FFFDE7"/>`);
-const eppPatio = (vest) => patio({ bw: 140 }) + G('an-slide', forklift(0, 192, { load: 22, lift: 12, loadColor: '#90A4AE' }), '--dx:30px') + P(196, 190, { r: 'vend', pose: 'carry', vest, gloves: vest }) + sacoBig(196, 152, 34, 22);
+const eppPatio = (vest) => patio({ bw: 140 }) + G('an-slide', forklift(0, 192, { load: 22, lift: 12, loadColor: '#90A4AE' }), '--dx:30px') + P(196, 190, Object.assign({ r: 'vend', pose: 'carry', vest, gloves: vest }, vest ? { helmet: true } : { shirt: '#8E24AA', pants: '#5D4037' })) + sacoBig(196, 152, 34, 22);
 Object.assign(S, {
   c5ep_que: () => sv(plain('#FFF8E1', '#FFFFFF') + `<rect y="160" width="320" height="40" fill="#FFE082"/>` + banner('EPP: la última barrera', RJ, 30, 13) +
     G('an-pulse', casco(44, 108, 24)) + G('an-pulse an-d1', lentes(104, 98, 1.1)) + G('an-pulse an-d2', guante(140, 128, 1.3)) + G('an-pulse an-d3', chaleco(214, 130, 1.2)) + G('an-pulse', zapato(252, 128, 1.1)) +
@@ -4722,7 +4722,7 @@ mejorar('epp', { sec: 'todos', thumb: 'c5ep_cargo',
   ],
   quiz: [
     { q: '¿Quién debe pagar el EPP que usas?', s: 'c5ep_ley', o: ['Yo, con mi sueldo', 'La empresa, libre de costo para el trabajador', 'Lo pagamos a medias'], a: 1, w: 'DS 594 art. 53 y Ley 16.744 art. 68: el empleador lo proporciona sin costo.' },
-    { q: '¿Quién sale al patio con el EPP correcto?', pick: ['c5ep_mal', 'c5ep_ok'], a: 1, w: 'Chaleco reflectante para que lo vean y guantes para manipular la carga.' },
+    { q: '¿Quién sale al patio con el EPP correcto?', pick: ['c5ep_mal', 'c5ep_ok'], a: 1, w: 'Mono (overol) con cintas reflectantes, casco, zapatos de seguridad y guantes.' },
     { q: 'El EPP elimina el peligro de la tarea.', s: 'c5ep_que', vf: false, w: 'Falso. Es la última barrera: reduce el daño si algo pasa.' },
     { q: 'Vas a cargar fierro y planchas de zinc. ¿Qué protege tus manos?', s: 'c5ep_manos', o: ['Guantes de trabajo en buen estado', 'Nada: basta con tener cuidado', 'Guantes de látex delgados'], a: 0, w: 'Los cantos del fierro y el zinc cortan. Se usan guantes de trabajo sin hoyos ni cortes.' },
     { q: '¿Para qué sirve el chaleco reflectante en el patio?', s: 'c5ep_chaleco', o: ['Para que conductores y operadores de grúa te vean a tiempo', 'Para abrigarse', 'Para lucir el uniforme'], a: 0, w: 'Los vehículos tienen puntos ciegos: el chaleco hace que te vean antes.' },
@@ -5392,7 +5392,7 @@ mejorar('enfermedades', { sec: 'todos', thumb: 'cc6_en_lumbago',
     { s: 'cc6_en_hombros', t: 'Hombros, brazos y manos', x: 'Reponer góndolas altas con los brazos sobre los hombros, pasar cientos de productos por la caja o digitar todo el día puede causar <b>tendinitis</b> y dolor de hombros, codos y muñecas. Usa escalera o plataforma para lo alto, deja lo pesado en las repisas medias y aprovecha las pausas para mover el cuerpo.', k: 'Lo pesado a media altura; lo alto, con escalera.' },
     { s: 'cc6_en_cemento', t: 'Cemento: dermatitis', x: 'El cemento, sobre todo húmedo o mezclado con sudor, es <b>alcalino e irritante</b>. El contacto repetido puede causar <b>dermatitis</b>: piel seca, grietas, picazón o alergia, e incluso quemaduras. Usa <b>guantes</b> al manipular sacos, no toques el polvo de un saco roto con las manos desnudas y lávate antes de comer.', k: 'Saco roto o polvo de cemento: guantes y lavado.' },
     { s: 'cc6_en_solventes', t: 'Pinturas y solventes', x: 'Al preparar pinturas o limpiar un derrame, los <b>vapores</b> de diluyentes y solventes pueden causar mareo, dolor de cabeza y náuseas; el contacto con la piel la reseca e irrita.<ul><li>Mantén los envases cerrados.</li><li>Trabaja con ventilación.</li><li>Usa los guantes que indica la <b>HDS</b>.</li></ul>', k: 'Envase cerrado, ventilación y guantes según la HDS.' },
-    { s: 'cc6_en_ruido', t: 'Ruido: si tu puesto lo tiene', x: 'Cortar madera o fierro a pedido, o trabajar junto a maquinaria ruidosa, puede dañar el oído de a poco. La pérdida auditiva por ruido es <b>permanente</b>. 85 dB(A) es el límite para 8 horas. Si tu puesto lo supera, o la zona está señalizada, <b>el protector es obligatorio todo el tiempo</b>.', k: 'Oído dañado no se recupera.' },
+    { s: 'cc6_en_ruido', t: 'Ruido: ojo con los trabajos de terceros', x: 'En nuestras labores propias no hay exposición a ruido peligroso. Puede haberla cuando <b>empresas externas</b> trabajan cerca con maquinaria (cortes, obras, demoliciones). La pérdida auditiva por ruido es <b>permanente</b>. Si pasa: aléjate y, donde se señalice, <b>usa protector auditivo</b>.', k: 'Oído dañado no se recupera.' },
     { s: 'cc6_en_mental', t: 'Salud mental', x: 'El estrés prolongado, la presión constante o el maltrato pueden causar <b>ansiedad, depresión o trastornos del sueño</b>. Las enfermedades de salud mental causadas por el trabajo también pueden calificarse como <b>enfermedad profesional</b> por tu organismo administrador (mutualidad o ISL). Si te sientes mal, avisa y pide evaluación.', k: 'La salud mental también se protege y se evalúa.' },
     { s: 'enfermedades_diep', t: 'Si crees que es por el trabajo', x: 'Avisa a tu jefatura. La empresa debe hacer la <b>DIEP</b> (Denuncia Individual de Enfermedad Profesional) y derivarte a tu organismo administrador (mutualidad o ISL), que evalúa si es de origen laboral. Si la empresa no la hace, puedes presentarla tú. Si se califica como profesional, la Ley 16.744 cubre atención gratuita y prestaciones.', k: 'La DIEP inicia la evaluación de tu enfermedad.' },
     { s: 'cc6_en_auto', t: 'Autocuidado: "es uno no más"', x: 'Las acciones inseguras típicas: levantar <b>"un saco no más"</b> con la espalda doblada, cargar solo una plancha larga, tocar cemento sin guantes, faltar al examen. El daño se suma día a día. La decisión segura: <b>usar la ayuda mecánica, pedir ayuda y protegerte siempre</b>. Avisa si falta un carro o tu EPP está malo.', k: 'Tu salud de mañana se cuida con lo que haces hoy.' }
@@ -5419,6 +5419,29 @@ NORMAS.enfermedades = { obj: 'Que la persona trabajadora reconozca los efectos e
     'DS 594, arts. 70 a 82: ruido; art. 74, 85 dB(A) lento para 8 horas. Protocolo PREXOR (MINSAL).',
     'DS 594, Título IV, Párrafo II, art. 66: límites permisibles de agentes químicos.'] };
 })();
+// ===== Constructor: uniforme de los trabajadores en todas las escenas =====
+// Casco azul, mono (overol) azul con cintas reflectantes y zapatos de seguridad bien visibles.
+// Clientes y personas externas (otros colores de ropa) no cambian. vest:false explícito = sin cintas (escenas "mal").
+(function () {
+  const W0 = W, MONO = '#1F4E9E', CASCO = '#1565C0';
+  const TRAB = ['#0039A6', '#1565C0', '#455A64', '#DC281D'];
+  W = function (x, y, o = {}) {
+    const shirt = o.shirt || '#1565C0', trab = TRAB.indexOf(String(shirt).toUpperCase()) >= 0 || TRAB.indexOf(shirt) >= 0;
+    if (!trab) return W0(x, y, o).replace(/fill="#3E2723"/g, 'fill="#1B1B1B"').replace(/(height="[\d.]+" rx="[\d.]+" )fill="#111"/g, '$1fill="#FFB300"');
+    const r = Object.assign({}, o, { shirt: MONO, pants: MONO, vest: false });
+    if (o.helmet !== false || o.vest) r.helmet = CASCO;
+    const anim = r.anim; delete r.anim;
+    let g = W0(x, y, r).replace(/fill="#3E2723"/g, 'fill="#1B1B1B"').replace(/(height="[\d.]+" rx="[\d.]+" )fill="#111"/g, '$1fill="#FFB300"');
+    if (o.vest !== false) {
+      const P = POSES[r.pose || 'stand'], s = r.s || 1, fx = r.flip ? -1 : 1;
+      const t = p => [x + p[0] * s * fx, y + p[1] * s], mid = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k];
+      const banda = (c, w, ancho) => { const d = (n) => n.toFixed(1); return `<line x1="${d(c[0] - ancho * s)}" y1="${d(c[1])}" x2="${d(c[0] + ancho * s)}" y2="${d(c[1])}" stroke="#FFD600" stroke-width="${d(w * s + 1.4 * s)}"/><line x1="${d(c[0] - ancho * s)}" y1="${d(c[1])}" x2="${d(c[0] + ancho * s)}" y2="${d(c[1])}" stroke="#E8EEF2" stroke-width="${d(w * s)}"/>`; };
+      [.38, .66].forEach(k => g += banda(t(mid(P.hip, P.neck, k)), 2.2, 7.3));
+      [P.kL, P.kR].forEach((kn, i) => g += banda(t(mid(kn, i ? P.fR : P.fL, .45)), 1.8, 4.2));
+    }
+    return anim ? `<g class="${anim}">${g}</g>` : g;
+  };
+})();
 // ===== Inducción de Prevención de Riesgos (IRL) · charla madre, obligatoria antes de todo · vigencia 18 meses =====
 var IND_REGLAMENTOS = {
   'Constructor Center': 'https://drive.google.com/file/d/1Ggzfz14iDyPhBgeaZN3xVvDTA9MklR9T/view',
@@ -5428,12 +5451,13 @@ var IND_REGLAMENTOS = {
   'Sopreser': 'https://drive.google.com/file/d/1LOEpNRM9jEvRUcghTIyQde2964q6Nb0B/view' };
 var IND_FORMULARIO = 'https://docs.google.com/forms/d/1i1ZclkR-XdCZ2XnFifL6Bw70r9xZCIwqUsK5xF5qm5E/viewform';
 var IND_MESES = 18;
+var IND_TRANSV = '<li><b>Para todos:</b> caídas al mismo nivel, atropello en patio y estacionamiento, sismo e incendio, accidente de trayecto y agresiones de terceros. <span class="ctrl">✅ Control:</span> pasillos libres, rutas peatonales, conocer la vía de evacuación y el punto de encuentro, respetar el tránsito y pedir ayuda ante una agresión.</li>';
 var IND_PUESTO = {
-  conductores: '<li><b>Conductor:</b> choques, volcamiento, atropello al retroceder, caída al subir o bajar del camión, carga mal amarrada. Control: revisión pre-uso, cinturón, señalero en reversa, 3 puntos de apoyo, amarre y cantoneras.</li>',
-  grua: '<li><b>Grúa horquilla:</b> atropello de peatones, volcamiento, caída de carga. Control: solo con licencia clase D y autorización, cinturón, horquillas bajas, contacto visual, nunca levantar personas.</li>',
-  bodega: '<li><b>Bodega y patio:</b> caída de materiales desde racks, sobreesfuerzo, cortes, caída de altura, químicos. Control: lo pesado abajo, ayuda mecánica, guantes, escalera en buen estado, HDS.</li>',
-  ventas: '<li><b>Sala de ventas:</b> caída de productos desde góndolas, sobreesfuerzo al ayudar a clientes, agresión de terceros, asaltos. Control: escalera para reponer, pedir ayuda, calma y retirarse ante agresión, no resistir un asalto.</li>',
-  admin: '<li><b>Oficina:</b> posturas frente al computador, caídas por cables o cajones, riesgo eléctrico. Control: pantalla a la altura de los ojos, pausas, orden, no sobrecargar zapatillas.</li>' };
+  conductores: '<li><b>Conductor:</b> choques, volcamiento, atropello al retroceder, caída al subir o bajar del camión, carga mal amarrada. <span class="ctrl">✅ Control:</span> revisión pre-uso, cinturón, señalero en reversa, 3 puntos de apoyo, amarre y cantoneras.</li>',
+  grua: '<li><b>Grúa horquilla:</b> atropello de peatones, volcamiento, caída de carga. <span class="ctrl">✅ Control:</span> solo con licencia clase D y autorización, cinturón, horquillas bajas, contacto visual. <b class="prohib">Nunca subir ni levantar personas en las horquillas: falta grave, puede ser sancionada drásticamente.</b></li>',
+  bodega: '<li><b>Bodega y patio:</b> caída de materiales desde racks, sobreesfuerzo, cortes, caída de altura, químicos. <span class="ctrl">✅ Control:</span> lo pesado abajo, ayuda mecánica, guantes, escalera en buen estado, HDS. <b class="prohib">Prohibido trepar racks.</b></li>',
+  ventas: '<li><b>Sala de ventas:</b> caída de productos desde góndolas, sobreesfuerzo al ayudar a clientes, agresión de terceros, asaltos. <span class="ctrl">✅ Control:</span> escalera para reponer (nunca trepar góndolas ni racks), pedir ayuda, calma y retirarse ante agresión, no resistir un asalto.</li>',
+  admin: '<li><b>Oficina:</b> posturas frente al computador, caídas por cables o cajones, riesgo eléctrico. <span class="ctrl">✅ Control:</span> pantalla a la altura de los ojos, pausas, orden, no sobrecargar zapatillas.</li>' };
 (function () {
   const L = [
     { s: 'c5pe_irl', t: 'Bienvenido a Constructor Center', x: 'Esta es tu <b>inducción de prevención de riesgos</b>: la primera capacitación, obligatoria antes de cualquier otra. Aprenderás a:<ul><li><b>Conocer tus derechos</b> y la cobertura de la Ley 16.744.</li><li><b>Usar tus EPP</b> correctamente.</li><li><b>Reconocer los riesgos</b> de tu puesto y cómo controlarlos.</li><li><b>Actuar bien</b> ante accidentes, emergencias e incendios.</li></ul>', k: 'Primero la inducción, después todo lo demás.' },
@@ -5442,16 +5466,16 @@ var IND_PUESTO = {
     { s: 'c5ac_diat', t: 'Accidente grave o fatal', x: 'Si ocurre un accidente grave o fatal, según las instrucciones de la SUSESO se debe:<ul><li><b>Paralizar</b> la faena afectada.</li><li><b>Delimitar</b> el área y no mover nada.</li><li><b>Avisar de inmediato</b> a la jefatura y a prevención, para informar a la autoridad.</li></ul>', k: 'Grave o fatal: paralizar, delimitar y avisar.' },
     { s: 'c5or_pasillo', t: 'Orden y limpieza: obligatorio', x: 'El área de trabajo debe estar <b>siempre</b> ordenada y limpia. No admite excepciones.<ul><li>Cada material y herramienta en su lugar, nunca en zonas de tránsito.</li><li>Retira o reporta derrames, embalajes, clavos y restos.</li></ul>No cumplir estas medidas es una <b>falta grave</b> a la normativa interna.', k: 'Un pasillo libre evita caídas.' },
     { s: 'c5ep_cargo', t: 'Tus EPP', x: '<ul><li>Su uso es <b>obligatorio</b> en todo momento dentro de la empresa.</li><li>Se entregan <b>sin costo</b>, certificados (DS 18) y con registro de entrega.</li><li>Al ingresar recibes <b>casco, chaleco reflectante y zapatos de seguridad</b>.</li><li>Si se dañan, devuelve el equipo y se repone.</li></ul>Se te explica cómo ponértelos, usarlos y cuidarlos.', k: 'EPP sin costo, obligatorio y bien cuidado.' },
-    { s: 'cc6_inc_ext', t: 'Uso del extintor', x: '<ul><li><b>1.</b> Retira el seguro.</li><li><b>2.</b> Apunta a la <b>base</b> del fuego, no a las llamas.</li><li><b>3.</b> Aprieta la manilla.</li><li><b>4.</b> Mueve de lado a lado hasta apagarlo.</li></ul><b>PQS:</b> sólidos, líquidos y gases inflamables. <b>CO₂:</b> fuegos eléctricos y equipos energizados.', k: 'Seguro, base, manilla y barrer.' },
+    { s: 'cc6_inc_ext', t: 'Uso del extintor', x: '<ul><li><b>1.</b> Retira el seguro.</li><li><b>2.</b> Apunta a la <b>base</b> del fuego, no a las llamas.</li><li><b>3.</b> Aprieta la manilla.</li><li><b>4.</b> Mueve de lado a lado hasta apagarlo.</li></ul><b>Nuestros extintores son PQS</b> (polvo químico seco). Si el fuego es en un tablero o equipo eléctrico, no uses agua: aleja a las personas y avisa.', k: 'Seguro, base, manilla y barrer.' },
     { s: 'transito_ruta', t: 'Señalización y zonas seguras', x: '<ul><li>Respeta y cuida toda la señalización.</li><li>Camina por las <b>zonas peatonales</b> señalizadas.</li><li>Las <b>zonas de seguridad</b> siempre despejadas.</li><li>Fuma <b>solo</b> en la zona habilitada.</li><li>Dentro de las instalaciones, vehículos a <b>máximo 10 km/h</b>.</li></ul>', k: 'Ruta peatonal y zonas de seguridad libres.' },
     { s: 'c5ca_limites', t: 'Peso máximo (Ley 20.949)', x: '<ul><li><b>25 kg</b>: máximo para hombres adultos.</li><li><b>20 kg</b>: mujeres y menores de 18 años.</li><li><b>Embarazadas:</b> prohibido cargar y descargar manualmente.</li></ul>Si la carga supera el límite, la empresa debe entregar <b>ayuda mecánica</b>: carro, transpaleta o grúa.', k: '25 kg hombres · 20 kg mujeres y menores.' },
     { s: 'c5ca_tecnica', t: 'Posturas y manejo de carga', x: 'Riesgos: lumbago, hernias y lesiones de hombros, muñecas y rodillas.<ul><li>Evalúa peso y estabilidad antes de levantar.</li><li>Carga <b>cerca del cuerpo</b>, espalda recta, rodillas flexionadas.</li><li>Usa carros y transpaletas para lo pesado.</li><li>Haz <b>pausas activas</b> cada 2 horas de trabajo continuo.</li></ul>', k: 'Cerca del cuerpo, espalda recta, piernas.' },
     { s: 'c5or_rack', t: 'Hantavirus', x: 'Enfermedad grave por <b>orina, fecas o saliva del ratón colilargo</b>, al respirar partículas en bodegas y galpones.<ul><li><b>No barras en seco:</b> humedece con agua y cloro.</li><li>Bodegas limpias y ventiladas, sin basura ni pasto acumulado.</li><li>Mascarilla y guantes al limpiar zonas de riesgo.</li><li>Avisa si tienes síntomas tras exponerte.</li></ul>', k: 'Nunca barras en seco: agua con cloro.' },
     { s: 'quim_cc_intro', t: 'Sustancias químicas', x: '<ul><li>Toda sustancia peligrosa debe tener su <b>Hoja de Datos de Seguridad (HDS)</b> vigente (DS 57 MINSAL).</li><li>Lee la etiqueta y sus pictogramas antes de usarla.</li><li>Usa el EPP que indica la HDS.</li><li>Nunca la traspases a envases de bebida o sin etiqueta.</li></ul>', k: 'Antes de usar: etiqueta y HDS.' },
     { s: 'cc6_uv_intro', t: 'Calor y radiación UV', x: 'Riesgos: deshidratación, golpe de calor, calambres y quemaduras.<ul><li><b>Agua fresca</b> y tomar seguido.</li><li>Ropa clara y liviana, gorro o casco con protección.</li><li><b>Bloqueador solar y lentes con filtro UV</b>, obligatorios.</li><li>Evita el sol directo entre las <b>11:00 y las 16:00</b>; pausas a la sombra.</li></ul>', k: 'Agua, sombra, bloqueador y lentes UV.' },
-    { s: 'cc6_en_hombros', t: 'Protocolos de salud: TMERT y PREXOR', x: '<ul><li><b>TMERT:</b> lesiones de hombros, codos y muñecas por movimientos repetitivos y posturas forzadas. Pausas activas y avisar cualquier molestia.</li><li><b>PREXOR (ruido):</b> en las zonas señalizadas o donde se indique, los protectores auditivos son <b>obligatorios</b>.</li></ul>', k: 'Molestias o ruido: avisa y protégete.' },
+    { s: 'cc6_en_hombros', t: 'Protocolos de salud: TMERT y PREXOR', x: '<ul><li><b>TMERT:</b> lesiones de hombros, codos y muñecas por movimientos repetitivos y posturas forzadas. Pausas activas y avisar cualquier molestia.</li><li><b>PREXOR (ruido):</b> en nuestras labores propias no hay exposición a ruido peligroso, pero <b>puede haberla cuando empresas externas</b> trabajan cerca (cortes, obras, demoliciones). Aléjate y, donde se señalice, usa protector auditivo.</li></ul>', k: 'Molestias o ruido de terceros: avisa y protégete.' },
     { s: 'cc6_ps_intro', t: 'Ley Karin, psicosocial e iluminación', x: '<ul><li><b>Ley Karin (21.643):</b> previene y sanciona el acoso laboral, sexual y la violencia en el trabajo. Las denuncias son reservadas.</li><li><b>Riesgo psicosocial:</b> se evalúa con el cuestionario oficial (CEAL-SM) para mejorar el ambiente laboral.</li><li><b>Iluminación (DS 594):</b> luz adecuada en cada puesto para evitar fatiga y accidentes.</li></ul>', k: 'Trabajo sin acoso ni violencia.' },
-    { s: 'altura_cc_improv', t: 'Caídas al mismo y a distinto nivel', x: '<ul><li>Pasillos libres; limpia al tiro aceite, agua o polvo.</li><li>Calzado de seguridad antideslizante.</li><li><b>Trabajo en altura:</b> toda labor sobre <b>1,8 m</b>; solo con examen de altura vigente.</li><li>Escaleras en buen estado y <b>3 puntos de contacto</b>.</li><li><b>Prohibido</b> trepar estanterías o usar sillas y pallets para alcanzar altura.</li></ul>', k: 'Nunca trepes racks ni uses una silla.' },
+    { s: 'altura_cc_improv', t: 'Caídas al mismo y a distinto nivel', x: '<ul><li>Pasillos libres; limpia al tiro aceite, agua o polvo.</li><li>Calzado de seguridad antideslizante.</li><li><b>Trabajo en altura:</b> toda labor sobre <b>1,8 m</b>; solo con examen de altura vigente.</li><li>Escaleras en buen estado y <b>3 puntos de contacto</b>.</li><li><b class="prohib">Prohibido trepar racks</b> o estanterías, o usar sillas y pallets para alcanzar altura.</li><li><b class="prohib">Nunca te subas a las horquillas de la grúa</b> ni a un pallet levantado: es una falta grave que puede ser sancionada drásticamente.</li></ul>', k: 'Nunca trepes racks ni te subas a las horquillas.' },
     { s: 'herr_cc_intro', t: 'Golpes, cortes y atrapamientos', x: '<ul><li>Usa guantes adecuados y <b>corta hacia afuera</b> del cuerpo.</li><li>No uses herramientas defectuosas o improvisadas.</li><li>Lentes de seguridad si hay <b>proyección de partículas</b>.</li><li>No metas las manos en equipos sin <b>bloquearlos</b>.</li><li><b>Prohibido</b> anillos, cadenas, aros y ropa suelta cerca de equipos.</li></ul>', k: 'Herramienta buena, guantes y manos fuera.' },
     { s: 'of_electrico', t: 'Riesgo eléctrico e incendio', x: '<ul><li>Revisa que herramientas y extensiones estén en buen estado.</li><li>No uses equipos eléctricos con las manos mojadas.</li><li>Reporta chispas, olor a quemado o cables expuestos.</li><li>Mantén extintores y salidas <b>despejados</b> y no acumules material combustible.</li></ul>', k: 'Cable dañado: no se usa, se reporta.' },
     { s: 'horquilla_patio_contacto', t: 'Grúa horquilla y vehículos', x: '<ul><li>Camina solo por rutas peatonales y busca <b>contacto visual</b> con el operador.</li><li>Nunca pases bajo una carga levantada.</li><li>Los vehículos respetan los <b>límites de la Ley de Tránsito</b>; dentro del recinto, máximo 10 km/h.</li><li><b>Cero alcohol y drogas</b> para conducir; celular solo con manos libres.</li></ul>', k: 'Contacto visual antes de acercarte.' },
@@ -5467,9 +5491,9 @@ var IND_PUESTO = {
     { q: 'El accidente de trayecto, entre tu casa y el trabajo, está cubierto por la Ley 16.744.', s: 'of_trayecto', vf: true, w: 'Verdadero. El trayecto directo de ida o regreso está cubierto. Avísalo de inmediato.' },
     { q: 'Ante un accidente grave o fatal, ¿qué se debe hacer primero?', s: 'c5ac_diat', o: ['Paralizar la faena, delimitar el área y avisar', 'Ordenar el lugar para seguir trabajando', 'Esperar al día siguiente para informar'], a: 0, w: 'Se paraliza, se delimita sin mover nada y se avisa de inmediato para informar a la autoridad.' },
     { q: '¿Quién paga tus elementos de protección personal?', s: 'c5ep_cargo', o: ['La empresa, sin costo para ti', 'Tú, con descuento por planilla', 'Mitad y mitad'], a: 0, w: 'La empresa debe entregar los EPP sin costo, certificados y con registro de entrega.' },
-    { q: '¿Cuál es la forma correcta de presentarse al patio?', pick: ['c5ep_mal', 'c5ep_ok'], a: 1, w: 'En patio y bodega: zapatos de seguridad, chaleco reflectante y casco donde se exija.' },
+    { q: '¿Cuál es la forma correcta de presentarse al patio?', pick: ['c5ep_mal', 'c5ep_ok'], a: 1, w: 'Al patio se va con mono (overol) con cintas reflectantes, casco, zapatos de seguridad y guantes.' },
     { q: 'Al usar el extintor, ¿hacia dónde apuntas?', s: 'cc6_inc_ext', o: ['A la base del fuego', 'A la parte alta de las llamas', 'Al humo'], a: 0, w: 'Se apunta a la base, donde está el combustible, y se barre de lado a lado.' },
-    { q: 'Para un fuego en un tablero eléctrico energizado, el extintor indicado es el de CO₂.', s: 'cc6_inc_ext', vf: true, w: 'Verdadero. El CO₂ es para fuegos eléctricos y equipos energizados.' },
+    { q: 'Un compañero se sube a las horquillas de la grúa para alcanzar una caja en altura. ¿Qué corresponde?', s: 'altura_cc_improv', o: ['Detenerlo: está prohibido y es una falta grave', 'Ayudarlo subiendo despacio', 'Permitirlo si es rápido'], a: 0, w: 'Nunca se sube nadie a las horquillas ni a un pallet levantado. Puede ser sancionado drásticamente.' },
     { q: '¿Cuál es el peso máximo que un hombre adulto puede cargar manualmente?', s: 'c5ca_limites', o: ['25 kg', '40 kg', '50 kg'], a: 0, w: 'La Ley 20.949 fija 25 kg para hombres y 20 kg para mujeres y menores de 18 años.' },
     { q: 'Debes limpiar una bodega con fecas de ratón. ¿Qué es lo correcto?', s: 'c5or_rack', o: ['Humedecer con agua y cloro antes de limpiar, con mascarilla y guantes', 'Barrer rápido en seco', 'Soplar el polvo con aire comprimido'], a: 0, w: 'Nunca en seco: se humedece con agua y cloro para no respirar partículas con hantavirus.' },
     { q: 'Para alcanzar un producto en la parte alta del rack, ¿qué haces?', pick: ['sv_escalera_mal', 'sv_escalera_ok'], a: 1, w: 'Escalera en buen estado y 3 puntos de contacto. Prohibido trepar racks o usar sillas y pallets.' },
@@ -6604,10 +6628,11 @@ function prepInduccion() {
   const t = TOPICS.find(x => x.id === 'induccion'); if (!t) return;
   const p = RUTA && RUTA.persona, secs = p ? p.secs : null;
   const c = t.learn.find(x => x.puesto);
-  if (c) c.x = 'Cada puesto tiene sus riesgos. ' + (secs && secs.length ? 'Los de tu cargo (' + (p.cargo || '') + '):' : 'Los principales en la empresa:') + '<ul>' + (secs && secs.length ? secs : Object.keys(IND_PUESTO)).map(s => IND_PUESTO[s] || '').join('') + '</ul>';
+  if (c) c.x = 'Cada puesto tiene sus riesgos. ' + (secs && secs.length ? 'Los de tu cargo (' + (p.cargo || '') + '):' : 'Los principales en la empresa:') + '<ul>' + (secs && secs.length ? secs : Object.keys(IND_PUESTO)).map(s => IND_PUESTO[s] || '').join('') + IND_TRANSV + '</ul>';
   const u = t.learn[t.learn.length - 1], emp = p && p.empresa && IND_REGLAMENTOS[p.empresa] ? p.empresa : null;
-  const links = (emp ? `<a class="indbtn" target="_blank" rel="noopener" href="${IND_REGLAMENTOS[emp]}">📘 Reglamento Interno ${emp}</a>`
-    : Object.keys(IND_REGLAMENTOS).map(k => `<a class="indbtn" target="_blank" rel="noopener" href="${IND_REGLAMENTOS[k]}">📘 Reglamento ${k}</a>`).join(''))
+  const mano = '<span class="mano">👉</span>';
+  const links = (emp ? `<a class="indbtn" target="_blank" rel="noopener" href="${IND_REGLAMENTOS[emp]}">${mano}<span>Pincha aquí para descargar tu Reglamento Interno<small>${emp}</small></span></a>`
+    : '<div class="indtit">👉 Pincha aquí para descargar el Reglamento Interno de tu empresa:</div>' + Object.keys(IND_REGLAMENTOS).map(k => `<a class="indbtn" target="_blank" rel="noopener" href="${IND_REGLAMENTOS[k]}">📘 ${k}</a>`).join(''))
     + (p ? '' : `<a class="indbtn" target="_blank" rel="noopener" href="${IND_FORMULARIO}">📝 Ficha de inscripción de trabajadores</a>`);
   u.x = u.x.replace(/<div class="indlinks"[\s\S]*$/, '') + `<div class="indlinks">${links}</div>`;
 }
@@ -6620,6 +6645,10 @@ function prepInduccion() {
   css.textContent = `#indModal { display:none; position:fixed; inset:0; background:rgba(10,20,50,.7); z-index:9999; align-items:center; justify-content:center; padding:18px; }
 #indModal.on { display:flex; } #indModal .imbox { background:#fff; color:#1F2328; border-radius:18px; padding:22px; max-width:380px; width:100%; display:flex; flex-direction:column; gap:12px; text-align:center; border-top:8px solid #DC281D; }
 #indModal .imic { font-size:44px; } #indModal h3 { margin:0; font-size:22px; } #indModal p { color:#30363D; margin:0; }
+.indbtn { display:flex !important; align-items:center; gap:10px; } .indbtn small { display:block; font-weight:normal; opacity:.85; font-size:12px; }
+.mano { font-size:26px; display:inline-block; animation: manoTap 1s ease-in-out infinite; } @keyframes manoTap { 0%,100% { transform:translateX(0) } 50% { transform:translateX(6px) } }
+.indtit { font-weight:bold; color:#0039A6; font-size:14px; }
+.ctrl { background:#2E7D32; color:#fff; font-weight:bold; padding:1px 6px; border-radius:6px; white-space:nowrap; } .prohib { color:#C62828; }
 .indlinks { display:flex; flex-direction:column; gap:8px; margin-top:10px; } .indbtn { display:block; background:#0039A6; color:#fff !important; text-decoration:none; padding:10px 12px; border-radius:10px; font-weight:bold; font-size:14px; }
 .tcard.bloq svg { filter:grayscale(1); opacity:.45; } .tb.lock { background:#37474F; color:#fff; } .tb.star { background:#DC281D; color:#fff; font-size:12px; }`;
   document.head.appendChild(css);
