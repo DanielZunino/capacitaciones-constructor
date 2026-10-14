@@ -6643,6 +6643,7 @@ function renderHome() {
   marcarTarjetas(RUTA, AV); enlazarAvance();
   if ($('bHist')) $('bHist').onclick = verHistorial;
   if ($('bClave')) $('bClave').onclick = cambiarMiClave;
+  if (RUTA && RUTA.jefe && $('bClave') && !$('bPanel')) { const bp = document.createElement('button'); bp.className = 'lnk'; bp.id = 'bPanel'; bp.textContent = '🔐 Ir a mi panel de ' + (RUTA.jefe === 'admin' ? 'administración' : 'jefatura'); bp.onclick = () => { location.href = 'panel.html'; }; $('bClave').parentNode.insertBefore(bp, $('bClave')); }
   document.querySelectorAll('.tcard').forEach(b => b.onclick = () => pickTopic(b.dataset.id));
   document.querySelectorAll('.shead').forEach(b => b.onclick = () => { const el = b.parentNode; el.classList.toggle('open'); abiertas[b.dataset.s] = el.classList.contains('open'); });
   if ($('bRuta')) { const go = () => identificar($('rutHome').value, false, $('claveHome').value); $('bRuta').onclick = go; $('claveHome').onkeydown = e => { if (e.key === 'Enter') go(); }; $('rutHome').onkeydown = e => { if (e.key === 'Enter') $('claveHome').focus(); }; }
@@ -6673,7 +6674,7 @@ async function identificar(rut, silencioso, clave) {
   const loc = Object.assign({}, (RUTA && RUTA.rut === rut && RUTA.aprob) || {}); try { const ci = JSON.parse(localStorage.getItem('cap_ind') || 'null'); if (ci && ci.rut === rut) loc.induccion = loc.induccion && fms(loc.induccion.fecha) >= fms(ci.fecha) ? loc.induccion : ci; } catch (e) {}
   Object.keys(loc).forEach(id => { const l = loc[id]; if (l && reciente(l.fecha) && (!aprob[id] || (id === 'induccion' && fms(l.fecha) > fms(aprob[id].fecha)))) aprob[id] = l; });
   window.__rutaServer = true;
-  RUTA = { rut, persona: d.persona || null, aprob, hist: d.hist || [], inicio: d.inicio, ds44: d.ds44, ranking: d.ranking }; st.persona = d.persona || null;
+  RUTA = { rut, jefe: d.jefe || '', persona: d.persona || null, aprob, hist: d.hist || [], inicio: d.inicio, ds44: d.ds44, ranking: d.ranking }; st.persona = d.persona || null;
   if (d.persona) { $('inName').value = d.persona.nombre; $('inRut').value = rut; try { localStorage.setItem('cap_persona', JSON.stringify({ name: d.persona.nombre, rut, k: String(clave).trim() })); localStorage.setItem('cap_ruta', JSON.stringify(RUTA)); } catch (e) {} }
   renderHome();
   if (!silencioso && d.persona) { const A = calcAvance(RUTA, TOPICS.filter(esMia), d.persona.secs, d.persona.extra); VOZ.say(`Hola ${primerNombre(d.persona.nombre)}. Tu nivel es: ${A.nivel.t}. ${A.nivel.m} Abajo tienes tu plan del mes.`); }
@@ -6754,32 +6755,15 @@ function prepInduccion() {
 function aviso(txt) { let a = document.getElementById('avisoTop'); if (!a) { a = document.createElement('div'); a.id = 'avisoTop'; a.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);background:#0039A6;color:#fff;padding:10px 16px;border-radius:12px;font-weight:bold;z-index:10000;box-shadow:0 6px 20px rgba(0,0,0,.25)'; document.body.appendChild(a); }
   a.textContent = txt; a.style.display = txt ? 'block' : 'none'; }
 
-// ===== Ingreso de jefaturas (administrador y gerentes) desde la misma página =====
+// ===== Ingreso de jefaturas: mismo RUT y misma clave del trabajador (el panel reconoce la sesión abierta)
 (function () {
   const css = document.createElement('style');
-  css.textContent = `.jefBtn { display:block; margin:18px auto 8px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:9px 16px; font:inherit; font-size:14px; cursor:pointer; }
-#jefModal { display:none; position:fixed; inset:0; background:rgba(10,20,50,.72); z-index:9999; align-items:center; justify-content:center; padding:16px; } #jefModal.on { display:flex; }
-#jefModal .jb { background:#fff; color:#1F2328; border-radius:18px; padding:22px; max-width:360px; width:100%; display:flex; flex-direction:column; gap:10px; text-align:center; border-top:8px solid #0039A6; }
-#jefModal input { border:2px solid #CFD8DC; border-radius:10px; padding:12px; font-size:18px; text-align:center; } #jefModal .je { color:#C62828; font-size:13px; min-height:16px; }
-#jefModal button.ok { border:0; border-radius:12px; padding:13px; font-weight:bold; font-size:16px; background:#0039A6; color:#fff; cursor:pointer; }`;
+  css.textContent = `.jefBtn { display:block; margin:18px auto 8px; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:9px 16px; font:inherit; font-size:14px; cursor:pointer; }`;
   document.head.appendChild(css);
   const home = $('s-home'); if (!home) return;
   const b = document.createElement('button'); b.className = 'jefBtn'; b.textContent = '🔐 Ingreso jefaturas'; (home.querySelector('.homeR') || home.querySelector('.wrap') || home).appendChild(b);
-  const m = document.createElement('div'); m.id = 'jefModal';
-  m.innerHTML = `<div class="jb"><div style="font-size:40px">🔐</div><h3 style="margin:0">Ingreso jefaturas</h3><p style="margin:0;color:#5A5F66;font-size:14px">Administración y gerentes de sucursal. Tu clave es tu primer nombre seguido de 123.</p>
-    <form id="jefF" onsubmit="return false" style="display:flex;flex-direction:column;gap:10px"><input name="username" value="jefatura" autocomplete="username" hidden>
-    <input id="jefCl" type="password" name="password" placeholder="Ej: juan123" autocomplete="current-password" autocapitalize="none">
-    <label style="display:flex;gap:8px;align-items:center;justify-content:center;font-size:15px;cursor:pointer"><input type="checkbox" id="jefRec" checked style="width:20px;height:20px"> Recordar mi clave en este equipo</label></form><div class="je" id="jefErr"></div><button class="ok" id="jefOk">Entrar</button><button class="lnk" id="jefNo">Cancelar</button></div>`;
-  document.body.appendChild(m);
-  const entrar = async () => { const c = $('jefCl').value.trim().toLowerCase(); if (!c) return; $('jefErr').style.color = '#5A5F66'; $('jefErr').textContent = 'Verificando…';
-    try { const r = await fetch(SCRIPT_URL + '?panel=' + encodeURIComponent(c)).then(x => x.json());
-      if (!r.ok) { $('jefErr').style.color = ''; $('jefErr').textContent = 'Clave no válida.'; return; }
-      try { if ($('jefRec').checked) localStorage.setItem('panel_clave', c); else { localStorage.removeItem('panel_clave'); sessionStorage.setItem('panel_clave', c); } sessionStorage.setItem('panel_data', JSON.stringify(r)); } catch (e) {} location.href = 'panel.html'; }
-    catch (e) { $('jefErr').style.color = ''; $('jefErr').textContent = 'No se pudo conectar. Intenta de nuevo.'; } };
-  let guardada = ''; try { guardada = localStorage.getItem('panel_clave') || ''; } catch (e) {}
-  if (guardada) { let n = ''; try { n = (JSON.parse(localStorage.getItem('panel_cache') || '{}').user || {}).nombre || ''; } catch (e) {} b.textContent = '🔐 Ir a mi panel' + (n ? ' · ' + n.split(' ')[0] : ''); }
-  b.onclick = () => { if (guardada) { location.href = 'panel.html'; return; } m.classList.add('on'); $('jefErr').textContent = ''; setTimeout(() => $('jefCl').focus(), 50); };
-  $('jefNo').onclick = () => m.classList.remove('on'); $('jefOk').onclick = entrar; $('jefCl').onkeydown = e => { if (e.key === 'Enter') entrar(); };
+  b.onclick = () => { location.href = 'panel.html'; };
+  try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); } catch (e) {}   // claves antiguas de jefatura: ya no se usan
 })();
 
 // ===== Mi historial: todas las capacitaciones aprobadas, también las vencidas (nada se borra)

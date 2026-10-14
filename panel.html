@@ -45,24 +45,31 @@ const $ = s => document.querySelector(s), esc = s => String(s == null ? '' : s).
 const col = p => p === null ? '#90A4AE' : p >= .9 ? '#2E7D32' : p >= .7 ? '#F9A825' : '#C62828';
 const pct = (a, b) => b ? a / b : null, fp = p => p === null ? '—' : Math.round(p * 100) + '%';
 const bar = p => `<div class="bar"><i style="width:${p === null ? 0 : Math.round(p * 100)}%;background:${col(p)}"></i></div>`;
-let D = null, clave = '', vista = 'resumen', fPer = 'todos', fRep = 'Abierto', fSuc = '', q = '';
-try { clave = localStorage.getItem('panel_clave') || sessionStorage.getItem('panel_clave') || ''; } catch (e) {}
+let D = null, AUTH = null, vista = 'resumen', fPer = 'todos', fRep = 'Abierto', fSuc = '', q = '';
+const cleanRut = r => String(r || '').toUpperCase().replace(/[^0-9K]/g, '');
+const fmtRut = r => { r = cleanRut(r).replace(/^0+/, ''); return r.length < 2 ? r : r.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + r.slice(-1); };
+async function rutHash(rut) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cc|' + cleanRut(rut).replace(/^0+/, ''))); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+// La sesión es la misma de la página de capacitaciones (RUT + clave del trabajador)
+try { const p = JSON.parse(localStorage.getItem('cap_persona') || 'null'); if (p && p.rut && p.k) AUTH = { rut: p.rut, k: p.k }; } catch (e) {}
+try { if (!AUTH) { const p = JSON.parse(sessionStorage.getItem('panel_auth') || 'null'); if (p && p.rut && p.k) AUTH = p; } } catch (e) {}
 
 function login(msg) {
   $('#app').innerHTML = `<div class="login"><img src="${LOGO}" alt="Constructor Center"><h2 style="margin:0">Panel de Prevención</h2>
-    <p style="margin:0;color:#6B7280">Para administración y gerentes de sucursal. Tu clave es tu primer nombre seguido de 123.</p>
-    <form onsubmit="return false" style="display:flex;flex-direction:column;gap:12px"><input name="username" value="jefatura" autocomplete="username" hidden><input id="cl" type="password" name="password" placeholder="Ej: juan123" maxlength="30" autocomplete="current-password">
-    <label style="display:flex;gap:8px;align-items:center;justify-content:center;cursor:pointer"><input type="checkbox" id="rec" checked style="width:20px;height:20px"> Recordar mi clave en este equipo</label></form><div class="err">${msg || ''}</div><button class="btn az" id="ent">Entrar</button></div>`;
-  const go = () => { clave = $('#cl').value.trim().toLowerCase(); if (clave) cargar(); };
-  $('#ent').onclick = go; $('#cl').onkeydown = e => { if (e.key === 'Enter') go(); };
+    <p style="margin:0;color:#6B7280">Administración y gerentes de sucursal. Entra con tu RUT y tu misma clave de capacitaciones (tu nombre y año de nacimiento, ej: juan1985, o la que cambiaste).</p>
+    <form onsubmit="return false" style="display:flex;flex-direction:column;gap:12px"><input id="ru" name="username" placeholder="RUT (ej: 12.345.678-9)" maxlength="14" autocomplete="username" inputmode="text"><input id="cl" type="password" name="password" placeholder="Clave" maxlength="40" autocomplete="current-password" autocapitalize="none">
+    <label style="display:flex;gap:8px;align-items:center;justify-content:center;cursor:pointer"><input type="checkbox" id="rec" checked style="width:20px;height:20px"> Recordarme en este equipo</label></form><div class="err">${msg || ''}</div><button class="btn az" id="ent">Entrar</button></div>`;
+  const go = () => { const rut = $('#ru').value, k = $('#cl').value.trim(); if (cleanRut(rut).length < 7 || !k) { $('.err').textContent = 'Escribe tu RUT y tu clave.'; return; } AUTH = { rut: fmtRut(rut), k, nuevo: true }; cargar(); };
+  $('#ent').onclick = go; $('#cl').onkeydown = e => { if (e.key === 'Enter') go(); }; $('#ru').onkeydown = e => { if (e.key === 'Enter') $('#cl').focus(); };
 }
 async function cargar(enFondo) {
+  if (!AUTH) return login();
   if (!enFondo) $('#app').innerHTML = '<div class="cargando">Cargando datos…</div>';
   try {
-    const r = await fetch(URL_API + '?panel=' + encodeURIComponent(clave)).then(r => r.json());
-    if (!r.ok) { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); } catch (e) {} return login('Clave no válida o desactivada.'); }
-    try { const rec = $('#rec'); if (!rec || rec.checked) { if (rec || localStorage.getItem('panel_clave')) localStorage.setItem('panel_clave', clave); } else { localStorage.removeItem('panel_clave'); sessionStorage.setItem('panel_clave', clave); } } catch (e) {}
-    D = r; try { localStorage.setItem('panel_cache', JSON.stringify(r)); } catch (e) {} pintar();
+    AUTH.h = await rutHash(AUTH.rut); const r = await fetch(URL_API + '?panel=' + AUTH.h + '&k=' + encodeURIComponent(AUTH.k)).then(r => r.json());
+    if (!r.ok) { try { localStorage.removeItem('panel_cache'); sessionStorage.removeItem('panel_auth'); } catch (e) {} const n = AUTH.nuevo; AUTH = null;
+      return login(n ? 'RUT o clave incorrectos, o este RUT no tiene panel de jefatura. Si no recuerdas tu clave, contacta al área de RR.HH.' : ''); }
+    if (AUTH.nuevo) { delete AUTH.nuevo; try { const rec = $('#rec'); if (!rec || rec.checked) { const p = JSON.parse(localStorage.getItem('cap_persona') || '{}'); localStorage.setItem('cap_persona', JSON.stringify(Object.assign(p, { name: (r.user || {}).nombre || p.name, rut: AUTH.rut, k: AUTH.k }))); } else sessionStorage.setItem('panel_auth', JSON.stringify(AUTH)); } catch (e) {} }
+    D = r; try { localStorage.setItem('panel_cache', JSON.stringify(Object.assign({}, r, { _rut: AUTH.rut }))); } catch (e) {} pintar();
   } catch (e) { if (!enFondo) login('No se pudo conectar. Revisa tu internet e intenta de nuevo.'); }
 }
 function resumenDe(ps, reps) {
@@ -76,7 +83,7 @@ function pintar() {
     <span style="font-size:12px;color:#6B7280">Datos al ${esc(D.act || '—')}</span><button class="lnk" id="ref">↻ Actualizar</button><a class="lnk" href="./">Charlas</a><button class="lnk" id="sal">Salir</button></div>
     <div class="wrap"><div class="tabs">${[['resumen', 'Resumen'], ['personas', 'Trabajadores']].concat(D.reportes.length ? [['reportes', 'Reportes', T.rep]] : []).map(([k, t, c]) => `<button class="tab${vista === k ? ' on' : ''}" data-v="${k}">${t}${c ? `<span class="ct">${c}</span>` : ''}</button>`).join('')}</div><div id="cont"></div></div>`;
   document.querySelectorAll('.tab').forEach(b => b.onclick = () => { vista = b.dataset.v; pintar(); });
-  $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); sessionStorage.removeItem('panel_clave'); } catch (e) {} clave = ''; login(); };
+  $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('cap_persona'); localStorage.removeItem('cap_ruta'); localStorage.removeItem('panel_cache'); sessionStorage.removeItem('panel_auth'); } catch (e) {} AUTH = null; login(); };
   ({ resumen: vResumen, personas: vPersonas, reportes: vReportes })[vista](T);
 }
 function vResumen(T) {
@@ -128,14 +135,11 @@ function vReportes() {
   document.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { fRep = b.dataset.r; vReportes(); });
   document.querySelectorAll('[data-ok]').forEach(b => b.onclick = () => {
     const id = b.dataset.ok, com = (document.querySelector(`[data-c="${id}"]`) || {}).value || '';
-    fetch(URL_API, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: 'reporte_estado', clave, id, estado: 'Resuelto', com }) }).catch(() => {});
+    fetch(URL_API, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: 'reporte_estado', h: AUTH.h, k: AUTH.k, id, estado: 'Resuelto', com }) }).catch(() => {});
     const r = D.reportes.find(x => x.id === id); Object.assign(r, { estado: 'Resuelto', por: D.user.nombre, fc: new Date().toLocaleDateString('es-CL'), com }); pintar(); });
 }
-// Inicio rápido: usa los datos que ya trajo el ingreso (o los últimos guardados) y actualiza en segundo plano
-(function () { let pre = null;
-  try { pre = JSON.parse(sessionStorage.getItem('panel_data') || 'null'); sessionStorage.removeItem('panel_data'); } catch (e) {}
-  if (pre && pre.ok && clave) { D = pre; try { localStorage.setItem('panel_cache', JSON.stringify(pre)); } catch (e) {} return pintar(); }
-  if (!clave) return login();
+// Inicio rápido: muestra los últimos datos guardados de esta misma persona y actualiza en segundo plano
+(async function () { if (!AUTH) return login(); AUTH.h = await rutHash(AUTH.rut); let pre = null;
   try { pre = JSON.parse(localStorage.getItem('panel_cache') || 'null'); } catch (e) {}
-  if (pre && pre.ok) { D = pre; pintar(); cargar(true); } else cargar(); })();
+  if (pre && pre.ok && pre._rut === AUTH.rut) { D = pre; pintar(); cargar(true); } else cargar(); })();
 </script></body></html>
