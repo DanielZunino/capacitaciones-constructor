@@ -6366,10 +6366,11 @@ async function temaAprobado() {
   try {
     st.hash = await rutHash(st.rut);
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 25000);
-    const d = await fetch(SCRIPT_URL + '?historial=' + st.hash, { signal: ctl.signal }).then(r => r.json());
+    const d = await fetch(SCRIPT_URL + '?historial=' + st.hash + '&k=' + encodeURIComponent((sesion() || {}).k || ''), { signal: ctl.signal }).then(r => r.json());
     if (d.persona) st.persona = d.persona;
     const ap = (d.temas || []).find(t => t.tema_id === st.topic.id) || null;
     if (ap && st.topic.id === 'induccion' && venceInduccion(ap.fecha) - Date.now() < 30 * 864e5) return null;   // por vencer o vencida: se rinde de nuevo
+    if (ap && st.topic.id !== 'induccion' && venceAprob(ap.tema_id || st.topic.id, ap.fecha) <= Date.now()) return null;   // vencida (12 meses): se renueva
     return ap;
   } catch (e) { return null; } // sin conexión: se deja hacer normal
 }
@@ -6409,7 +6410,7 @@ var PLAN_TEMPORADA = {           // meses (0 = enero) en que conviene que venza 
   transito: [2, 3, 4, 5],        // marzo a junio: lluvia, barro y poca luz
   orden: [2, 3, 4, 5]            // pisos mojados y barro en invierno
 };
-function planPersonal(cfg, temas, inicioMs, secs, extra, hechos) {
+function planPersonal(cfg, temas, inicioMs, secs, extra, hechos, vencidas) {
   const pend = temas.filter(id => id !== 'autocuidado' && id !== 'induccion'), items = [], tiene = id => pend.indexOf(id) >= 0;
   const crit = [];
   (cfg.ordenSec || []).forEach(s => { if (s === 'todos' || (secs || []).indexOf(s) >= 0) (cfg.critico[s] || []).forEach(id => { if (tiene(id) && crit.indexOf(id) < 0) crit.push(id); }); });
@@ -6433,8 +6434,16 @@ function planPersonal(cfg, temas, inicioMs, secs, extra, hechos) {
     let k = Math.max(2, mesAct + 1);
     mover.sort((a, b) => a.vence - b.vence).forEach(x => { while ((cap[k] || 0) >= 2) k++; if (k < x.mes) { x.mes = k; x.vence = inicioMs + k * PLAN_MES; } cap[x.mes] = (cap[x.mes] || 0) + 1; });
   }
+  // La rueda: una charla vencida (más de 12 meses) vuelve al plan un mes después de vencer
+  if (vencidas) items.forEach(x => { const v = vencidas[x.id]; if (v && (!hechos || hechos.indexOf(x.id) < 0)) { const nv = Math.max(x.vence, v + PLAN_MES); x.mes = Math.max(1, Math.round((nv - inicioMs) / PLAN_MES)); x.vence = nv; x.renovar = true; } });
   return { ds44: inicioMs + PLAN_MES, items };
 }
+// ===== Vigencia de cada charla: 12 meses (Inducción 18). Lo vencido se vuelve a hacer; el histórico nunca se borra.
+var VIG_MESES = { induccion: 18 }, VIG_DEF = 12;
+function fechaMs(f) { if (f instanceof Date) return f.getTime(); if (typeof f === 'number') return f; const m = String(f || '').match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/); return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : 0; }
+function venceAprob(id, fecha) { const ms = fechaMs(fecha); if (!ms) return 0; const d = new Date(ms); d.setMonth(d.getMonth() + (VIG_MESES[id] || VIG_DEF)); return d.getTime(); }
+function aprobVigentes(ap, now) { now = now || Date.now(); const o = {}; Object.keys(ap || {}).forEach(id => { const v = venceAprob(id, ap[id].fecha); if (!v || v > now) o[id] = ap[id]; }); return o; }
+function aprobVencidas(ap, now) { now = now || Date.now(); const o = {}; Object.keys(ap || {}).forEach(id => { const v = venceAprob(id, ap[id].fecha); if (v && v <= now) o[id] = v; }); return o; }
 // Puntaje Seguro (0 a 100): 60 % avance de la ruta + 30 % promedio de notas + 10 % aprobadas al primer intento
 function puntajeSeguro(nReq, aprob) {
   if (!nReq || !aprob.length) return 0;
@@ -6481,8 +6490,8 @@ const mesNombre = ms => { const d = new Date(ms); return MESES_ES[d.getMonth()] 
 const fmtCorta = ms => { const d = new Date(ms); return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear(); };
 // Calcula todo lo del avance a partir de la respuesta del servidor
 function calcAvance(R, temasReq, secs, extra) {
-  const ap = R.aprob || {}, ini = R.inicio || Date.now(), now = Date.now();
-  const plan = planPersonal(PLAN_CFG, temasReq.map(t => t.id), ini, secs, extra, Object.keys(ap));
+  const ap = aprobVigentes(R.aprob), ini = R.inicio || Date.now(), now = Date.now();
+  const plan = planPersonal(PLAN_CFG, temasReq.map(t => t.id), ini, secs, extra, Object.keys(ap), aprobVencidas(R.aprob));
   const mesActual = Math.max(1, Math.floor((now - ini) / PLAN_MES) + 1);
   const due = {}; plan.items.forEach(x => due[x.id] = x);
   const lista = temasReq.map(t => ({ id: t.id, nota: ap[t.id] ? ap[t.id].n || parseFloat(String(ap[t.id].nota).replace(',', '.')) : 0, intentos: ap[t.id] ? ap[t.id].intentos : 1 })).filter(x => x.nota);
@@ -6493,7 +6502,7 @@ function calcAvance(R, temasReq, secs, extra) {
   return { plan, mesActual, due, puntaje, nivel: nivelSeguro(puntaje), aprobadas: lista.length, total: temasReq.length, atrasadas, esteMes, ds44ok, ds44Atr, lista };
 }
 function htmlAvance(R, A, opts) {
-  const p = R.persona, T = id => (TOPICS.find(t => t.id === id) || { title: id }).title, ap = R.aprob || {};
+  const p = R.persona, T = id => (TOPICS.find(t => t.id === id) || { title: id }).title, ap = aprobVigentes(R.aprob);
   const pend = [], II = typeof indInfo === 'function' ? indInfo() : null;
   if (II && !II.ok) pend.push(`<li class="atr"><span class="pi">🔒</span><span class="pt"><b>Inducción de Prevención de Riesgos</b>${II.vence ? '<small>Tu inducción venció el ' + fmtCorta(II.vence) + '. Renuévala para seguir.</small>' : '<small>Obligatoria. Sin ella no puedes hacer charlas ni el DS 44.</small>'}</span><button class="pgo" data-id="induccion">Ir</button></li>`);
   else if (II && II.renovar) pend.push(`<li class="atr"><span class="pi">⏰</span><span class="pt"><b>Renueva tu Inducción</b><small>Vence el ${fmtCorta(II.vence)}</small></span><button class="pgo" data-id="induccion">Ir</button></li>`);
@@ -6525,11 +6534,12 @@ function htmlAvance(R, A, opts) {
     ${podio(gen, '🏆 TOP 3 · ' + (opts.sucursal ? 'general' : opts.lugar || 'planta'))}${suc ? podio(suc, '📍 TOP 3 · ' + p.sucursal) : ''}
     ${falta ? `<div class="falta">${falta}</div>` : ''}
     <details class="como"><summary>¿Cómo se calcula?</summary>Tu Puntaje Seguro suma: <b>60 %</b> charlas de tu ruta realizadas, <b>30 %</b> tu promedio de notas y <b>10 %</b> charlas aprobadas al primer intento. Si hay empate, gana quien llegó primero.<br>Niveles: 95 Ejemplar · 85 Seguro · 75 Casi Seguro · 65 En camino.</details>
-    <button class="lnk" id="bNoSoy">No soy yo</button>`;
+    ${(R.hist && R.hist.length) ? '<button class="lnk" id="bHist" style="display:block;margin-bottom:6px">📜 Ver mi historial de capacitaciones</button>' : ''}
+    <button class="lnk" id="bNoSoy">🚪 Cerrar sesión</button>`;
 }
 // Marca las tarjetas: realizada (sello verde), atrasada, este mes
 function marcarTarjetas(R, A) {
-  const ap = (R && R.aprob) || {};
+  const ap = aprobVigentes((R && R.aprob) || {}), venc = aprobVencidas((R && R.aprob) || {});
   document.querySelectorAll('.tcard').forEach(b => {
     b.querySelectorAll('.tb,.sello').forEach(e => e.remove()); b.classList.remove('hecha');
     b.classList.remove('bloq');
@@ -6543,6 +6553,7 @@ function marcarTarjetas(R, A) {
     if (!A) return;
     const d = A.due[id];
     if (A.atrasadas.some(x => x.id === id)) b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Atrasada</span>');
+    else if (venc[id] && d) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">🔄 Renovar · ${mesNombre(d.vence)}</span>`);
     else if (d && d.mes === A.mesActual) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">📌 ${mesNombre(d.vence)}</span>`);
     else if (d) b.insertAdjacentHTML('afterbegin', `<span class="tb mes">📅 ${mesNombre(d.vence)}</span>`);
   });
@@ -6612,14 +6623,16 @@ const abiertas = {};
 function renderHome() {
   const p = RUTA && RUTA.persona, ap = (RUTA && RUTA.aprob) || {};
   if (!RUTA) $('ruta').innerHTML = `<div class="rq"><b>¿Quién eres?</b> Escribe tu RUT y te mostramos <b>tu ruta</b>: las charlas que te corresponden según tu cargo.</div>
-    <div class="rrow"><input type="text" id="rutHome" inputmode="text" maxlength="12" placeholder="Tu RUT"><button class="btn sm" id="bRuta">Ver mi ruta</button></div><div class="err" id="rErr"></div>`;
+    <form class="login" onsubmit="return false" style="display:flex;flex-direction:column;gap:8px"><input type="text" id="rutHome" name="username" autocomplete="username" inputmode="text" maxlength="12" placeholder="Tu RUT (ej: 12.345.678-9)" value="${sesion().rut || ''}">
+    <input type="password" id="claveHome" name="password" autocomplete="current-password" maxlength="40" placeholder="Clave: tu nombre + año de nacimiento (ej: juan1985)">
+    <button class="btn sm" id="bRuta">Ingresar</button></form><div class="err" id="rErr"></div>`;
   else if (!p) $('ruta').innerHTML = `<div class="rq"><b>No te encontramos en la nómina</b> con el RUT ${RUTA.rut}. Igual puedes hacer cualquier charla. Avisa a tu jefatura para que te inscriban.</div><button class="lnk" id="bNoSoy">Probar con otro RUT</button>`;
   let AV = null;
   if (p) { AV = calcAvance(RUTA, TOPICS.filter(esMia), p.secs, p.extra); $('ruta').innerHTML = htmlAvance(RUTA, AV, { sucursal: true }); }
   const orden = SECCIONES.slice().sort((a, b) => secMia(b) - secMia(a));
   $('secciones').innerHTML = orden.map(s => {
     const ts = TOPICS.filter(t => t.sec === s.id); if (!ts.length) return '';
-    if (AV) { const k = t => t.id === 'induccion' ? -2 : ap[t.id] ? 9e15 : AV.due[t.id] ? AV.due[t.id].vence : 8e15; ts.sort((a, b) => k(a) - k(b)); }   // ordenadas por mes de plazo; las realizadas al final
+    const apv = aprobVigentes(ap); if (AV) { const k = t => t.id === 'induccion' ? -2 : apv[t.id] ? 9e15 : AV.due[t.id] ? AV.due[t.id].vence : 8e15; ts.sort((a, b) => k(a) - k(b)); }   // ordenadas por mes de plazo; las realizadas al final
     const mia = secMia(s), open = abiertas[s.id] ?? (mia || s.id === 'todos'), hechas = ts.filter(t => ap[t.id]).length;
     return `<div class="seccion${open ? ' open' : ''}" style="--sc:${s.c}">
       <button class="shead" data-s="${s.id}"><span class="sic">${s.ic}</span><span class="stt">${s.t}<small>${s.d} · ${ts.length} charlas${hechas ? ' · ✔ ' + hechas + ' realizadas' : ''}</small></span>
@@ -6628,36 +6641,46 @@ function renderHome() {
         return `<button class="tcard" data-id="${t.id}">${S[t.thumb]()}<div class="tt">${t.title}<div class="tm">${durTema(t)} min · ${t.quiz.length} preguntas</div></div></button>`; }).join('')}</div></div>`;
   }).join('');
   marcarTarjetas(RUTA, AV); enlazarAvance();
+  if ($('bHist')) $('bHist').onclick = verHistorial;
   document.querySelectorAll('.tcard').forEach(b => b.onclick = () => pickTopic(b.dataset.id));
   document.querySelectorAll('.shead').forEach(b => b.onclick = () => { const el = b.parentNode; el.classList.toggle('open'); abiertas[b.dataset.s] = el.classList.contains('open'); });
-  if ($('bRuta')) { $('bRuta').onclick = () => identificar($('rutHome').value); $('rutHome').onkeydown = e => { if (e.key === 'Enter') identificar($('rutHome').value); }; }
-  if ($('bNoSoy')) $('bNoSoy').onclick = () => { RUTA = null; st.persona = null; try { localStorage.removeItem('cap_persona'); localStorage.removeItem('cap_ruta'); } catch (e) {} $('inName').value = ''; $('inRut').value = ''; renderHome(); };
+  if ($('bRuta')) { const go = () => identificar($('rutHome').value, false, $('claveHome').value); $('bRuta').onclick = go; $('claveHome').onkeydown = e => { if (e.key === 'Enter') go(); }; $('rutHome').onkeydown = e => { if (e.key === 'Enter') $('claveHome').focus(); }; }
+  if ($('bNoSoy')) $('bNoSoy').onclick = cerrarSesion;
 }
-async function identificar(rut, silencioso) {
+async function identificar(rut, silencioso, clave) {
+  if (clave === undefined) clave = sesion().k || '';
+  if (!silencioso && !String(clave).trim()) { if ($('rErr')) { $('rErr').style.color = ''; $('rErr').textContent = 'Escribe tu clave: tu nombre y tu año de nacimiento, todo junto (ej: juan1985).'; $('rErr').style.display = 'block'; } return; }
   if (!validRut(rut || '')) { if (!silencioso && $('rErr')) { $('rErr').textContent = 'Revisa el RUT (con guion y dígito verificador).'; $('rErr').style.display = 'block'; } return; }
   rut = fmtRut(rut);
   if (!silencioso && $('bRuta')) { $('bRuta').disabled = true; $('bRuta').textContent = 'Buscando…'; }
   const yo = (identificar.n = (identificar.n || 0) + 1);
   if (!silencioso && $('rErr')) { $('rErr').textContent = 'Buscando tu ruta… puede tardar unos segundos.'; $('rErr').style.display = 'block'; $('rErr').style.color = '#5A5F66'; }
   let d = null;
-  for (let k = 0; k < 2 && !d; k++) { try { const ctl = new AbortController(); setTimeout(() => ctl.abort(), 30000); d = await fetch(SCRIPT_URL + '?historial=' + await rutHash(rut), { signal: ctl.signal }).then(r => r.json()); } catch (e) {} }
+  for (let k = 0; k < 2 && !d; k++) { try { const ctl = new AbortController(); setTimeout(() => ctl.abort(), 30000); d = await fetch(SCRIPT_URL + '?historial=' + await rutHash(rut) + '&k=' + encodeURIComponent(String(clave).trim()), { signal: ctl.signal }).then(r => r.json()); } catch (e) {} }
   if (yo !== identificar.n) return;   // llegó una búsqueda más nueva: se ignora esta
   if (!d) { if (!silencioso && $('rErr')) { $('rErr').style.color = ''; $('rErr').textContent = 'No se pudo conectar. Revisa tu internet e intenta de nuevo.'; $('rErr').style.display = 'block'; $('bRuta').disabled = false; $('bRuta').textContent = 'Ver mi ruta'; } return; }
+  if (d.ok === false) {   // clave incorrecta: se puede reintentar sin límite
+    if (silencioso) { cerrarSesion(); return; }
+    $('bRuta').disabled = false; $('bRuta').textContent = 'Ingresar'; $('rErr').style.color = ''; $('rErr').style.display = 'block';
+    $('rErr').innerHTML = d.error === 'sinnac' ? 'Tu ficha no tiene fecha de nacimiento registrada. <b>Contacta al área de RR.HH.</b> para completarla.'
+      : 'RUT o clave incorrectos. Puedes intentarlo de nuevo. Si no te funciona, <b>contacta al área de RR.HH.</b> para revisar tu nombre y fecha de nacimiento en la nómina.';
+    return; }
+  try { const ses = JSON.parse(localStorage.getItem('cap_persona') || '{}'); localStorage.setItem('cap_persona', JSON.stringify(Object.assign(ses, { rut, k: String(clave).trim() }))); } catch (e) {}
   const aprob = {}; (d.temas || []).forEach(t => aprob[t.tema_id] = t);
   // Lo aprobado en este teléfono los últimos días se conserva aunque el servidor aún no lo tenga (el registro puede tardar)
   const fms = f => { const m = String(f || '').match(/(\d{1,2})-(\d{1,2})-(\d{4})/); return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : 0; }, reciente = f => fms(f) > Date.now() - 7 * 864e5;
   const loc = Object.assign({}, (RUTA && RUTA.rut === rut && RUTA.aprob) || {}); try { const ci = JSON.parse(localStorage.getItem('cap_ind') || 'null'); if (ci && ci.rut === rut) loc.induccion = loc.induccion && fms(loc.induccion.fecha) >= fms(ci.fecha) ? loc.induccion : ci; } catch (e) {}
   Object.keys(loc).forEach(id => { const l = loc[id]; if (l && reciente(l.fecha) && (!aprob[id] || (id === 'induccion' && fms(l.fecha) > fms(aprob[id].fecha)))) aprob[id] = l; });
   window.__rutaServer = true;
-  RUTA = { rut, persona: d.persona || null, aprob, inicio: d.inicio, ds44: d.ds44, ranking: d.ranking }; st.persona = d.persona || null;
-  if (d.persona) { $('inName').value = d.persona.nombre; $('inRut').value = rut; try { localStorage.setItem('cap_persona', JSON.stringify({ name: d.persona.nombre, rut })); localStorage.setItem('cap_ruta', JSON.stringify(RUTA)); } catch (e) {} }
+  RUTA = { rut, persona: d.persona || null, aprob, hist: d.hist || [], inicio: d.inicio, ds44: d.ds44, ranking: d.ranking }; st.persona = d.persona || null;
+  if (d.persona) { $('inName').value = d.persona.nombre; $('inRut').value = rut; try { localStorage.setItem('cap_persona', JSON.stringify({ name: d.persona.nombre, rut, k: String(clave).trim() })); localStorage.setItem('cap_ruta', JSON.stringify(RUTA)); } catch (e) {} }
   renderHome();
   if (!silencioso && d.persona) { const A = calcAvance(RUTA, TOPICS.filter(esMia), d.persona.secs, d.persona.extra); VOZ.say(`Hola ${primerNombre(d.persona.nombre)}. Tu nivel es: ${A.nivel.t}. ${A.nivel.m} Abajo tienes tu plan del mes.`); }
 }
 // al volver al inicio se refresca la ruta (para ver las charlas recién aprobadas)
 (function () {
   try { const p = JSON.parse(localStorage.getItem('cap_persona') || 'null'), g = JSON.parse(localStorage.getItem('cap_ruta') || 'null');
-    if (p && p.rut) { if (g && g.rut === fmtRut(p.rut) && g.persona) { RUTA = g; st.persona = RUTA.persona || null; $('inName').value = g.persona.nombre; $('inRut').value = g.rut; renderHome(); } window.__rutaCarga = new Promise(ok => setTimeout(() => identificar(p.rut, true).then(ok, ok), 300)); } } catch (e) {}
+    if (p && p.rut && p.k) { if (g && g.rut === fmtRut(p.rut) && g.persona) { RUTA = g; st.persona = RUTA.persona || null; $('inName').value = g.persona.nombre; $('inRut').value = g.rut; renderHome(); } window.__rutaCarga = new Promise(ok => setTimeout(() => identificar(p.rut, true).then(ok, ok), 300)); } } catch (e) {}
   let t0 = 0; new MutationObserver(() => { if ($('s-home').classList.contains('on') && RUTA && Date.now() - t0 > 4000) { t0 = Date.now(); identificar(RUTA.rut, true); } })
     .observe($('s-home'), { attributes: true, attributeFilter: ['class'] });
 })();
@@ -6687,12 +6710,12 @@ function bloqueoInduccion() {
   let m = $('indModal'); if (!m) { m = document.createElement('div'); m.id = 'indModal'; document.body.appendChild(m); }
   const sinRut = !RUTA;
   m.innerHTML = `<div class="imbox"><div class="imic">🔒</div><h3>Primero, tu Inducción</h3>
-    <p>${sinRut ? 'Escribe tu RUT arriba para verificar tu inducción.' : 'Debes aprobar la <b>Inducción de Prevención de Riesgos</b> antes de cualquier charla o del curso DS 44.'}</p>
+    <p>${sinRut ? 'Primero ingresa con tu RUT y tu clave (tu nombre + año de nacimiento).' : 'Debes aprobar la <b>Inducción de Prevención de Riesgos</b> antes de cualquier charla o del curso DS 44.'}</p>
     <button class="btn" id="imGo">${sinRut ? 'Escribir mi RUT' : 'Ir a la Inducción'}</button><button class="lnk" id="imX">Cerrar</button></div>`;
   m.className = 'on';
   $('imX').onclick = () => m.className = '';
   $('imGo').onclick = () => { m.className = ''; if (sinRut) { const r = $('rutHome'); if (r) { r.scrollIntoView({ block: 'center' }); r.focus(); } } else pickTopic('induccion'); };
-  try { VOZ.say(sinRut ? 'Primero escribe tu RUT para verificar tu inducción.' : 'Primero debes aprobar tu inducción.'); } catch (e) {}
+  try { VOZ.say(sinRut ? 'Primero ingresa con tu RUT y tu clave.' : 'Primero debes aprobar tu inducción.'); } catch (e) {}
 }
 function prepInduccion() {
   const t = TOPICS.find(x => x.id === 'induccion'); if (!t) return;
@@ -6709,7 +6732,8 @@ function prepInduccion() {
 (function () {
   const _pick = pickTopic, _ds = openDS44;
   const esperar = fn => { if (!window.__rutaServer && window.__rutaCarga) { aviso('⏳ Cargando tu perfil…'); window.__rutaCarga.then(() => { aviso(''); fn(); }); return true; } return false; };
-  pickTopic = function (id) { if (id !== 'induccion' && !indInfo().ok) { const a = arguments; if (esperar(() => pickTopic.apply(this, a))) return; return bloqueoInduccion(); } if (id === 'induccion') prepInduccion(); return _pick.apply(this, arguments); };
+  pickTopic = function (id) { if (!RUTA) { const a = arguments; if (esperar(() => pickTopic.apply(this, a))) return; return bloqueoInduccion(); }
+    if (id !== 'induccion' && !indInfo().ok) { const a = arguments; if (esperar(() => pickTopic.apply(this, a))) return; return bloqueoInduccion(); } if (id === 'induccion') prepInduccion(); return _pick.apply(this, arguments); };
   openDS44 = function () { if (!indInfo().ok) { if (esperar(() => openDS44())) return; return bloqueoInduccion(); } return _ds.apply(this, arguments); };
   const b = $('bDS44'); if (b) b.onclick = () => openDS44();
   const css = document.createElement('style');
@@ -6756,6 +6780,30 @@ function aviso(txt) { let a = document.getElementById('avisoTop'); if (!a) { a =
   b.onclick = () => { if (guardada) { location.href = 'panel.html'; return; } m.classList.add('on'); $('jefErr').textContent = ''; setTimeout(() => $('jefCl').focus(), 50); };
   $('jefNo').onclick = () => m.classList.remove('on'); $('jefOk').onclick = entrar; $('jefCl').onkeydown = e => { if (e.key === 'Enter') entrar(); };
 })();
+
+// ===== Mi historial: todas las capacitaciones aprobadas, también las vencidas (nada se borra)
+function verHistorial() {
+  let m = $('histModal'); if (!m) { m = document.createElement('div'); m.id = 'histModal'; m.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(10,20,50,.72);z-index:9999;align-items:center;justify-content:center;padding:16px'; document.body.appendChild(m); m.onclick = e => { if (e.target === m) m.style.display = 'none'; }; }
+  const H = (RUTA && RUTA.hist) || [], hoy = Date.now();
+  m.innerHTML = `<div style="background:#fff;color:#1F2328;border-radius:18px;padding:18px;max-width:440px;width:100%;max-height:88vh;overflow:auto;border-top:8px solid #0039A6">
+    <h3 style="margin:0 0 4px">📜 Mi historial</h3><p style="margin:0 0 10px;color:#5A5F66;font-size:13px">Todas tus capacitaciones aprobadas. Cada charla vale 12 meses (la Inducción 18); al vencer vuelve a tu plan, pero aquí queda el registro.</p>
+    ${H.map(x => { const v = venceAprob(x.id, x.f), ok = !v || v > hoy;
+      return `<div style="display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #E5E7EB"><div style="flex:1"><b style="font-size:14px">${x.t}</b><div style="font-size:12px;color:#5A5F66">${x.f} · nota ${x.n} · <a href="#" data-c="${x.c}">${x.c}</a></div></div>
+        <span style="font-size:11px;font-weight:bold;border-radius:6px;padding:3px 7px;${ok ? 'background:#E8F5E9;color:#2E7D32">Vigente' : 'background:#F1F3F5;color:#6B7280">Vencida'}</span></div>`; }).join('') || '<p>Aún no tienes capacitaciones.</p>'}
+    <button class="btn" style="margin-top:12px;width:100%" id="histOk">Cerrar</button></div>`;
+  m.style.display = 'flex'; $('histOk').onclick = () => m.style.display = 'none';
+  m.querySelectorAll('[data-c]').forEach(a => a.onclick = e => { e.preventDefault(); m.style.display = 'none'; validar(a.dataset.c); });
+}
+
+// ===== Sesión del trabajador (RUT + clave)
+function sesion() { try { return JSON.parse(localStorage.getItem('cap_persona') || '{}') || {}; } catch (e) { return {}; } }
+function cerrarSesion() { RUTA = null; st.persona = null; try { localStorage.removeItem('cap_persona'); localStorage.removeItem('cap_ruta'); localStorage.removeItem('cap_ind'); } catch (e) {} $('inName').value = ''; $('inRut').value = ''; renderHome(); }
+// los datos de la charla salen de la sesión y no se pueden cambiar
+(function () { const _pick = pickTopic; pickTopic = function () { const r = _pick.apply(this, arguments);
+  if (RUTA && RUTA.persona) { $('inName').value = RUTA.persona.nombre; $('inRut').value = RUTA.rut; $('inName').readOnly = $('inRut').readOnly = true; }
+  else { $('inName').readOnly = false; $('inRut').readOnly = !!RUTA; if (RUTA) $('inRut').value = RUTA.rut; }
+  return r; }; })();
+(function () { const c = document.createElement('style'); c.textContent = `#ruta form.login input { width:100%; box-sizing:border-box; padding:13px 14px; border-radius:12px; border:2px solid #CFD8DC; background:#F4F7FB; font-size:17px; font-family:inherit; color:#1F2328; }`; document.head.appendChild(c); })();
 // --- Arranque
 $('bMute').textContent = SFX.muted ? '🔇' : '🔊';
 $('bMute').onclick = ()=>{ const m = SFX.toggle(); $('bMute').textContent = m ? '🔇' : '🔊'; if (m) VOZ.stop(true); };
