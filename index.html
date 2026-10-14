@@ -5419,6 +5419,85 @@ NORMAS.enfermedades = { obj: 'Que la persona trabajadora reconozca los efectos e
     'DS 594, arts. 70 a 82: ruido; art. 74, 85 dB(A) lento para 8 horas. Protocolo PREXOR (MINSAL).',
     'DS 594, Título IV, Párrafo II, art. 66: límites permisibles de agentes químicos.'] };
 })();
+// ===== Inducción de Prevención de Riesgos (IRL) · charla madre, obligatoria antes de todo · vigencia 18 meses =====
+var IND_REGLAMENTOS = {
+  'Constructor Center': 'https://drive.google.com/file/d/1Ggzfz14iDyPhBgeaZN3xVvDTA9MklR9T/view',
+  'Full Rental': 'https://drive.google.com/file/d/18ddxf_vUWj8FIIaSkFSGJPoawPBn0V8t/view',
+  'Sotraman': 'https://drive.google.com/file/d/16Q8nXfPAtSo6boq0MomdvQqyC3yFPdlZ/view',
+  'Solintev': 'https://drive.google.com/file/d/1nv9TSrQ5zT2RZ7uDpkjFiM4F9fOYYyAR/view',
+  'Sopreser': 'https://drive.google.com/file/d/1LOEpNRM9jEvRUcghTIyQde2964q6Nb0B/view' };
+var IND_FORMULARIO = 'https://docs.google.com/forms/d/1i1ZclkR-XdCZ2XnFifL6Bw70r9xZCIwqUsK5xF5qm5E/viewform';
+var IND_MESES = 18;
+var IND_PUESTO = {
+  conductores: '<li><b>Conductor:</b> choques, volcamiento, atropello al retroceder, caída al subir o bajar del camión, carga mal amarrada. Control: revisión pre-uso, cinturón, señalero en reversa, 3 puntos de apoyo, amarre y cantoneras.</li>',
+  grua: '<li><b>Grúa horquilla:</b> atropello de peatones, volcamiento, caída de carga. Control: solo con licencia clase D y autorización, cinturón, horquillas bajas, contacto visual, nunca levantar personas.</li>',
+  bodega: '<li><b>Bodega y patio:</b> caída de materiales desde racks, sobreesfuerzo, cortes, caída de altura, químicos. Control: lo pesado abajo, ayuda mecánica, guantes, escalera en buen estado, HDS.</li>',
+  ventas: '<li><b>Sala de ventas:</b> caída de productos desde góndolas, sobreesfuerzo al ayudar a clientes, agresión de terceros, asaltos. Control: escalera para reponer, pedir ayuda, calma y retirarse ante agresión, no resistir un asalto.</li>',
+  admin: '<li><b>Oficina:</b> posturas frente al computador, caídas por cables o cajones, riesgo eléctrico. Control: pantalla a la altura de los ojos, pausas, orden, no sobrecargar zapatillas.</li>' };
+(function () {
+  const L = [
+    { s: 'c5pe_irl', t: 'Bienvenido a Constructor Center', x: 'Esta es tu <b>inducción de prevención de riesgos</b>: la primera capacitación, obligatoria antes de cualquier otra. Aprenderás a:<ul><li><b>Conocer tus derechos</b> y la cobertura de la Ley 16.744.</li><li><b>Usar tus EPP</b> correctamente.</li><li><b>Reconocer los riesgos</b> de tu puesto y cómo controlarlos.</li><li><b>Actuar bien</b> ante accidentes, emergencias e incendios.</li></ul>', k: 'Primero la inducción, después todo lo demás.' },
+    { s: 'c5ac_ley', t: 'Ley 16.744: estás protegido', x: 'Todos los trabajadores están protegidos frente a <b>accidentes del trabajo</b> y <b>enfermedades profesionales</b>. Incluye <b>atención médica, rehabilitación y prestaciones económicas</b> según corresponda. También cubre el accidente de <b>trayecto</b> directo entre tu casa y el trabajo.', k: 'Accidente o enfermedad laboral: estás cubierto.' },
+    { s: 'c5ac_avisa', t: 'Si tienes un accidente', x: '<ul><li>Avisa <b>de inmediato</b> a tu jefatura, aunque parezca leve.</li><li>Serás trasladado a la <b>Mutual de Seguridad</b> para tu atención.</li><li>Emergencias Mutual: <b>1407</b>, las 24 horas.</li></ul>Si no avisas a tiempo, después cuesta probar que ocurrió en el trabajo.', k: 'Avisa al tiro. Mutual: 1407, 24 horas.' },
+    { s: 'c5ac_diat', t: 'Accidente grave o fatal', x: 'Si ocurre un accidente grave o fatal, según las instrucciones de la SUSESO se debe:<ul><li><b>Paralizar</b> la faena afectada.</li><li><b>Delimitar</b> el área y no mover nada.</li><li><b>Avisar de inmediato</b> a la jefatura y a prevención, para informar a la autoridad.</li></ul>', k: 'Grave o fatal: paralizar, delimitar y avisar.' },
+    { s: 'c5or_pasillo', t: 'Orden y limpieza: obligatorio', x: 'El área de trabajo debe estar <b>siempre</b> ordenada y limpia. No admite excepciones.<ul><li>Cada material y herramienta en su lugar, nunca en zonas de tránsito.</li><li>Retira o reporta derrames, embalajes, clavos y restos.</li></ul>No cumplir estas medidas es una <b>falta grave</b> a la normativa interna.', k: 'Un pasillo libre evita caídas.' },
+    { s: 'c5ep_cargo', t: 'Tus EPP', x: '<ul><li>Su uso es <b>obligatorio</b> en todo momento dentro de la empresa.</li><li>Se entregan <b>sin costo</b>, certificados (DS 18) y con registro de entrega.</li><li>Al ingresar recibes <b>casco, chaleco reflectante y zapatos de seguridad</b>.</li><li>Si se dañan, devuelve el equipo y se repone.</li></ul>Se te explica cómo ponértelos, usarlos y cuidarlos.', k: 'EPP sin costo, obligatorio y bien cuidado.' },
+    { s: 'cc6_inc_ext', t: 'Uso del extintor', x: '<ul><li><b>1.</b> Retira el seguro.</li><li><b>2.</b> Apunta a la <b>base</b> del fuego, no a las llamas.</li><li><b>3.</b> Aprieta la manilla.</li><li><b>4.</b> Mueve de lado a lado hasta apagarlo.</li></ul><b>PQS:</b> sólidos, líquidos y gases inflamables. <b>CO₂:</b> fuegos eléctricos y equipos energizados.', k: 'Seguro, base, manilla y barrer.' },
+    { s: 'transito_ruta', t: 'Señalización y zonas seguras', x: '<ul><li>Respeta y cuida toda la señalización.</li><li>Camina por las <b>zonas peatonales</b> señalizadas.</li><li>Las <b>zonas de seguridad</b> siempre despejadas.</li><li>Fuma <b>solo</b> en la zona habilitada.</li><li>Dentro de las instalaciones, vehículos a <b>máximo 10 km/h</b>.</li></ul>', k: 'Ruta peatonal y zonas de seguridad libres.' },
+    { s: 'c5ca_limites', t: 'Peso máximo (Ley 20.949)', x: '<ul><li><b>25 kg</b>: máximo para hombres adultos.</li><li><b>20 kg</b>: mujeres y menores de 18 años.</li><li><b>Embarazadas:</b> prohibido cargar y descargar manualmente.</li></ul>Si la carga supera el límite, la empresa debe entregar <b>ayuda mecánica</b>: carro, transpaleta o grúa.', k: '25 kg hombres · 20 kg mujeres y menores.' },
+    { s: 'c5ca_tecnica', t: 'Posturas y manejo de carga', x: 'Riesgos: lumbago, hernias y lesiones de hombros, muñecas y rodillas.<ul><li>Evalúa peso y estabilidad antes de levantar.</li><li>Carga <b>cerca del cuerpo</b>, espalda recta, rodillas flexionadas.</li><li>Usa carros y transpaletas para lo pesado.</li><li>Haz <b>pausas activas</b> cada 2 horas de trabajo continuo.</li></ul>', k: 'Cerca del cuerpo, espalda recta, piernas.' },
+    { s: 'c5or_rack', t: 'Hantavirus', x: 'Enfermedad grave por <b>orina, fecas o saliva del ratón colilargo</b>, al respirar partículas en bodegas y galpones.<ul><li><b>No barras en seco:</b> humedece con agua y cloro.</li><li>Bodegas limpias y ventiladas, sin basura ni pasto acumulado.</li><li>Mascarilla y guantes al limpiar zonas de riesgo.</li><li>Avisa si tienes síntomas tras exponerte.</li></ul>', k: 'Nunca barras en seco: agua con cloro.' },
+    { s: 'quim_cc_intro', t: 'Sustancias químicas', x: '<ul><li>Toda sustancia peligrosa debe tener su <b>Hoja de Datos de Seguridad (HDS)</b> vigente (DS 57 MINSAL).</li><li>Lee la etiqueta y sus pictogramas antes de usarla.</li><li>Usa el EPP que indica la HDS.</li><li>Nunca la traspases a envases de bebida o sin etiqueta.</li></ul>', k: 'Antes de usar: etiqueta y HDS.' },
+    { s: 'cc6_uv_intro', t: 'Calor y radiación UV', x: 'Riesgos: deshidratación, golpe de calor, calambres y quemaduras.<ul><li><b>Agua fresca</b> y tomar seguido.</li><li>Ropa clara y liviana, gorro o casco con protección.</li><li><b>Bloqueador solar y lentes con filtro UV</b>, obligatorios.</li><li>Evita el sol directo entre las <b>11:00 y las 16:00</b>; pausas a la sombra.</li></ul>', k: 'Agua, sombra, bloqueador y lentes UV.' },
+    { s: 'cc6_en_hombros', t: 'Protocolos de salud: TMERT y PREXOR', x: '<ul><li><b>TMERT:</b> lesiones de hombros, codos y muñecas por movimientos repetitivos y posturas forzadas. Pausas activas y avisar cualquier molestia.</li><li><b>PREXOR (ruido):</b> en las zonas señalizadas o donde se indique, los protectores auditivos son <b>obligatorios</b>.</li></ul>', k: 'Molestias o ruido: avisa y protégete.' },
+    { s: 'cc6_ps_intro', t: 'Ley Karin, psicosocial e iluminación', x: '<ul><li><b>Ley Karin (21.643):</b> previene y sanciona el acoso laboral, sexual y la violencia en el trabajo. Las denuncias son reservadas.</li><li><b>Riesgo psicosocial:</b> se evalúa con el cuestionario oficial (CEAL-SM) para mejorar el ambiente laboral.</li><li><b>Iluminación (DS 594):</b> luz adecuada en cada puesto para evitar fatiga y accidentes.</li></ul>', k: 'Trabajo sin acoso ni violencia.' },
+    { s: 'altura_cc_improv', t: 'Caídas al mismo y a distinto nivel', x: '<ul><li>Pasillos libres; limpia al tiro aceite, agua o polvo.</li><li>Calzado de seguridad antideslizante.</li><li><b>Trabajo en altura:</b> toda labor sobre <b>1,8 m</b>; solo con examen de altura vigente.</li><li>Escaleras en buen estado y <b>3 puntos de contacto</b>.</li><li><b>Prohibido</b> trepar estanterías o usar sillas y pallets para alcanzar altura.</li></ul>', k: 'Nunca trepes racks ni uses una silla.' },
+    { s: 'herr_cc_intro', t: 'Golpes, cortes y atrapamientos', x: '<ul><li>Usa guantes adecuados y <b>corta hacia afuera</b> del cuerpo.</li><li>No uses herramientas defectuosas o improvisadas.</li><li>Lentes de seguridad si hay <b>proyección de partículas</b>.</li><li>No metas las manos en equipos sin <b>bloquearlos</b>.</li><li><b>Prohibido</b> anillos, cadenas, aros y ropa suelta cerca de equipos.</li></ul>', k: 'Herramienta buena, guantes y manos fuera.' },
+    { s: 'of_electrico', t: 'Riesgo eléctrico e incendio', x: '<ul><li>Revisa que herramientas y extensiones estén en buen estado.</li><li>No uses equipos eléctricos con las manos mojadas.</li><li>Reporta chispas, olor a quemado o cables expuestos.</li><li>Mantén extintores y salidas <b>despejados</b> y no acumules material combustible.</li></ul>', k: 'Cable dañado: no se usa, se reporta.' },
+    { s: 'horquilla_patio_contacto', t: 'Grúa horquilla y vehículos', x: '<ul><li>Camina solo por rutas peatonales y busca <b>contacto visual</b> con el operador.</li><li>Nunca pases bajo una carga levantada.</li><li>Los vehículos respetan los <b>límites de la Ley de Tránsito</b>; dentro del recinto, máximo 10 km/h.</li><li><b>Cero alcohol y drogas</b> para conducir; celular solo con manos libres.</li></ul>', k: 'Contacto visual antes de acercarte.' },
+    { s: 'camion_conduccion_revision', t: 'Conductores: obligaciones', x: '<ul><li>Antes: revisa niveles, luces, neumáticos, extintor y botiquín; licencia y carnet vigentes.</li><li>Durante: <b>cinturón</b>, no fumar, no beber, no usar celular, luces encendidas en carretera.</li><li><b>Reversa siempre con señalero.</b></li><li>Avería: a un costado, motor apagado, frenos puestos, luces de emergencia, conos y triángulos; avisa a tu jefatura.</li></ul>', k: 'Reversa siempre con ayuda.' },
+    { s: 'of_trayecto', t: 'Accidente de trayecto', x: 'Es el que ocurre en el <b>trayecto directo</b> entre tu casa y el trabajo.<ul><li>Respeta las normas de tránsito como peatón, ciclista o conductor.</li><li>Sin celular ni audífonos al caminar o conducir.</li><li>Si te pasa, <b>avisa de inmediato</b> a tu empleador.</li></ul>', k: 'Camino directo, atento y sin celular.' },
+    { s: 'c5pe_cargos', t: 'Los riesgos de TU puesto', puesto: true, x: 'Cada puesto tiene sus riesgos. Tu jefatura y prevención te explican los de tu cargo:<ul>' + Object.values(IND_PUESTO).join('') + '</ul>', k: 'Conoce los riesgos de tu puesto.' },
+    { s: 'c5au_184', t: 'Tus derechos', x: '<ul><li><b>Derecho a saber</b> los riesgos de tu trabajo y cómo controlarlos (DS 44, art. 15).</li><li><b>Derecho a detenerte</b> y salir si hay un riesgo grave e inminente para tu vida o salud (Código del Trabajo, art. 184 bis), avisando de inmediato.</li><li>EPP y capacitación <b>sin costo</b>.</li></ul>', k: 'Si hay peligro grave, detente y avisa.' },
+    { s: 'c5au_cadena', t: 'Tu compromiso: autocuidado', x: 'La mayoría de los accidentes se relacionan con una <b>acción insegura</b>: apurarse, saltarse un paso o no usar el EPP. Cuidarte es tu responsabilidad, y avisar lo inseguro también.<ul><li>131 Ambulancia · 132 Bomberos · 133 Carabineros · <b>1407 Mutual</b></li></ul><div class="indlinks" data-ind="links"></div>', k: 'Tu seguridad depende de lo que haces cada día.' }
+  ];
+  const Q = [
+    { q: 'Te cortas un dedo con una plancha de zinc y parece leve. ¿Qué haces?', s: 'c5ac_avisa', o: ['Aviso de inmediato a mi jefatura', 'Sigo trabajando y aviso al final del día', 'No digo nada si no sangra mucho'], a: 0, w: 'Todo accidente se informa de inmediato, aunque parezca leve, para recibir atención y quedar cubierto.' },
+    { q: '¿Cuál es el número de emergencias de la Mutual, disponible las 24 horas?', s: 'c5ac_ley', o: ['1407', '133', '131'], a: 0, w: '1407 es la Mutual de Seguridad. 131 es ambulancia y 133 Carabineros.' },
+    { q: 'El accidente de trayecto, entre tu casa y el trabajo, está cubierto por la Ley 16.744.', s: 'of_trayecto', vf: true, w: 'Verdadero. El trayecto directo de ida o regreso está cubierto. Avísalo de inmediato.' },
+    { q: 'Ante un accidente grave o fatal, ¿qué se debe hacer primero?', s: 'c5ac_diat', o: ['Paralizar la faena, delimitar el área y avisar', 'Ordenar el lugar para seguir trabajando', 'Esperar al día siguiente para informar'], a: 0, w: 'Se paraliza, se delimita sin mover nada y se avisa de inmediato para informar a la autoridad.' },
+    { q: '¿Quién paga tus elementos de protección personal?', s: 'c5ep_cargo', o: ['La empresa, sin costo para ti', 'Tú, con descuento por planilla', 'Mitad y mitad'], a: 0, w: 'La empresa debe entregar los EPP sin costo, certificados y con registro de entrega.' },
+    { q: '¿Cuál es la forma correcta de presentarse al patio?', pick: ['c5ep_mal', 'c5ep_ok'], a: 1, w: 'En patio y bodega: zapatos de seguridad, chaleco reflectante y casco donde se exija.' },
+    { q: 'Al usar el extintor, ¿hacia dónde apuntas?', s: 'cc6_inc_ext', o: ['A la base del fuego', 'A la parte alta de las llamas', 'Al humo'], a: 0, w: 'Se apunta a la base, donde está el combustible, y se barre de lado a lado.' },
+    { q: 'Para un fuego en un tablero eléctrico energizado, el extintor indicado es el de CO₂.', s: 'cc6_inc_ext', vf: true, w: 'Verdadero. El CO₂ es para fuegos eléctricos y equipos energizados.' },
+    { q: '¿Cuál es el peso máximo que un hombre adulto puede cargar manualmente?', s: 'c5ca_limites', o: ['25 kg', '40 kg', '50 kg'], a: 0, w: 'La Ley 20.949 fija 25 kg para hombres y 20 kg para mujeres y menores de 18 años.' },
+    { q: 'Debes limpiar una bodega con fecas de ratón. ¿Qué es lo correcto?', s: 'c5or_rack', o: ['Humedecer con agua y cloro antes de limpiar, con mascarilla y guantes', 'Barrer rápido en seco', 'Soplar el polvo con aire comprimido'], a: 0, w: 'Nunca en seco: se humedece con agua y cloro para no respirar partículas con hantavirus.' },
+    { q: 'Para alcanzar un producto en la parte alta del rack, ¿qué haces?', pick: ['sv_escalera_mal', 'sv_escalera_ok'], a: 1, w: 'Escalera en buen estado y 3 puntos de contacto. Prohibido trepar racks o usar sillas y pallets.' },
+    { q: 'Se considera trabajo en altura toda labor sobre 1,8 metros.', s: 'altura_cc_improv', vf: true, w: 'Verdadero. Y solo puede hacerse con examen de altura vigente.' },
+    { q: 'Ves un cable pelado en la extensión de una herramienta. ¿Qué haces?', s: 'of_electrico', o: ['No la uso y la reporto de inmediato', 'La uso con cuidado', 'La envuelvo con cinta y sigo'], a: 0, w: 'Un cable dañado no se usa: se saca de servicio y se reporta.' },
+    { q: 'Un camión debe retroceder en el patio. ¿Cuál es la forma segura?', pick: ['camion_conduccion_retro_mal', 'camion_conduccion_retro_ok'], a: 1, w: 'La reversa se hace siempre con un señalero que guía al conductor.' },
+    { q: 'Si ves un riesgo grave e inminente para tu vida, tienes derecho a detener tu trabajo y retirarte, avisando de inmediato.', s: 'c5au_184', vf: true, w: 'Verdadero. Código del Trabajo, art. 184 bis. Detente, ponte a salvo y avisa.' }
+  ];
+  nuevoTema({ id: 'induccion', sec: 'todos', exig: 0.86, title: 'Inducción de Prevención de Riesgos (IRL)', thumb: 'c5pe_irl', learn: L, quiz: Q }, {
+    obj: 'Informar a la persona trabajadora, al ingresar, los riesgos laborales de la empresa y de su puesto, las medidas preventivas, el uso del EPP, sus derechos y cómo actuar ante accidentes y emergencias. Vigencia de la inducción: 18 meses.',
+    n: ['Ley 16.744: seguro contra accidentes del trabajo y enfermedades profesionales; art. 68: medidas de prevención y EPP sin costo.',
+      'DS 44/2023 MINTRAB, art. 15: informar los riesgos laborales (IRL); art. 16: capacitación en seguridad y salud en el trabajo.',
+      'Código del Trabajo, art. 184: deber general de protección; art. 184 bis: derecho a interrumpir labores ante riesgo grave e inminente.',
+      'DS 594/1999 MINSAL: condiciones sanitarias y ambientales básicas; art. 53: EPP sin costo y adiestramiento.',
+      'DS 18/1982 MINSAL: certificación de los EPP.',
+      'Código del Trabajo, arts. 211-F a 211-J (Ley 20.949): manejo manual de carga.',
+      'DS 57/2019 MINSAL: clasificación, etiquetado y Hojas de Datos de Seguridad.',
+      'Ley 21.643 (Ley Karin): prevención, investigación y sanción del acoso laboral, sexual y la violencia en el trabajo.',
+      'Protocolos MINSAL: TMERT, PREXOR y riesgo psicosocial (CEAL-SM).',
+      'Reglamento Interno de Orden, Higiene y Seguridad de la empresa.'] });
+})();
+// --- estado de la inducción de la persona (vigencia 18 meses, aviso 30 días antes)
+function venceInduccion(fecha) { const m = String(fecha || '').match(/(\d{1,2})-(\d{1,2})-(\d{4})/); if (!m) return 0; return new Date(+m[3], +m[2] - 1 + IND_MESES, +m[1]).getTime(); }
+function indInfo() {
+  const a = typeof RUTA !== 'undefined' && RUTA && RUTA.aprob && RUTA.aprob.induccion; if (!a) return { ok: false };
+  const vence = venceInduccion(a.fecha), now = Date.now();
+  return { ok: vence > now, vence, renovar: vence - now < 30 * 864e5, nota: a.nota };
+}
 // Orden del menú: la charla de autocuidado va primero (es la base de todas)
 (function () { const i = TOPICS.findIndex(t => t.id === 'autocuidado'); if (i > 0) TOPICS.unshift(TOPICS.splice(i, 1)[0]); })();
 // Contenido tal como se dictó hasta el 2026-10-09 (para validar diplomas antiguos con lo que realmente se enseñó)
@@ -5592,7 +5671,7 @@ function registroCanvas(D) {
   section(1, 'Identificación de la actividad');
   const rows = [
     ['Participante', D.name], ['RUT', D.rut], ...filasEmpresa(D, TM), ['Capacitación', t.title],
-    ['Fecha', D.fecha], ['Hora de registro', D.horas || '—'],
+    ['Fecha', D.fecha], ...(t.id === 'induccion' ? [['Vigencia', 'Hasta el ' + (() => { const v = venceInduccion(D.fecha); return v ? dmy(new Date(v)) : '18 meses'; })() + ' (18 meses)']] : []), ['Hora de registro', D.horas || '—'],
     ...(TM.modal === 'distancia' ? [] : [[TM.modal === 'digital' ? 'Duración de la actividad' : 'Duración de la sesión', D.dur + ' min (contenidos y evaluación)']]),
     ['Tiempo en la plataforma', (D.tiempo || '—') + ' min (lectura, evaluación y firma)'],
     ['Modalidad', TM.modalidad],
@@ -5612,7 +5691,7 @@ function registroCanvas(D) {
   // 5. evaluación
   section(5, 'Evaluación');
   const tot = D.tot;
-  const ev = [['Resultado', 'APROBADO · Nota ' + fmtN(D.nota)], ['Logro', D.ok + ' de ' + tot + ' respuestas correctas (' + Math.round(D.ok / tot * 100) + '%)'], ['Intentos', String(D.attempts)], ['Criterio', 'Escala de 1,0 a 7,0 con exigencia de 60% (nota 4,0). Evaluación formativa: puede repetirse.']];
+  const ev = [['Resultado', 'APROBADO · Nota ' + fmtN(D.nota)], ['Logro', D.ok + ' de ' + tot + ' respuestas correctas (' + Math.round(D.ok / tot * 100) + '%)'], ['Intentos', String(D.attempts)], ['Criterio', 'Escala de 1,0 a 7,0 con exigencia de ' + Math.round(((t && t.exig) || 0.6) * 100) + '% (nota 4,0). Evaluación formativa: puede repetirse.']];
   ev.forEach(([k, v]) => { brk(40); c.fillStyle = '#5A5F66'; c.font = `bold 21px ${sans}`; c.fillText(k, L + 14, y); const yy = y; wrap(v, L + 360, Wt - 380, 27, (k === 'Resultado' ? 'bold ' : '') + `21px ${sans}`, k === 'Resultado' ? '#2E7D32' : '#1F2328'); y = Math.max(y, yy + 33); });
   // 6. compromiso
   section(6, 'Compromiso del participante');
@@ -5790,7 +5869,7 @@ function answer(btn, ok){
 $('qNext').onclick = ()=>{ st.qi++; if(st.qi<st.topic.quiz.length) renderQ(); else if(st.mode==='ds44') ds44ModDone(); else result(); };
 
 // --- Resultado
-function calcNota(p){ const n = p>=EXIGENCIA ? 4+3*(p-EXIGENCIA)/(1-EXIGENCIA) : 1+3*p/EXIGENCIA; return Math.round(n*10)/10; }
+function calcNota(p){ const EXIGENCIA = (st.topic && st.topic.exig) || 0.6; const n = p>=EXIGENCIA ? 4+3*(p-EXIGENCIA)/(1-EXIGENCIA) : 1+3*p/EXIGENCIA; return Math.round(n*10)/10; }
 const fmtN = n => n.toFixed(1).replace('.',',');
 function result(){
   if (st.repaso) return finRepaso();
@@ -5837,7 +5916,7 @@ const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','
 const dmy = d => [d.getDate(),d.getMonth()+1].map(v=>String(v).padStart(2,'0')).join('-')+'-'+d.getFullYear();
 function diplomaCanvas(o){
   o = o || { name:st.name, rut:st.rut, date:st.date, code:st.code, sig:sigImg(), titulo:'DIPLOMA', otorga:'Se otorga el presente diploma a', p1:'por haber aprobado con nota ', p2:fmtN(st.nota), p3:' la capacitación de seguridad', tema:st.topic.title,
-    linea:`realizada el ${st.date.getDate()} de ${MESES[st.date.getMonth()]} de ${st.date.getFullYear()}`, sello:['APROBADO',fmtN(st.nota),'NOTA'], foot:'Código de verificación '+st.code+'  ·  '+dmy(st.date)+'  ·  Duración '+durTema(st.topic)+' min · '+Math.max(1,Math.round((st.date-st.start)/60000))+' min en plataforma', rol: textoModalidad(st).rolRelator };
+    linea:`realizada el ${st.date.getDate()} de ${MESES[st.date.getMonth()]} de ${st.date.getFullYear()}`+(st.topic.id==='induccion'?`  ·  vigente hasta el ${dmy(new Date(st.date.getFullYear(), st.date.getMonth()+IND_MESES, st.date.getDate()))}`:''), sello:['APROBADO',fmtN(st.nota),'NOTA'], foot:'Código de verificación '+st.code+'  ·  '+dmy(st.date)+'  ·  Duración '+durTema(st.topic)+' min · '+Math.max(1,Math.round((st.date-st.start)/60000))+' min en plataforma', rol: textoModalidad(st).rolRelator };
   const Wd=2000, Ht=1414, cv=document.createElement('canvas'); cv.width=Wd; cv.height=Ht; const c=cv.getContext('2d');
   const d=o.date, serif='Georgia, "Times New Roman", serif', sans='Arial, Helvetica, sans-serif';
   c.fillStyle='#FFFDF6'; c.fillRect(0,0,Wd,Ht);
@@ -6212,7 +6291,9 @@ async function temaAprobado() {
     const ctl = new AbortController(); setTimeout(() => ctl.abort(), 25000);
     const d = await fetch(SCRIPT_URL + '?historial=' + st.hash, { signal: ctl.signal }).then(r => r.json());
     if (d.persona) st.persona = d.persona;
-    return (d.temas || []).find(t => t.tema_id === st.topic.id) || null;
+    const ap = (d.temas || []).find(t => t.tema_id === st.topic.id) || null;
+    if (ap && st.topic.id === 'induccion' && venceInduccion(ap.fecha) - Date.now() < 30 * 864e5) return null;   // por vencer o vencida: se rinde de nuevo
+    return ap;
   } catch (e) { return null; } // sin conexión: se deja hacer normal
 }
 async function entrarTema() {
@@ -6252,7 +6333,7 @@ var PLAN_TEMPORADA = {           // meses (0 = enero) en que conviene que venza 
   orden: [2, 3, 4, 5]            // pisos mojados y barro en invierno
 };
 function planPersonal(cfg, temas, inicioMs, secs, extra) {
-  const pend = temas.filter(id => id !== 'autocuidado'), items = [], tiene = id => pend.indexOf(id) >= 0;
+  const pend = temas.filter(id => id !== 'autocuidado' && id !== 'induccion'), items = [], tiene = id => pend.indexOf(id) >= 0;
   const crit = [];
   (cfg.ordenSec || []).forEach(s => { if (s === 'todos' || (secs || []).indexOf(s) >= 0) (cfg.critico[s] || []).forEach(id => { if (tiene(id) && crit.indexOf(id) < 0) crit.push(id); }); });
   (extra || []).forEach(id => { if (tiene(id) && crit.indexOf(id) < 0) crit.push(id); });
@@ -6261,6 +6342,7 @@ function planPersonal(cfg, temas, inicioMs, secs, extra) {
   for (let i = 0; i < Math.max(crit.length, base.length); i++) { if (crit[i] && !PLAN_TEMPORADA[crit[i]]) cola.push(crit[i]); if (base[i]) cola.push(base[i]); }
   pend.forEach(id => { if (cola.indexOf(id) < 0 && !PLAN_TEMPORADA[id]) cola.push(id); });
   const temp = pend.filter(id => PLAN_TEMPORADA[id]);
+  if (temas.indexOf('induccion') >= 0) items.push({ id: 'induccion', mes: 1, vence: inicioMs + 7 * PLAN_DIA });
   if (temas.indexOf('autocuidado') >= 0) items.push({ id: 'autocuidado', mes: 1, vence: inicioMs + PLAN_MES });
   for (let k = 2; (cola.length || temp.length) && k < 40; k++) {
     const vence = inicioMs + k * PLAN_MES, mes = new Date(vence).getMonth(); let cupos = 2;
@@ -6326,10 +6408,12 @@ function calcAvance(R, temasReq, secs, extra) {
 }
 function htmlAvance(R, A, opts) {
   const p = R.persona, T = id => (TOPICS.find(t => t.id === id) || { title: id }).title, ap = R.aprob || {};
-  const pend = [];
+  const pend = [], II = typeof indInfo === 'function' ? indInfo() : null;
+  if (II && !II.ok) pend.push(`<li class="atr"><span class="pi">🔒</span><span class="pt"><b>Inducción de Prevención de Riesgos</b>${II.vence ? '<small>Tu inducción venció el ' + fmtCorta(II.vence) + '. Renuévala para seguir.</small>' : '<small>Obligatoria. Sin ella no puedes hacer charlas ni el DS 44.</small>'}</span><button class="pgo" data-id="induccion">Ir</button></li>`);
+  else if (II && II.renovar) pend.push(`<li class="atr"><span class="pi">⏰</span><span class="pt"><b>Renueva tu Inducción</b><small>Vence el ${fmtCorta(II.vence)}</small></span><button class="pgo" data-id="induccion">Ir</button></li>`);
   if (!A.ds44ok) pend.push(`<li class="${A.ds44Atr ? 'atr' : ''}"><span class="pi">${A.ds44Atr ? '⏰' : '📘'}</span><span class="pt"><b>Curso DS 44</b> (${(R.ds44 && R.ds44.n) || 0} de 6 módulos)<small>${A.ds44Atr ? 'Atrasado · plazo era el ' : 'Hasta el '}${fmtCorta(A.plan.ds44)}</small></span><button class="pgo" data-ds44="1">Ir</button></li>`);
-  A.atrasadas.forEach(x => pend.push(`<li class="atr"><span class="pi">⏰</span><span class="pt">${T(x.id)}<small>Atrasada · plazo era el ${fmtCorta(x.vence)}</small></span><button class="pgo" data-id="${x.id}">Ir</button></li>`));
-  A.esteMes.filter(x => !A.atrasadas.includes(x)).forEach(x => pend.push(ap[x.id]
+  A.atrasadas.filter(x => x.id !== 'induccion').forEach(x => pend.push(`<li class="atr"><span class="pi">⏰</span><span class="pt">${T(x.id)}<small>Atrasada · plazo era el ${fmtCorta(x.vence)}</small></span><button class="pgo" data-id="${x.id}">Ir</button></li>`));
+  A.esteMes.filter(x => !A.atrasadas.includes(x) && x.id !== 'induccion').forEach(x => pend.push(ap[x.id]
     ? `<li class="ok"><span class="pi">✅</span><span class="pt">${T(x.id)}<small>Realizada · nota ${ap[x.id].nota}</small></span></li>`
     : `<li><span class="pi">📌</span><span class="pt">${T(x.id)}<small>Hasta el ${fmtCorta(x.vence)}</small></span><button class="pgo" data-id="${x.id}">Ir</button></li>`));
   const sig = A.plan.items.find(x => !ap[x.id] && x.mes > A.mesActual);
@@ -6362,7 +6446,13 @@ function marcarTarjetas(R, A) {
   const ap = (R && R.aprob) || {};
   document.querySelectorAll('.tcard').forEach(b => {
     b.querySelectorAll('.tb,.sello').forEach(e => e.remove()); b.classList.remove('hecha');
-    const id = b.dataset.id, a = ap[id];
+    b.classList.remove('bloq');
+    const id = b.dataset.id, II = typeof indInfo === 'function' ? indInfo() : null;
+    let a = ap[id];
+    if (II && id === 'induccion') {
+      if (!II.ok) { a = null; b.insertAdjacentHTML('afterbegin', `<span class="tb star">${II.vence ? '⏰ Renovar' : '⭐ EMPIEZA AQUÍ'}</span>`); return; }
+      if (II.renovar) { b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Renovar</span>'); return; }
+    } else if (II && !II.ok && !a) { b.classList.add('bloq'); b.insertAdjacentHTML('afterbegin', '<span class="tb lock">🔒</span>'); return; }
     if (a) { b.classList.add('hecha'); b.insertAdjacentHTML('afterbegin', `<span class="sello"><span class="sc">✔</span><span class="st">REALIZADA<small>Nota ${a.nota}</small></span></span>`); return; }
     if (!A) return;
     const d = A.due[id];
@@ -6412,7 +6502,7 @@ const SECCIONES = [
   { id: 'ventas', t: 'Sala de ventas y público', ic: '🛒', c: '#7B1FA2', d: 'Clientes, asaltos y seguridad en sala' },
   { id: 'admin', t: 'Administración y oficina', ic: '💻', c: '#00838F', d: 'Computador, ergonomía y oficina' }];
 const SEC = id => SECCIONES.find(s => s.id === id) || SECCIONES[0];
-const ORDEN_CC = ['autocuidado', 'peligros', 'transito', 'cargas', 'epp', 'orden', 'accidente', 'incendios', 'emergencias', 'senaletica', 'uv', 'enfermedades', 'psicosocial', 'karin',
+const ORDEN_CC = ['induccion', 'autocuidado', 'peligros', 'transito', 'cargas', 'epp', 'orden', 'accidente', 'incendios', 'emergencias', 'senaletica', 'uv', 'enfermedades', 'psicosocial', 'karin',
   'camion_conduccion', 'camion_estiba', 'camion_carga', 'horquilla', 'horquilla_patio', 'horquilla_checklist', 'racks', 'altura', 'herramientas', 'quimicos',
   'sala_ventas', 'atencion_publico', 'asaltos', 'pvd', 'oficina'];
 TOPICS.forEach(t => { if (!t.sec) t.sec = 'todos'; });
@@ -6491,10 +6581,48 @@ async function identificar(rut, silencioso) {
   const _send = send;
   send = function () {
     try { if (RUTA && st.topic && st.nota >= 4) { const n = Math.round(st.nota * 10) / 10, prev = RUTA.aprob[st.topic.id];
-      if (!prev || n > (prev.n || 0)) RUTA.aprob[st.topic.id] = { n, tema_id: st.topic.id, nota: n.toFixed(1).replace('.', ','), intentos: st.attempts || 1 };
+      if (!prev || n > (prev.n || 0)) RUTA.aprob[st.topic.id] = { n, tema_id: st.topic.id, nota: n.toFixed(1).replace('.', ','), intentos: st.attempts || 1, fecha: dmy(new Date()) };
       localStorage.setItem('cap_ruta', JSON.stringify(RUTA)); } } catch (e) {}
     return _send.apply(this, arguments);
   };
+})();
+
+// ===== Inducción obligatoria: sin inducción vigente no se puede hacer ninguna charla ni el curso DS 44
+function bloqueoInduccion() {
+  show('s-home');
+  let m = $('indModal'); if (!m) { m = document.createElement('div'); m.id = 'indModal'; document.body.appendChild(m); }
+  const sinRut = !RUTA;
+  m.innerHTML = `<div class="imbox"><div class="imic">🔒</div><h3>Primero, tu Inducción</h3>
+    <p>${sinRut ? 'Escribe tu RUT arriba para verificar tu inducción.' : 'Debes aprobar la <b>Inducción de Prevención de Riesgos</b> antes de cualquier charla o del curso DS 44.'}</p>
+    <button class="btn" id="imGo">${sinRut ? 'Escribir mi RUT' : 'Ir a la Inducción'}</button><button class="lnk" id="imX">Cerrar</button></div>`;
+  m.className = 'on';
+  $('imX').onclick = () => m.className = '';
+  $('imGo').onclick = () => { m.className = ''; if (sinRut) { const r = $('rutHome'); if (r) { r.scrollIntoView({ block: 'center' }); r.focus(); } } else pickTopic('induccion'); };
+  try { VOZ.say(sinRut ? 'Primero escribe tu RUT para verificar tu inducción.' : 'Primero debes aprobar tu inducción.'); } catch (e) {}
+}
+function prepInduccion() {
+  const t = TOPICS.find(x => x.id === 'induccion'); if (!t) return;
+  const p = RUTA && RUTA.persona, secs = p ? p.secs : null;
+  const c = t.learn.find(x => x.puesto);
+  if (c) c.x = 'Cada puesto tiene sus riesgos. ' + (secs && secs.length ? 'Los de tu cargo (' + (p.cargo || '') + '):' : 'Los principales en la empresa:') + '<ul>' + (secs && secs.length ? secs : Object.keys(IND_PUESTO)).map(s => IND_PUESTO[s] || '').join('') + '</ul>';
+  const u = t.learn[t.learn.length - 1], emp = p && p.empresa && IND_REGLAMENTOS[p.empresa] ? p.empresa : null;
+  const links = (emp ? `<a class="indbtn" target="_blank" rel="noopener" href="${IND_REGLAMENTOS[emp]}">📘 Reglamento Interno ${emp}</a>`
+    : Object.keys(IND_REGLAMENTOS).map(k => `<a class="indbtn" target="_blank" rel="noopener" href="${IND_REGLAMENTOS[k]}">📘 Reglamento ${k}</a>`).join(''))
+    + (p ? '' : `<a class="indbtn" target="_blank" rel="noopener" href="${IND_FORMULARIO}">📝 Ficha de inscripción de trabajadores</a>`);
+  u.x = u.x.replace(/<div class="indlinks"[\s\S]*$/, '') + `<div class="indlinks">${links}</div>`;
+}
+(function () {
+  const _pick = pickTopic, _ds = openDS44;
+  pickTopic = function (id) { if (id !== 'induccion' && !indInfo().ok) return bloqueoInduccion(); if (id === 'induccion') prepInduccion(); return _pick.apply(this, arguments); };
+  openDS44 = function () { if (!indInfo().ok) return bloqueoInduccion(); return _ds.apply(this, arguments); };
+  const b = $('bDS44'); if (b) b.onclick = () => openDS44();
+  const css = document.createElement('style');
+  css.textContent = `#indModal { display:none; position:fixed; inset:0; background:rgba(10,20,50,.7); z-index:9999; align-items:center; justify-content:center; padding:18px; }
+#indModal.on { display:flex; } #indModal .imbox { background:#fff; color:#1F2328; border-radius:18px; padding:22px; max-width:380px; width:100%; display:flex; flex-direction:column; gap:12px; text-align:center; border-top:8px solid #DC281D; }
+#indModal .imic { font-size:44px; } #indModal h3 { margin:0; font-size:22px; } #indModal p { color:#30363D; margin:0; }
+.indlinks { display:flex; flex-direction:column; gap:8px; margin-top:10px; } .indbtn { display:block; background:#0039A6; color:#fff !important; text-decoration:none; padding:10px 12px; border-radius:10px; font-weight:bold; font-size:14px; }
+.tcard.bloq svg { filter:grayscale(1); opacity:.45; } .tb.lock { background:#37474F; color:#fff; } .tb.star { background:#DC281D; color:#fff; font-size:12px; }`;
+  document.head.appendChild(css);
 })();
 // --- Arranque
 $('bMute').textContent = SFX.muted ? '🔇' : '🔊';
