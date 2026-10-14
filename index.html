@@ -3957,7 +3957,7 @@ nuevoTema({ id: 'transito', sec: 'todos', title: 'Patio y estacionamiento: peato
     { q: 'Un cliente se baja de su camioneta y camina hacia donde la grúa está cargando. ¿Qué haces?', s: 'transito_clientes', o: ['Lo guío con amabilidad a la zona de espera, fuera de la carga', 'Lo dejo, es cliente', 'Le pido que ayude a cargar'], a: 0, w: 'Los clientes no conocen los riesgos del patio: guiarlos es cuidarlos.' },
     { q: 'Puedo cruzar el patio mirando el celular si voy por la ruta peatonal.', s: 'transito_celular', vf: false, w: 'Falso. Mirando el celular no ves ni escuchas los vehículos. Detente en un lugar seguro para usarlo.' },
     { q: 'Conduces el camión y debes retroceder, pero no ves bien atrás. ¿Qué haces?', s: 'transito_vel', o: ['Me bajo a mirar o pido un señalero', 'Retrocedo rápido tocando la bocina', 'Retrocedo igual, despacio'], a: 0, w: 'Si no ves, no retrocedes: primero mira o pide un señalero.' },
-    { q: '¿Quién puede operar la grúa horquilla?', s: 'transito_intro', o: ['Solo quien está capacitado y autorizado por la empresa', 'Cualquiera con licencia de auto', 'Cualquiera, si es un movimiento corto'], a: 0, w: 'Operar sin capacitación ni autorización pone en riesgo a todo el patio.' },
+    { q: '¿Quién puede operar la grúa horquilla?', s: 'horquilla_autorizado', o: ['Solo quien está capacitado y autorizado por la empresa', 'Cualquiera con licencia de auto', 'Cualquiera, si es un movimiento corto'], a: 0, w: 'Operar sin capacitación ni autorización pone en riesgo a todo el patio.' },
     { q: 'Pasar entre un camión que maniobra y otro vehículo o una pared es seguro si voy rápido.', s: 'transito_cortaMal', vf: false, w: 'Falso. Puedes quedar atrapado. Rodea por la ruta peatonal.' }
   ]
 }, { obj: 'Que la persona trabajadora circule de forma segura en patios y estacionamientos donde conviven peatones, camiones, grúas horquilla y vehículos de clientes.',
@@ -5450,6 +5450,48 @@ NORMAS.enfermedades = { obj: 'Que la persona trabajadora reconozca los efectos e
     return anim ? `<g class="${anim}">${g}</g>` : g;
   };
 })();
+// ===== Escenas nuevas Constructor (animadas con CSS, sin peso extra) =====
+(function () {
+  const t = (x, y, s, z = 11, c = '#263238') => `<text x="${x}" y="${y}" font-size="${z}" font-weight="bold" text-anchor="middle" fill="${c}" font-family="Arial">${s}</text>`;
+  const cartel = (x, y, w, s, c) => `<rect x="${x - w / 2}" y="${y - 13}" width="${w}" height="18" rx="9" fill="${c}"/>${t(x, y, s, 10, '#fff')}`;
+  const caja = (x, y, w, h, c) => `<rect x="${x}" y="${y - h}" width="${w}" height="${h}" rx="1.5" fill="${c}" stroke="#00000033"/><rect x="${x + w / 2 - 2}" y="${y - h}" width="4" height="${h}" fill="#ffffff55"/>`;
+  const estante = (x, y, w, h) => { let g = `<rect x="${x}" y="${y - h}" width="4" height="${h}" fill="#0039A6"/><rect x="${x + w - 4}" y="${y - h}" width="4" height="${h}" fill="#0039A6"/>`;
+    [0, 1, 2].forEach(i => { const yy = y - 8 - i * (h - 8) / 3; g += `<rect x="${x}" y="${yy}" width="${w}" height="4" fill="#FF7A00"/>` + caja(x + 6, yy, 16, 14, ['#C89B5E', '#90A4AE', '#E57373'][i]) + caja(x + 26, yy, 14, 18, ['#81C784', '#C89B5E', '#64B5F6'][i]); });
+    return g; };
+  const piso = `<defs><linearGradient id="hcBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EEF2F6"/><stop offset="1" stop-color="#DCE3EA"/></linearGradient></defs><rect width="320" height="200" fill="url(#hcBg)"/><rect y="160" width="320" height="40" fill="#B0BEC5"/><rect y="160" width="320" height="3" fill="#90A4AE"/>`;
+  const estilo = `<style>
+    .hcCae { animation:hcCae 3.6s ease-in infinite; transform-box:fill-box; transform-origin:50% 100%; }
+    @keyframes hcCae { 0%,35% { transform:translate(0,0) rotate(0); } 45% { transform:translate(2px,-2px) rotate(-12deg); } 52% { transform:translate(4px,0) rotate(18deg); } 72% { transform:translate(26px,58px) rotate(85deg); } 100% { transform:translate(26px,58px) rotate(88deg); } }
+    .hcCaja { animation:hcCaja 3.6s ease-in infinite; transform-box:fill-box; }
+    @keyframes hcCaja { 0%,48% { transform:translate(0,0); opacity:1; } 72% { transform:translate(10px,64px) rotate(30deg); } 100% { transform:translate(10px,64px) rotate(30deg); } }
+    .hcMov { animation:hcMov 3.6s ease-in-out infinite; } @keyframes hcMov { 0%,38% { transform:translateX(0); } 48%,100% { transform:translateX(-6px); } }
+    .hcX { animation:hcX 3.6s ease-out infinite; transform-box:fill-box; transform-origin:center; } @keyframes hcX { 0%,70% { opacity:0; transform:scale(.3); } 80%,100% { opacity:1; transform:scale(1); } }
+    .hcSube { animation:hcSube 3.6s ease-in-out infinite; } @keyframes hcSube { 0%,10% { transform:translateY(14px); } 45%,100% { transform:translateY(0); } }
+    .hcOk { animation:hcX 3.6s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  </style>`;
+  const marca = (x, y, ok) => `<circle cx="${x}" cy="${y}" r="13" fill="${ok ? '#2E7D32' : '#D7262B'}" stroke="#fff" stroke-width="3"/>` + (ok ? `<path d="M${x - 6},${y} l4,4.5 l8,-8.5" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>` : `<path d="M${x - 5},${y - 5} l10,10 M${x + 5},${y - 5} l-10,10" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>`);
+  // Izquierda: trabajador sobre las horquillas levantadas → la grúa se mueve y cae. Derecha: escalera en buen estado.
+  S.horquilla_subirse = () => {
+    const lift = 58, fy = 160 - lift - 5;
+    const L = estante(104, 160, 52, 128)
+      + `<g class="hcMov">${forklift(-14, 160, { lift })}</g>`
+      + `<g class="hcCaja">${caja(76, fy - 2, 16, 12, '#C89B5E')}</g>`
+      + `<g class="hcCae">${W(90, fy, { pose: 'c4reach', s: .78, face: 'worried' })}</g>`
+      + `<g class="hcX">${marca(30, 26, false)}</g>` + cartel(80, 194, 150, 'Prohibido: falta grave', '#C62828');
+    const R = estante(262, 160, 52, 128)
+      + `<path d="M210,160 L226,70 L242,160" fill="none" stroke="#FF8F00" stroke-width="4"/><path d="M215,138 h21 M219,116 h14 M222,94 h8" stroke="#FF8F00" stroke-width="3.5"/>`
+      + `<g class="hcSube">${W(226, 116, { pose: 'c4reach', s: .78, gloves: true })}</g>`
+      + `<g class="hcOk">${marca(296, 26, true)}</g>` + cartel(240, 194, 150, 'Escalera en buen estado', '#2E7D32');
+    return sv(piso + estilo + L + `<line x1="160" y1="8" x2="160" y2="192" stroke="#fff" stroke-width="4"/>` + R);
+  };
+})();
+// Las pocas escenas que quedaban quietas: los trabajadores se mueven suave y las marcas ✔/✖ laten (solo CSS, sin datos extra)
+(function () {
+  const QUIETAS = ['c5ep_cargo', 'c5ca_limites', 'c5pe_cargos', 'c5au_ok', 'c5pe_auto', 'c5pe_avisa', 'c5ca_zona', 'c5ca_auto', 'cc6_em_bloq', 'cc6_em_libre', 'cc6_sen_tapada', 'of_escalera_ok'];
+  const W1 = W; let vivo = false, n = 0;
+  W = function (x, y, o = {}) { if (vivo && !o.anim) { o = Object.assign({}, o, { anim: 'an-bob' }); } const g = W1(x, y, o); return vivo && !o.anim ? g : (vivo ? g.replace('<g class="an-bob"', `<g class="an-bob" style="animation-delay:-${(n++ % 4) * .4}s"`) : g); };
+  QUIETAS.forEach(k => { const f = S[k]; if (!f) return; S[k] = function () { vivo = true; try { return f.apply(this, arguments).replace(/(<circle [^>]*fill="(?:#2E7D32|#D7262B)" stroke="#fff" stroke-width="3"\/><path [^>]*\/>)/g, '<g class="an-pulse">$1</g>'); } finally { vivo = false; } }; });
+})();
 // ===== Inducción de Prevención de Riesgos (IRL) · charla madre, obligatoria antes de todo · vigencia 18 meses =====
 var IND_REGLAMENTOS = {
   'Constructor Center': 'https://drive.google.com/file/d/1Ggzfz14iDyPhBgeaZN3xVvDTA9MklR9T/view',
@@ -5501,7 +5543,7 @@ var IND_PUESTO = {
     { q: '¿Quién paga tus elementos de protección personal?', s: 'c5ep_cargo', o: ['La empresa, sin costo para ti', 'Tú, con descuento por planilla', 'Mitad y mitad'], a: 0, w: 'La empresa debe entregar los EPP sin costo, certificados y con registro de entrega.' },
     { q: '¿Cuál es la forma correcta de presentarse al patio?', pick: ['c5ep_mal', 'c5ep_ok'], a: 1, w: 'Al patio se va con mono (overol) con cintas reflectantes, casco, zapatos de seguridad y guantes.' },
     { q: 'Al usar el extintor, ¿hacia dónde apuntas?', s: 'cc6_inc_ext', o: ['A la base del fuego', 'A la parte alta de las llamas', 'Al humo'], a: 0, w: 'Se apunta a la base, donde está el combustible, y se barre de lado a lado.' },
-    { q: 'Un compañero se sube a las horquillas de la grúa para alcanzar una caja en altura. ¿Qué corresponde?', s: 'altura_cc_improv', o: ['Detenerlo: está prohibido y es una falta grave', 'Ayudarlo subiendo despacio', 'Permitirlo si es rápido'], a: 0, w: 'Nunca se sube nadie a las horquillas ni a un pallet levantado. Puede ser sancionado drásticamente.' },
+    { q: 'Un compañero se sube a las horquillas de la grúa para alcanzar una caja en altura. ¿Qué corresponde?', s: 'horquilla_subirse', o: ['Detenerlo: está prohibido y es una falta grave', 'Ayudarlo subiendo despacio', 'Permitirlo si es rápido'], a: 0, w: 'Nunca se sube nadie a las horquillas ni a un pallet levantado. Puede ser sancionado drásticamente.' },
     { q: '¿Cuál es el peso máximo que un hombre adulto puede cargar manualmente?', s: 'c5ca_limites', o: ['25 kg', '40 kg', '50 kg'], a: 0, w: 'La Ley 20.949 fija 25 kg para hombres y 20 kg para mujeres y menores de 18 años.' },
     { q: 'Debes limpiar una bodega con fecas de ratón. ¿Qué es lo correcto?', s: 'c5or_rack', o: ['Humedecer con agua y cloro antes de limpiar, con mascarilla y guantes', 'Barrer rápido en seco', 'Soplar el polvo con aire comprimido'], a: 0, w: 'Nunca en seco: se humedece con agua y cloro para no respirar partículas con hantavirus.' },
     { q: 'Para alcanzar un producto en la parte alta del rack, ¿qué haces?', pick: ['sv_escalera_mal', 'sv_escalera_ok'], a: 1, w: 'Escalera en buen estado y 3 puntos de contacto. Prohibido trepar racks o usar sillas y pallets.' },
@@ -5526,7 +5568,9 @@ var IND_PUESTO = {
 // --- estado de la inducción de la persona (vigencia 18 meses, aviso 30 días antes)
 function venceInduccion(fecha) { const m = String(fecha || '').match(/(\d{1,2})-(\d{1,2})-(\d{4})/); if (!m) return 0; return new Date(+m[3], +m[2] - 1 + IND_MESES, +m[1]).getTime(); }
 function indInfo() {
-  const a = typeof RUTA !== 'undefined' && RUTA && RUTA.aprob && RUTA.aprob.induccion; if (!a) return { ok: false };
+  let a = typeof RUTA !== 'undefined' && RUTA && RUTA.aprob && RUTA.aprob.induccion;
+  if (!a) try { const ci = JSON.parse(localStorage.getItem('cap_ind') || 'null'), p = JSON.parse(localStorage.getItem('cap_persona') || 'null'); if (ci && p && ci.rut === fmtRut(p.rut)) a = ci; } catch (e) {}
+  if (!a) return { ok: false };
   const vence = venceInduccion(a.fecha), now = Date.now();
   return { ok: vence > now, vence, renovar: vence - now < 30 * 864e5, nota: a.nota };
 }
@@ -6589,6 +6633,11 @@ async function identificar(rut, silencioso) {
   if (yo !== identificar.n) return;   // llegó una búsqueda más nueva: se ignora esta
   if (!d) { if (!silencioso && $('rErr')) { $('rErr').style.color = ''; $('rErr').textContent = 'No se pudo conectar. Revisa tu internet e intenta de nuevo.'; $('rErr').style.display = 'block'; $('bRuta').disabled = false; $('bRuta').textContent = 'Ver mi ruta'; } return; }
   const aprob = {}; (d.temas || []).forEach(t => aprob[t.tema_id] = t);
+  // Lo aprobado en este teléfono los últimos días se conserva aunque el servidor aún no lo tenga (el registro puede tardar)
+  const fms = f => { const m = String(f || '').match(/(\d{1,2})-(\d{1,2})-(\d{4})/); return m ? new Date(+m[3], +m[2] - 1, +m[1]).getTime() : 0; }, reciente = f => fms(f) > Date.now() - 7 * 864e5;
+  const loc = Object.assign({}, (RUTA && RUTA.rut === rut && RUTA.aprob) || {}); try { const ci = JSON.parse(localStorage.getItem('cap_ind') || 'null'); if (ci && ci.rut === rut) loc.induccion = loc.induccion && fms(loc.induccion.fecha) >= fms(ci.fecha) ? loc.induccion : ci; } catch (e) {}
+  Object.keys(loc).forEach(id => { const l = loc[id]; if (l && reciente(l.fecha) && (!aprob[id] || (id === 'induccion' && fms(l.fecha) > fms(aprob[id].fecha)))) aprob[id] = l; });
+  window.__rutaServer = true;
   RUTA = { rut, persona: d.persona || null, aprob, inicio: d.inicio, ds44: d.ds44, ranking: d.ranking }; st.persona = d.persona || null;
   if (d.persona) { $('inName').value = d.persona.nombre; $('inRut').value = rut; try { localStorage.setItem('cap_persona', JSON.stringify({ name: d.persona.nombre, rut })); localStorage.setItem('cap_ruta', JSON.stringify(RUTA)); } catch (e) {} }
   renderHome();
@@ -6597,7 +6646,7 @@ async function identificar(rut, silencioso) {
 // al volver al inicio se refresca la ruta (para ver las charlas recién aprobadas)
 (function () {
   try { const p = JSON.parse(localStorage.getItem('cap_persona') || 'null'), g = JSON.parse(localStorage.getItem('cap_ruta') || 'null');
-    if (p && p.rut) { if (g && g.rut === fmtRut(p.rut) && g.persona) { RUTA = g; st.persona = RUTA.persona || null; $('inName').value = g.persona.nombre; $('inRut').value = g.rut; renderHome(); } setTimeout(() => identificar(p.rut, true), 300); } } catch (e) {}
+    if (p && p.rut) { if (g && g.rut === fmtRut(p.rut) && g.persona) { RUTA = g; st.persona = RUTA.persona || null; $('inName').value = g.persona.nombre; $('inRut').value = g.rut; renderHome(); } window.__rutaCarga = new Promise(ok => setTimeout(() => identificar(p.rut, true).then(ok, ok), 300)); } } catch (e) {}
   let t0 = 0; new MutationObserver(() => { if ($('s-home').classList.contains('on') && RUTA && Date.now() - t0 > 4000) { t0 = Date.now(); identificar(RUTA.rut, true); } })
     .observe($('s-home'), { attributes: true, attributeFilter: ['class'] });
 })();
@@ -6615,6 +6664,8 @@ async function identificar(rut, silencioso) {
     try { if (RUTA && st.topic && st.nota >= 4) { const n = Math.round(st.nota * 10) / 10, prev = RUTA.aprob[st.topic.id];
       if (!prev || n > (prev.n || 0)) RUTA.aprob[st.topic.id] = { n, tema_id: st.topic.id, nota: n.toFixed(1).replace('.', ','), intentos: st.attempts || 1, fecha: dmy(new Date()) };
       localStorage.setItem('cap_ruta', JSON.stringify(RUTA)); } } catch (e) {}
+    try { if (st.topic && st.topic.id === 'induccion' && st.nota >= 4) { const n = Math.round(st.nota * 10) / 10, r = RUTA ? RUTA.rut : fmtRut(st.rut || $('inRut').value || '');
+      localStorage.setItem('cap_ind', JSON.stringify({ rut: r, n, tema_id: 'induccion', nota: n.toFixed(1).replace('.', ','), intentos: st.attempts || 1, fecha: dmy(new Date()) })); } } catch (e) {}
     return _send.apply(this, arguments);
   };
 })();
@@ -6646,8 +6697,9 @@ function prepInduccion() {
 }
 (function () {
   const _pick = pickTopic, _ds = openDS44;
-  pickTopic = function (id) { if (id !== 'induccion' && !indInfo().ok) return bloqueoInduccion(); if (id === 'induccion') prepInduccion(); return _pick.apply(this, arguments); };
-  openDS44 = function () { if (!indInfo().ok) return bloqueoInduccion(); return _ds.apply(this, arguments); };
+  const esperar = fn => { if (!window.__rutaServer && window.__rutaCarga) { aviso('⏳ Cargando tu perfil…'); window.__rutaCarga.then(() => { aviso(''); fn(); }); return true; } return false; };
+  pickTopic = function (id) { if (id !== 'induccion' && !indInfo().ok) { const a = arguments; if (esperar(() => pickTopic.apply(this, a))) return; return bloqueoInduccion(); } if (id === 'induccion') prepInduccion(); return _pick.apply(this, arguments); };
+  openDS44 = function () { if (!indInfo().ok) { if (esperar(() => openDS44())) return; return bloqueoInduccion(); } return _ds.apply(this, arguments); };
   const b = $('bDS44'); if (b) b.onclick = () => openDS44();
   const css = document.createElement('style');
   css.textContent = `#indModal { display:none; position:fixed; inset:0; background:rgba(10,20,50,.7); z-index:9999; align-items:center; justify-content:center; padding:18px; }
@@ -6661,6 +6713,10 @@ function prepInduccion() {
 .tcard.bloq svg { filter:grayscale(1); opacity:.45; } .tb.lock { background:#37474F; color:#fff; } .tb.star { background:#DC281D; color:#fff; font-size:12px; }`;
   document.head.appendChild(css);
 })();
+
+// aviso flotante breve (cargando perfil)
+function aviso(txt) { let a = document.getElementById('avisoTop'); if (!a) { a = document.createElement('div'); a.id = 'avisoTop'; a.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);background:#0039A6;color:#fff;padding:10px 16px;border-radius:12px;font-weight:bold;z-index:10000;box-shadow:0 6px 20px rgba(0,0,0,.25)'; document.body.appendChild(a); }
+  a.textContent = txt; a.style.display = txt ? 'block' : 'none'; }
 // --- Arranque
 $('bMute').textContent = SFX.muted ? '🔇' : '🔊';
 $('bMute').onclick = ()=>{ const m = SFX.toggle(); $('bMute').textContent = m ? '🔇' : '🔊'; if (m) VOZ.stop(true); };
