@@ -6741,7 +6741,9 @@ function aviso(txt) { let a = document.getElementById('avisoTop'); if (!a) { a =
       if (!r.ok) { $('jefErr').style.color = ''; $('jefErr').textContent = 'Clave no válida.'; return; }
       try { localStorage.setItem('panel_clave', c); sessionStorage.setItem('panel_data', JSON.stringify(r)); } catch (e) {} location.href = 'panel.html'; }
     catch (e) { $('jefErr').style.color = ''; $('jefErr').textContent = 'No se pudo conectar. Intenta de nuevo.'; } };
-  b.onclick = () => { m.classList.add('on'); $('jefErr').textContent = ''; setTimeout(() => $('jefCl').focus(), 50); };
+  let guardada = ''; try { guardada = localStorage.getItem('panel_clave') || ''; } catch (e) {}
+  if (guardada) { let n = ''; try { n = (JSON.parse(localStorage.getItem('panel_cache') || '{}').user || {}).nombre || ''; } catch (e) {} b.textContent = '🔐 Ir a mi panel' + (n ? ' · ' + n.split(' ')[0] : ''); }
+  b.onclick = () => { if (guardada) { location.href = 'panel.html'; return; } m.classList.add('on'); $('jefErr').textContent = ''; setTimeout(() => $('jefCl').focus(), 50); };
   $('jefNo').onclick = () => m.classList.remove('on'); $('jefOk').onclick = entrar; $('jefCl').onkeydown = e => { if (e.key === 'Enter') entrar(); };
 })();
 // --- Arranque
