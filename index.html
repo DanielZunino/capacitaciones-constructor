@@ -322,7 +322,7 @@ const SFX = (() => {
 const VOZ = (() => {
   const ss = window.speechSynthesis; let voz = null, token = 0, todas = [];
   // 3 voces: se busca la mejor voz REAL del equipo (natural / chilena), sin deformar tono ni velocidad
-  const FEM = /catalina|dalia|elvira|paloma|elena|helena|laura|sabina|paulina|m[oó]nica|marisol|isabela|francisca|valentina|salom[eé]|ximena|larissa|abril|paola|renata|sof[ií]a|soledad|ana\b|female|mujer|google/i;
+  const FEM = /catalina|dalia|elvira|paloma|elena|helena|laura|sabina|paulina|m[oó]nica|marisol|isabela|francisca|valentina|salom[eé]|ximena|larissa|abril|paola|renata|sof[ií]a|soledad|ana\b|female|mujer/i;
   const MAS = /lorenzo|jorge|ra[uú]l|diego|pablo|juan|carlos|[aá]lvaro|enrique|andr[eé]s|gonzalo|tom[aá]s|emilio|gerardo|alonso|rodrigo|arnau|male\b|hombre/i;
   const RARA = /eddy|flo\b|grandma|grandpa|abuel|rocko|sandy|shelley|reed|bells|bubbles|bad news|good news|whisper|zarvox|trinoids|organ|jester|superstar|wobble|boing|bahh|cellos/i;
   const PERFILES = {
@@ -337,12 +337,14 @@ const VOZ = (() => {
     if (!ss) return; const vs = ss.getVoices().filter(v => /^es/i.test(v.lang) && !RARA.test(v.name)); if (!vs.length) return;
     todas = vs.sort((a, b) => (calidad(b) + pais(b)) - (calidad(a) + pais(a))); elegirPerfil();
   };
-  const elegirPerfil = () => { if (!todas.length) return; const p = PERFILES[perfil];
-    const ok = todas.filter(v => p.fem ? FEM.test(v.name) && !MAS.test(v.name) : MAS.test(v.name));
-    if (p.otra) { const primera = todas.filter(v => FEM.test(v.name) && !MAS.test(v.name))[0]; voz = ok.find(v => v !== primera) || ok[0] || todas[0]; }
-    else voz = ok[0] || todas[0];
-    p.pitch = (!p.fem && !MAS.test(voz.name)) ? .88 : 1;   // si el equipo no tiene voz de hombre, se baja apenas el tono
-    p.real = voz.name.replace(/Microsoft |Google |\(.*?\)| - .*$|Online/g, '').trim(); };
+  const esMujer = v => FEM.test(v.name) && !MAS.test(v.name);
+  const vozDe = k => { const p = PERFILES[k], fem = todas.filter(esMujer);
+    if (k === 'lorenzo') { const m = todas.find(v => MAS.test(v.name)); return { v: m || todas[0], pitch: m ? 1 : .88 }; }
+    if (k === 'paulina') { const v = fem[1] || fem[0]; return { v: v || todas[0], pitch: v ? 1 : 1.05 }; }   // solo voces que sabemos que son de mujer
+    return { v: fem[0] || todas[0], pitch: 1 }; };
+  const elegirPerfil = () => { if (!todas.length) return;
+    Object.keys(PERFILES).forEach(k => { const r = vozDe(k); PERFILES[k].v = r.v; PERFILES[k].pitch = r.pitch; PERFILES[k].real = r.v.name.replace(/Microsoft |Google |\(.*?\)| - .*$|Online/g, '').trim(); });
+    const p = PERFILES[perfil]; voz = p.v; p.real = voz.name.replace(/Microsoft |Google |\(.*?\)| - .*$|Online/g, '').trim(); };
   if (ss) { elegir(); ss.onvoiceschanged = elegir;
     // iPhone: la voz se habilita con el primer toque en pantalla
     const unlock = () => { try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; ss.speak(u); } catch (e) {} document.removeEventListener('pointerdown', unlock, true); };
