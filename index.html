@@ -6734,12 +6734,14 @@ function aviso(txt) { let a = document.getElementById('avisoTop'); if (!a) { a =
   const b = document.createElement('button'); b.className = 'jefBtn'; b.textContent = '🔐 Ingreso jefaturas'; (home.querySelector('.homeR') || home.querySelector('.wrap') || home).appendChild(b);
   const m = document.createElement('div'); m.id = 'jefModal';
   m.innerHTML = `<div class="jb"><div style="font-size:40px">🔐</div><h3 style="margin:0">Ingreso jefaturas</h3><p style="margin:0;color:#5A5F66;font-size:14px">Administración y gerentes de sucursal. Tu clave es tu primer nombre seguido de 123.</p>
-    <input id="jefCl" placeholder="Ej: juan123" autocomplete="off" autocapitalize="none"><div class="je" id="jefErr"></div><button class="ok" id="jefOk">Entrar</button><button class="lnk" id="jefNo">Cancelar</button></div>`;
+    <form id="jefF" onsubmit="return false" style="display:flex;flex-direction:column;gap:10px"><input name="username" value="jefatura" autocomplete="username" hidden>
+    <input id="jefCl" type="password" name="password" placeholder="Ej: juan123" autocomplete="current-password" autocapitalize="none">
+    <label style="display:flex;gap:8px;align-items:center;justify-content:center;font-size:15px;cursor:pointer"><input type="checkbox" id="jefRec" checked style="width:20px;height:20px"> Recordar mi clave en este equipo</label></form><div class="je" id="jefErr"></div><button class="ok" id="jefOk">Entrar</button><button class="lnk" id="jefNo">Cancelar</button></div>`;
   document.body.appendChild(m);
   const entrar = async () => { const c = $('jefCl').value.trim().toLowerCase(); if (!c) return; $('jefErr').style.color = '#5A5F66'; $('jefErr').textContent = 'Verificando…';
     try { const r = await fetch(SCRIPT_URL + '?panel=' + encodeURIComponent(c)).then(x => x.json());
       if (!r.ok) { $('jefErr').style.color = ''; $('jefErr').textContent = 'Clave no válida.'; return; }
-      try { localStorage.setItem('panel_clave', c); sessionStorage.setItem('panel_data', JSON.stringify(r)); } catch (e) {} location.href = 'panel.html'; }
+      try { if ($('jefRec').checked) localStorage.setItem('panel_clave', c); else { localStorage.removeItem('panel_clave'); sessionStorage.setItem('panel_clave', c); } sessionStorage.setItem('panel_data', JSON.stringify(r)); } catch (e) {} location.href = 'panel.html'; }
     catch (e) { $('jefErr').style.color = ''; $('jefErr').textContent = 'No se pudo conectar. Intenta de nuevo.'; } };
   let guardada = ''; try { guardada = localStorage.getItem('panel_clave') || ''; } catch (e) {}
   if (guardada) { let n = ''; try { n = (JSON.parse(localStorage.getItem('panel_cache') || '{}').user || {}).nombre || ''; } catch (e) {} b.textContent = '🔐 Ir a mi panel' + (n ? ' · ' + n.split(' ')[0] : ''); }

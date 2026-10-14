@@ -46,12 +46,13 @@ const col = p => p === null ? '#90A4AE' : p >= .9 ? '#2E7D32' : p >= .7 ? '#F9A8
 const pct = (a, b) => b ? a / b : null, fp = p => p === null ? '—' : Math.round(p * 100) + '%';
 const bar = p => `<div class="bar"><i style="width:${p === null ? 0 : Math.round(p * 100)}%;background:${col(p)}"></i></div>`;
 let D = null, clave = '', vista = 'resumen', fPer = 'todos', fRep = 'Abierto', fSuc = '', q = '';
-try { clave = localStorage.getItem('panel_clave') || ''; } catch (e) {}
+try { clave = localStorage.getItem('panel_clave') || sessionStorage.getItem('panel_clave') || ''; } catch (e) {}
 
 function login(msg) {
   $('#app').innerHTML = `<div class="login"><img src="${LOGO}" alt="Constructor Center"><h2 style="margin:0">Panel de Prevención</h2>
     <p style="margin:0;color:#6B7280">Para administración y gerentes de sucursal. Tu clave es tu primer nombre seguido de 123.</p>
-    <input id="cl" placeholder="Ej: juan123" maxlength="30" autocomplete="off"><div class="err">${msg || ''}</div><button class="btn az" id="ent">Entrar</button></div>`;
+    <form onsubmit="return false" style="display:flex;flex-direction:column;gap:12px"><input name="username" value="jefatura" autocomplete="username" hidden><input id="cl" type="password" name="password" placeholder="Ej: juan123" maxlength="30" autocomplete="current-password">
+    <label style="display:flex;gap:8px;align-items:center;justify-content:center;cursor:pointer"><input type="checkbox" id="rec" checked style="width:20px;height:20px"> Recordar mi clave en este equipo</label></form><div class="err">${msg || ''}</div><button class="btn az" id="ent">Entrar</button></div>`;
   const go = () => { clave = $('#cl').value.trim().toLowerCase(); if (clave) cargar(); };
   $('#ent').onclick = go; $('#cl').onkeydown = e => { if (e.key === 'Enter') go(); };
 }
@@ -60,7 +61,7 @@ async function cargar(enFondo) {
   try {
     const r = await fetch(URL_API + '?panel=' + encodeURIComponent(clave)).then(r => r.json());
     if (!r.ok) { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); } catch (e) {} return login('Clave no válida o desactivada.'); }
-    try { localStorage.setItem('panel_clave', clave); } catch (e) {}
+    try { const rec = $('#rec'); if (!rec || rec.checked) { if (rec || localStorage.getItem('panel_clave')) localStorage.setItem('panel_clave', clave); } else { localStorage.removeItem('panel_clave'); sessionStorage.setItem('panel_clave', clave); } } catch (e) {}
     D = r; try { localStorage.setItem('panel_cache', JSON.stringify(r)); } catch (e) {} pintar();
   } catch (e) { if (!enFondo) login('No se pudo conectar. Revisa tu internet e intenta de nuevo.'); }
 }
@@ -75,7 +76,7 @@ function pintar() {
     <span style="font-size:12px;color:#6B7280">Datos al ${esc(D.act || '—')}</span><button class="lnk" id="ref">↻ Actualizar</button><a class="lnk" href="./">Charlas</a><button class="lnk" id="sal">Salir</button></div>
     <div class="wrap"><div class="tabs">${[['resumen', 'Resumen'], ['personas', 'Trabajadores']].concat(D.reportes.length ? [['reportes', 'Reportes', T.rep]] : []).map(([k, t, c]) => `<button class="tab${vista === k ? ' on' : ''}" data-v="${k}">${t}${c ? `<span class="ct">${c}</span>` : ''}</button>`).join('')}</div><div id="cont"></div></div>`;
   document.querySelectorAll('.tab').forEach(b => b.onclick = () => { vista = b.dataset.v; pintar(); });
-  $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); } catch (e) {} clave = ''; login(); };
+  $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('panel_clave'); localStorage.removeItem('panel_cache'); sessionStorage.removeItem('panel_clave'); } catch (e) {} clave = ''; login(); };
   ({ resumen: vResumen, personas: vPersonas, reportes: vReportes })[vista](T);
 }
 function vResumen(T) {
