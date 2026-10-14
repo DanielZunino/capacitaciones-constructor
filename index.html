@@ -321,22 +321,28 @@ const SFX = (() => {
 // ===== Voz guía (síntesis de voz del teléfono) + dedo que indica el paso siguiente =====
 const VOZ = (() => {
   const ss = window.speechSynthesis; let voz = null, token = 0, todas = [];
-  // 3 personajes de voz: cambian la voz del teléfono (si hay varias), el tono y la velocidad
+  // 3 voces: se busca la mejor voz REAL del equipo (natural / chilena), sin deformar tono ni velocidad
+  const FEM = /catalina|dalia|elvira|paloma|elena|helena|laura|sabina|paulina|m[oó]nica|marisol|isabela|francisca|valentina|salom[eé]|ximena|larissa|abril|paola|renata|sof[ií]a|soledad|ana\b|female|mujer|google/i;
+  const MAS = /lorenzo|jorge|ra[uú]l|diego|pablo|juan|carlos|[aá]lvaro|enrique|andr[eé]s|gonzalo|tom[aá]s|emilio|gerardo|alonso|rodrigo|arnau|male\b|hombre/i;
+  const RARA = /eddy|flo\b|grandma|grandpa|abuel|rocko|sandy|shelley|reed|bells|bubbles|bad news|good news|whisper|zarvox|trinoids|organ|jester|superstar|wobble|boing|bahh|cellos/i;
   const PERFILES = {
-    clara:   { nombre: 'Clara', desc: 'Amable y clara', pitch: 1.12, rate: 1.03, prefiere: /female|mujer|paulina|m[oó]nica|sabina|paloma|helena|laura|elvira|dalia|google/i },
-    capitan: { nombre: 'Capitán', desc: 'Grave y firme', pitch: 0.72, rate: 0.93, prefiere: /male|hombre|jorge|ra[uú]l|diego|pablo|juan|carlos|alvaro|jose|enrique|andres|daniel/i },
-    chispa:  { nombre: 'Chispa', desc: 'Alegre y rápida', pitch: 1.5, rate: 1.15, prefiere: /female|mujer|google|paulina|m[oó]nica|sabina/i } };
-  let perfil = 'clara'; try { perfil = localStorage.getItem('cap_voz') || 'clara'; if (!PERFILES[perfil]) perfil = 'clara'; } catch (e) {}
+    catalina: { nombre: 'Catalina 🇨🇱', desc: 'Mujer, chilena, natural', fem: true, pitch: 1, rate: 1 },
+    lorenzo:  { nombre: 'Lorenzo 🇨🇱', desc: 'Hombre, chileno, natural', fem: false, pitch: 1, rate: 1 },
+    paulina:  { nombre: 'Paulina', desc: 'Mujer, latina, clara', fem: true, otra: true, pitch: 1, rate: 1.03 } };
+  const VIEJO = { clara: 'catalina', capitan: 'lorenzo', chispa: 'paulina' };
+  let perfil = 'catalina'; try { perfil = localStorage.getItem('cap_voz') || 'catalina'; perfil = VIEJO[perfil] || perfil; if (!PERFILES[perfil]) perfil = 'catalina'; } catch (e) {}
+  const calidad = v => (/natural|neural|online|premium|enhanced|mejorad/i.test(v.name) ? 40 : 0) + (/google/i.test(v.name) ? 15 : 0) + (v.localService === false ? 5 : 0);
+  const pais = v => { const l = v.lang.replace('_', '-'); return /CL$/i.test(l) || /chile/i.test(v.name) ? 30 : /419|MX|US|AR|CO|PE/i.test(l) ? 12 : 0; };
   const elegir = () => {
-    if (!ss) return; const vs = ss.getVoices().filter(v => /^es/i.test(v.lang)); if (!vs.length) return;
-    const pref = ['es-CL', 'es-419', 'es-US', 'es-MX', 'es-AR', 'es-CO', 'es-ES'];
-    const score = v => { let s = pref.indexOf(v.lang.replace('_', '-')); s = s < 0 ? 20 : s; if (/google|natural|neural|paulina|m[oó]nica|sabina|paloma|helena/i.test(v.name)) s -= 10; if (/female|mujer/i.test(v.name)) s -= 2; return s; };
-    todas = vs.sort((a, b) => score(a) - score(b)); elegirPerfil();
+    if (!ss) return; const vs = ss.getVoices().filter(v => /^es/i.test(v.lang) && !RARA.test(v.name)); if (!vs.length) return;
+    todas = vs.sort((a, b) => (calidad(b) + pais(b)) - (calidad(a) + pais(a))); elegirPerfil();
   };
   const elegirPerfil = () => { if (!todas.length) return; const p = PERFILES[perfil];
-    // busca una voz que calce con el personaje (prefiriendo Chile/Latinoamérica); si no hay, usa la mejor disponible
-    const m = todas.filter(v => p.prefiere.test(v.name) && !(perfil === 'capitan' && /female|mujer/i.test(v.name)));
-    voz = (perfil === 'capitan' ? m.find(v => !/google/i.test(v.name)) || m[0] : m[0]) || todas[0]; };
+    const ok = todas.filter(v => p.fem ? FEM.test(v.name) && !MAS.test(v.name) : MAS.test(v.name));
+    if (p.otra) { const primera = todas.filter(v => FEM.test(v.name) && !MAS.test(v.name))[0]; voz = ok.find(v => v !== primera) || ok[0] || todas[0]; }
+    else voz = ok[0] || todas[0];
+    p.pitch = (!p.fem && !MAS.test(voz.name)) ? .88 : 1;   // si el equipo no tiene voz de hombre, se baja apenas el tono
+    p.real = voz.name.replace(/Microsoft |Google |\(.*?\)| - .*$|Online/g, '').trim(); };
   if (ss) { elegir(); ss.onvoiceschanged = elegir;
     // iPhone: la voz se habilita con el primer toque en pantalla
     const unlock = () => { try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; ss.speak(u); } catch (e) {} document.removeEventListener('pointerdown', unlock, true); };
@@ -460,9 +466,9 @@ if (!window.speechSynthesis) setTimeout(avisoVoz, 600);
   document.body.appendChild(b);
   const menu = document.createElement('div'); menu.id = 'vozMenu'; document.body.appendChild(menu);
   const pintar = () => { menu.innerHTML = '<div class="vmT">Elige la voz</div>' + Object.entries(VOZ.PERFILES).map(([k, p]) =>
-    `<button class="vmO${VOZ.perfil === k ? ' on' : ''}" data-k="${k}"><b>${p.nombre}</b><span>${p.desc}</span></button>`).join('')
-    + '<div class="vmN">La voz depende de tu teléfono: si tiene una sola, cambia el tono y la velocidad.</div>';
-    menu.querySelectorAll('.vmO').forEach(o => o.onclick = () => { VOZ.setPerfil(o.dataset.k); pintar(); VOZ.say('Hola, soy ' + VOZ.PERFILES[o.dataset.k].nombre + '. Así te voy a leer las charlas.'); }); };
+    `<button class="vmO${VOZ.perfil === k ? ' on' : ''}" data-k="${k}"><b>${p.nombre}</b><span>${p.desc}${p.real && p.nombre.indexOf(p.real) < 0 ? ' · voz: ' + p.real : ''}</span></button>`).join('')
+    + '<div class="vmN">Usamos la voz más natural que tenga tu equipo. Las chilenas más reales están en el navegador Edge.</div>';
+    menu.querySelectorAll('.vmO').forEach(o => o.onclick = () => { VOZ.setPerfil(o.dataset.k); pintar(); VOZ.say('Hola, soy ' + VOZ.PERFILES[o.dataset.k].nombre.replace(/ 🇨🇱/, '') + '. Así te voy a leer las charlas.'); }); };
   b.onclick = e => { e.stopPropagation(); if (menu.style.display === 'block') { menu.style.display = 'none'; return; } pintar(); menu.style.display = 'block'; };
   document.addEventListener('click', e => { if (!menu.contains(e.target) && e.target !== b) menu.style.display = 'none'; });
 })();
