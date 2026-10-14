@@ -6535,7 +6535,7 @@ function htmlAvance(R, A, opts) {
     ${falta ? `<div class="falta">${falta}</div>` : ''}
     <details class="como"><summary>¿Cómo se calcula?</summary>Tu Puntaje Seguro suma: <b>60 %</b> charlas de tu ruta realizadas, <b>30 %</b> tu promedio de notas y <b>10 %</b> charlas aprobadas al primer intento. Si hay empate, gana quien llegó primero.<br>Niveles: 95 Ejemplar · 85 Seguro · 75 Casi Seguro · 65 En camino.</details>
     ${(R.hist && R.hist.length) ? '<button class="lnk" id="bHist" style="display:block;margin-bottom:6px">📜 Ver mi historial de capacitaciones</button>' : ''}
-    <button class="lnk" id="bNoSoy">🚪 Cerrar sesión</button>`;
+    <div style="display:flex;gap:14px;flex-wrap:wrap"><button class="lnk" id="bClave">🔑 Cambiar mi clave</button><button class="lnk" id="bNoSoy">🚪 Cerrar sesión</button></div>`;
 }
 // Marca las tarjetas: realizada (sello verde), atrasada, este mes
 function marcarTarjetas(R, A) {
@@ -6642,6 +6642,7 @@ function renderHome() {
   }).join('');
   marcarTarjetas(RUTA, AV); enlazarAvance();
   if ($('bHist')) $('bHist').onclick = verHistorial;
+  if ($('bClave')) $('bClave').onclick = cambiarMiClave;
   document.querySelectorAll('.tcard').forEach(b => b.onclick = () => pickTopic(b.dataset.id));
   document.querySelectorAll('.shead').forEach(b => b.onclick = () => { const el = b.parentNode; el.classList.toggle('open'); abiertas[b.dataset.s] = el.classList.contains('open'); });
   if ($('bRuta')) { const go = () => identificar($('rutHome').value, false, $('claveHome').value); $('bRuta').onclick = go; $('claveHome').onkeydown = e => { if (e.key === 'Enter') go(); }; $('rutHome').onkeydown = e => { if (e.key === 'Enter') $('claveHome').focus(); }; }
@@ -6804,6 +6805,36 @@ function cerrarSesion() { RUTA = null; st.persona = null; try { localStorage.rem
   else { $('inName').readOnly = false; $('inRut').readOnly = !!RUTA; if (RUTA) $('inRut').value = RUTA.rut; }
   return r; }; })();
 (function () { const c = document.createElement('style'); c.textContent = `#ruta form.login input { width:100%; box-sizing:border-box; padding:13px 14px; border-radius:12px; border:2px solid #CFD8DC; background:#F4F7FB; font-size:17px; font-family:inherit; color:#1F2328; }`; document.head.appendChild(c); })();
+
+// ===== Cambiar mi clave
+function cambiarMiClave() {
+  let m = $('claveModal'); if (!m) { m = document.createElement('div'); m.id = 'claveModal'; m.style.cssText = 'display:none;position:fixed;inset:0;background:rgba(10,20,50,.72);z-index:9999;align-items:center;justify-content:center;padding:16px'; document.body.appendChild(m); }
+  const inp = 'width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:2px solid #CFD8DC;font-size:16px;font-family:inherit';
+  m.innerHTML = `<form onsubmit="return false" style="background:#fff;color:#1F2328;border-radius:18px;padding:20px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:10px;border-top:8px solid #0039A6">
+    <h3 style="margin:0">🔑 Cambiar mi clave</h3><p style="margin:0;color:#5A5F66;font-size:13px">La nueva clave debe tener al menos 6 caracteres, con letras y números.</p>
+    <input name="username" value="${RUTA.rut}" autocomplete="username" hidden>
+    <input id="cA" type="password" autocomplete="current-password" placeholder="Clave actual" style="${inp}">
+    <input id="cN" type="password" autocomplete="new-password" placeholder="Nueva clave" style="${inp}">
+    <input id="cR" type="password" autocomplete="new-password" placeholder="Repite la nueva clave" style="${inp}">
+    <div id="cE" style="font-size:13px;color:#C62828;min-height:16px"></div>
+    <button class="btn" id="cOk">Guardar nueva clave</button><button class="lnk" id="cNo" type="button">Cancelar</button></form>`;
+  m.style.display = 'flex'; const e = $('cE');
+  $('cNo').onclick = () => m.style.display = 'none';
+  $('cOk').onclick = async () => {
+    const a = $('cA').value.trim(), n = $('cN').value.trim(), r = $('cR').value.trim();
+    if (n !== r) return e.textContent = 'Las claves nuevas no coinciden.';
+    if (n.length < 6 || !/[a-z]/i.test(n) || !/\d/.test(n)) return e.textContent = 'Usa al menos 6 caracteres, con letras y números.';
+    e.style.color = '#5A5F66'; e.textContent = 'Guardando…'; $('cOk').disabled = true;
+    let d = null; try { d = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: 'cambiar_clave', h: await rutHash(RUTA.rut), actual: a, nueva: n }) }).then(x => x.json()); } catch (er) {}
+    $('cOk').disabled = false; e.style.color = '#C62828';
+    if (!d) { try { const v = await fetch(SCRIPT_URL + '?historial=' + await rutHash(RUTA.rut) + '&k=' + encodeURIComponent(n)).then(x => x.json()); if (v && v.ok) d = { ok: true }; } catch (er) {} }   // si el navegador no deja leer la respuesta, se comprueba entrando con la nueva
+    if (!d) return e.textContent = 'No se pudo confirmar el cambio. Intenta de nuevo.';
+    if (!d.ok) return e.textContent = d.error === 'actual' ? 'La clave actual no es correcta.' : d.error === 'debil' ? 'Usa al menos 6 caracteres, con letras y números.' : 'No se pudo cambiar. Contacta al área de RR.HH.';
+    try { const ses = sesion(); ses.k = n; localStorage.setItem('cap_persona', JSON.stringify(ses)); } catch (er) {}
+    m.querySelector('form').innerHTML = '<div style="font-size:44px;text-align:center">✅</div><h3 style="margin:0;text-align:center">Clave cambiada</h3><p style="margin:0;text-align:center;color:#5A5F66">Desde ahora entras con tu nueva clave.</p><button class="btn" id="cFin">Listo</button>';
+    $('cFin').onclick = () => m.style.display = 'none';
+  };
+}
 // --- Arranque
 $('bMute').textContent = SFX.muted ? '🔇' : '🔊';
 $('bMute').onclick = ()=>{ const m = SFX.toggle(); $('bMute').textContent = m ? '🔇' : '🔊'; if (m) VOZ.stop(true); };
