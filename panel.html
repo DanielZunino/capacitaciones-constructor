@@ -50,8 +50,8 @@ try { clave = localStorage.getItem('panel_clave') || ''; } catch (e) {}
 
 function login(msg) {
   $('#app').innerHTML = `<div class="login"><img src="${LOGO}" alt="Constructor Center"><h2 style="margin:0">Panel de Prevención</h2>
-    <p style="margin:0;color:#6B7280">Para administración y gerentes de sucursal. Tu clave es tu primer nombre + los 4 últimos números de tu RUT (sin el dígito verificador).</p>
-    <input id="cl" placeholder="Ej: juan1234" maxlength="30" autocomplete="off"><div class="err">${msg || ''}</div><button class="btn az" id="ent">Entrar</button></div>`;
+    <p style="margin:0;color:#6B7280">Para administración y gerentes de sucursal. Tu clave es tu primer nombre seguido de 123.</p>
+    <input id="cl" placeholder="Ej: juan123" maxlength="30" autocomplete="off"><div class="err">${msg || ''}</div><button class="btn az" id="ent">Entrar</button></div>`;
   const go = () => { clave = $('#cl').value.trim().toLowerCase(); if (clave) cargar(); };
   $('#ent').onclick = go; $('#cl').onkeydown = e => { if (e.key === 'Enter') go(); };
 }
@@ -72,7 +72,7 @@ function resumenDe(ps, reps) {
 function pintar() {
   const u = D.user, P = D.personas, R = D.reportes, T = resumenDe(P, R);
   $('#app').innerHTML = `<div class="top"><img src="${LOGO}" alt="Constructor Center"><div class="tt"><b>PANEL DE PREVENCIÓN</b><span>${esc(u.nombre)} · ${u.rol === 'admin' ? 'Administrador · todas las sucursales' : 'Gerente · ' + esc(u.suc || 'todas')}</span></div>
-    <span style="font-size:12px;color:#6B7280">Datos al ${esc(D.act || '—')}</span><button class="lnk" id="ref">↻ Actualizar</button><button class="lnk" id="sal">Salir</button></div>
+    <span style="font-size:12px;color:#6B7280">Datos al ${esc(D.act || '—')}</span><button class="lnk" id="ref">↻ Actualizar</button><a class="lnk" href="./">Charlas</a><button class="lnk" id="sal">Salir</button></div>
     <div class="wrap"><div class="tabs">${[['resumen', 'Resumen'], ['personas', 'Trabajadores']].concat(D.reportes.length ? [['reportes', 'Reportes', T.rep]] : []).map(([k, t, c]) => `<button class="tab${vista === k ? ' on' : ''}" data-v="${k}">${t}${c ? `<span class="ct">${c}</span>` : ''}</button>`).join('')}</div><div id="cont"></div></div>`;
   document.querySelectorAll('.tab').forEach(b => b.onclick = () => { vista = b.dataset.v; pintar(); });
   $('#ref').onclick = cargar; $('#sal').onclick = () => { try { localStorage.removeItem('panel_clave'); } catch (e) {} clave = ''; login(); };
