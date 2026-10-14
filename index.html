@@ -236,6 +236,7 @@ body.conaviso .wrap { padding-bottom:250px; }
     <p>Para obtener tu diploma, confirma tu compromiso y firma:</p>
     <label class="chk"><input type="checkbox" class="cmt">Aplicaré lo aprendido en mi trabajo diario.</label>
     <label class="chk"><input type="checkbox" class="cmt">Si veo algo peligroso, avisaré de inmediato.</label>
+    <p class="decl" style="font-size:12.5px;line-height:1.35;opacity:.85;margin:0">Al firmar declaro que participé en esta capacitación, que comprendí sus contenidos y que esta firma electrónica vale como constancia de ello (Ley 19.799).</p>
     <div class="sigwrap"><div class="lbl"><span>Firma aquí con tu dedo</span><button type="button" id="bClr">Borrar</button></div><canvas id="sig"></canvas></div>
     <button class="btn" id="bDip" disabled>Firmar y obtener mi diploma</button>
   </div>
@@ -5822,7 +5823,7 @@ async function validar(code) {
   if (!firmaRel.complete) await new Promise(r => firmaRel.onload = r);
   const cv = registroCanvas(D);
   const fname = `Certificado ${d.nombre} ${t.title.replace(/[:¿?]/g,'')} ${d.fecha}.pdf`;
-  $('vBody').innerHTML = `<div class="vok"><b>✔ Documento válido</b>Emitido desde el registro oficial de capacitaciones Constructor Center. Código ${code}.</div>
+  $('vBody').innerHTML = `<div class="vok"><b>✔ Documento válido</b>Emitido desde el registro oficial de capacitaciones Constructor Center. Código ${code}.${d.huella ? `<br><small style="word-break:break-all;opacity:.8">Huella digital (SHA-256) del diploma original: ${d.huella}</small>` : ''}</div>
     <img id="certImg" style="width:100%;border-radius:10px;background:#fff" alt="Certificado">
     <button class="btn" id="bCert">Descargar certificado (PDF)</button>`;
   $('certImg').src = cv.toDataURL('image/jpeg', .85);
