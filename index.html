@@ -6475,7 +6475,7 @@ var NIVELES = [
   { min: 65, id: 'camino', t: 'En camino', m: 'Vas bien. Cada charla te acerca a ser Trabajador Seguro.' },
   { min: 0, id: 'partiendo', t: 'Partiendo con todo', m: 'Todos partimos por algo. ¡Vamos por la próxima!' }];
 function nivelSeguro(p) { for (let i = 0; i < NIVELES.length; i++) if (p >= NIVELES[i].min) return NIVELES[i]; return NIVELES[NIVELES.length - 1]; }
-function nombreCorto(n) { return (n => { const w = String(n || '').trim().split(/\s+/); return w.length > 2 ? w[0] + ' ' + w[w.length - 2].charAt(0) + '.' : w.length === 2 ? w[0] + ' ' + w[1].charAt(0) + '.' : w[0] || ''; })(n); }
+function nombreCorto(n) { return (n => { const w = String(n || '').trim().split(/\s+/); return w.length > 2 ? w[0] + ' ' + w[w.length - 2] : w.length === 2 ? w[0] + ' ' + w[1] : w[0] || ''; })(n); }
 var PLAN_CFG = { ordenSec: ['todos', 'conductores', 'grua', 'bodega', 'ventas', 'admin'],
   critico: { conductores: ['camion_conduccion', 'camion_estiba', 'camion_carga'], grua: ['horquilla', 'horquilla_checklist', 'horquilla_patio'],
     bodega: ['racks', 'altura', 'herramientas', 'quimicos'], ventas: ['asaltos', 'atencion_publico', 'sala_ventas'], admin: ['pvd', 'oficina'] },
@@ -6532,7 +6532,7 @@ function htmlAvance(R, A, opts) {
   if (!pend.length && sig) pend.push(`<li class="ok"><span class="pi">🎉</span><span class="pt">¡Estás al día este mes!<small>Puedes adelantar: ${T(sig.id)}</small></span><button class="pgo" data-id="${sig.id}">Ir</button></li>`);
   const rk = R.ranking || {}, gen = rk.general || [], suc = (opts.sucursal && rk.suc && p.sucursal) ? (rk.suc[p.sucursal] || []) : null;
   const yo = nombreCorto(p.nombre), med = ['🥇', '🥈', '🥉'];
-  const podio = (l, tit) => `<div class="podio"><div class="ptit">${tit}</div>${l.length ? l.map((x, i) => `<div class="prow ${x.n === yo && (!x.s || x.s === (p.sucursal || '')) ? 'yo' : ''}"><span class="pm">${med[i]}</span><span class="pn">${x.n}${opts.sucursal && x.s && tit.indexOf('general') >= 0 ? `<small>${x.s}</small>` : ''}</span><span class="pp">${x.p}</span></div>`).join('') : '<div class="pvac">El podio se arma cuando haya compañeros con 3 o más charlas aprobadas. ¡Puedes ser el primero!</div>'}</div>`;
+  const podio = (l, tit) => `<div class="podio"><div class="ptit">${tit}</div><div class="psub">Ranking según el Puntaje Seguro de cada uno (de 0 a 100)</div>${l.length ? l.map((x, i) => `<div class="prow ${x.n === yo && (!x.s || x.s === (p.sucursal || '')) ? 'yo' : ''}"><span class="pm">${med[i]}</span><span class="pn">${x.n}${x.n === yo && (!x.s || x.s === (p.sucursal || '')) ? ' <em class="tu">(Tú)</em>' : ''}${opts.sucursal && x.s && tit.indexOf('EMPRESA') >= 0 ? `<small>${x.s}</small>` : ''}</span><span class="pp">${x.p} pts</span></div>`).join('') : '<div class="pvac">El podio se arma cuando haya compañeros con 3 o más charlas aprobadas. ¡Puedes ser el primero!</div>'}</div>`;
   let falta = '';
   const tercero = (suc && suc.length ? suc : gen)[2];
   if (A.aprobadas < 3) falta = `Aprueba ${3 - A.aprobadas} charla${3 - A.aprobadas > 1 ? 's' : ''} más para entrar al ranking.`;
@@ -6547,8 +6547,8 @@ function htmlAvance(R, A, opts) {
     <div class="pscore"><span>Puntaje Seguro</span><b>${A.puntaje}<small>/100</small></b></div>
     <div class="rbar"><i style="width:${A.puntaje}%"></i></div>
     <div class="rnum"><b>${A.aprobadas} de ${A.total}</b> charlas de tu ruta realizadas ${A.aprobadas && A.aprobadas === A.total ? '🏆' : ''}</div>
-    <div class="plan"><div class="ptit">📅 TU PLAN · HASTA ${mesNombre((R.inicio || Date.now()) + A.mesActual * PLAN_MES).toUpperCase()}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
-    ${podio(gen, '🏆 TOP 3 · ' + (opts.sucursal ? 'general' : opts.lugar || 'planta'))}${suc ? podio(suc, '📍 TOP 3 · ' + p.sucursal) : ''}
+    <div class="plan"><div class="ptit">📅 LO QUE TE TOCA ESTE MES</div><div class="psub">Tu plazo vence en ${mesNombre((R.inicio || Date.now()) + A.mesActual * PLAN_MES)}</div><ul>${pend.join('') || '<li class="ok"><span class="pi">🏆</span><span class="pt">¡Completaste toda tu ruta!</span></li>'}</ul></div>
+    ${podio(gen, '🏆 LOS 3 MEJORES DE TODA LA EMPRESA')}${suc ? podio(suc, '📍 LOS 3 MEJORES DE TU SUCURSAL · ' + p.sucursal.toUpperCase()) : ''}
     ${falta ? `<div class="falta">${falta}</div>` : ''}
     <details class="como"><summary>¿Cómo se calcula?</summary>Tu Puntaje Seguro suma: <b>60 %</b> charlas de tu ruta realizadas, <b>30 %</b> tu promedio de notas y <b>10 %</b> charlas aprobadas al primer intento. Si hay empate, gana quien llegó primero.<br>Niveles: 95 Ejemplar · 85 Seguro · 75 Casi Seguro · 65 En camino.</details>
     ${(R.hist && R.hist.length) ? '<button class="lnk" id="bHist" style="display:block;margin-bottom:6px">📜 Ver mi historial de capacitaciones</button>' : ''}
@@ -6564,15 +6564,16 @@ function marcarTarjetas(R, A) {
     let a = ap[id];
     if (II && id === 'induccion') {
       if (!II.ok) { a = null; b.insertAdjacentHTML('afterbegin', `<span class="tb star">${II.vence ? '⏰ Renovar' : '⭐ EMPIEZA AQUÍ'}</span>`); return; }
-      if (II.renovar) { b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Renovar</span>'); return; }
+      if (II.renovar) { const tt = b.querySelector('.tt'); (tt || b).insertAdjacentHTML('beforeend', '<span class="tb atr">⏰ Renovar tu inducción</span>'); return; }
     } else if (II && !II.ok && !a) { b.classList.add('bloq'); b.insertAdjacentHTML('afterbegin', '<span class="tb lock">🔒</span>'); return; }
     if (a) { b.classList.add('hecha'); b.insertAdjacentHTML('afterbegin', `<span class="sello"><span class="sc">✔</span><span class="st">REALIZADA<small>Nota ${a.nota}</small></span></span>`); return; }
     if (!A) return;
     const d = A.due[id];
-    if (A.atrasadas.some(x => x.id === id)) b.insertAdjacentHTML('afterbegin', '<span class="tb atr">⏰ Atrasada</span>');
-    else if (venc[id] && d) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">🔄 Renovar · ${mesNombre(d.vence)}</span>`);
-    else if (d && d.mes === A.mesActual) b.insertAdjacentHTML('afterbegin', `<span class="tb pend">📌 ${mesNombre(d.vence)}</span>`);
-    else if (d) b.insertAdjacentHTML('afterbegin', `<span class="tb mes">📅 ${mesNombre(d.vence)}</span>`);
+    const pon = h => { const tt = b.querySelector('.tt'); (tt || b).insertAdjacentHTML('beforeend', h); };
+    if (A.atrasadas.some(x => x.id === id)) pon('<span class="tb atr">⏰ Atrasada · hazla ya</span>');
+    else if (venc[id] && d) pon(`<span class="tb pend">🔄 Renovar en ${mesNombre(d.vence)}</span>`);
+    else if (d && d.mes === A.mesActual) pon(`<span class="tb pend">📌 Te toca este mes · hasta ${mesNombre(d.vence)}</span>`);
+    else if (d) pon(`<span class="tb mes">📅 Te toca en ${mesNombre(d.vence)}</span>`);
   });
 }
 function enlazarAvance() {
@@ -6601,6 +6602,9 @@ function enlazarAvance() {
 .como { font-size:12px; color:#4A5568; } .como summary { cursor:pointer; color:#1565C0; font-weight:bold; }
 .tcard { position:relative; } .tcard .tb { position:absolute; top:8px; left:8px; z-index:2; font-size:11px; font-weight:bold; padding:4px 8px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,.25); }
 .tb.pend { background:#FFC20E; color:#1F2328; } .tb.atr { background:#C62828; color:#fff; } .tb.mes { background:rgba(255,255,255,.92); color:#4A5568; }
+.psub { font-size:12px; color:#6B7280; margin:-2px 0 8px; } .prow .tu { font-style:normal; color:#B45309; font-size:12px; }
+.tcard .tt .tb { position:static; display:block; width:fit-content; margin-top:7px; box-shadow:none; font-size:12px; }
+.tb.mes { border:1px solid #CBD5E1; }
 .tcard.hecha svg { filter:saturate(.35) brightness(1.05); opacity:.75; } .tcard.hecha { box-shadow:0 0 0 3px #2E7D32 inset; }
 .tcard .sello { position:absolute; top:10px; left:50%; transform:translateX(-50%) rotate(-6deg); z-index:3; display:flex; align-items:center; gap:8px; background:#2E7D32; color:#fff; border:3px solid #fff; border-radius:14px; padding:6px 12px 6px 8px; box-shadow:0 4px 12px rgba(0,0,0,.3); white-space:nowrap; }
 .tcard .sello .sc { font-size:26px; line-height:1; } .tcard .sello .st { font-weight:bold; font-size:13px; letter-spacing:1px; line-height:1.1; } .tcard .sello small { display:block; font-weight:normal; letter-spacing:0; font-size:12px; }`;
