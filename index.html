@@ -1136,6 +1136,57 @@ Object.assign(NORMAS, {
 // ===== Base para ampliar charlas: reemplaza tarjetas/preguntas de un tema o agrega temas nuevos =====
 function mejorar(id, o) { const t = TOPICS.find(x => x.id === id); if (!t) throw new Error('No existe el tema ' + id); Object.assign(t, o); }
 function nuevoTema(t, norma) { if (TOPICS.some(x => x.id === t.id)) throw new Error('Tema repetido ' + t.id); TOPICS.push(t); NORMAS[t.id] = norma; }
+// ===== Constructor Center: tracto moderno (estilo Volvo FH) + rampla con cortina. Sin camión pluma. =====
+// Coordenadas locales: (0,0) = suelo bajo la parte trasera; avanza hacia la derecha. Piso de la rampla en y=-46.
+// L = largo de la rampla. Largo total = L + 58. o.open: cortina recogida (se ve la carga o.load). o.driver, o.brake, o.rev, o.squash.
+function RAMPLA(L, o) {
+  o = o || {}; L = L || 150;
+  const AZ = '#0039A6', RO = '#DC281D', AM = '#FFC20E', CORT = '#123F8C', c = L + 2, n = v => (+v).toFixed(1);
+  const rueda = (cx, r) => o.squash ? `<ellipse cx="${n(cx)}" cy="-10" rx="${r + 3}" ry="${r - 1}" fill="#263238"/><circle cx="${n(cx)}" cy="-10" r="${r * .4}" fill="#B0BEC5"/>`
+    : `<circle cx="${n(cx)}" cy="-${r}" r="${r}" fill="#263238"/><circle cx="${n(cx)}" cy="-${r}" r="${r * .45}" fill="#B0BEC5"/><circle cx="${n(cx)}" cy="-${r}" r="${r * .15}" fill="#455A64"/>`;
+  let g = `<ellipse cx="${n((L + 56) / 2)}" cy="1" rx="${n((L + 56) / 2 + 4)}" ry="4" fill="#000" opacity=".2"/>`;
+  // --- rampla: chasis, piso con cinta reflectante, patas de apoyo, techo y cabecera
+  g += `<rect x="2" y="-36" width="${L - 2}" height="8" fill="#37474F"/><rect x="0" y="-47" width="${L}" height="11" fill="#90A4AE" stroke="#607D8B" stroke-width=".8"/>`;
+  for (let i = 0; i * 12 < L - 6; i++) g += `<rect x="${3 + i * 12}" y="-41" width="6" height="3" fill="${i % 2 ? '#fff' : RO}"/>`;
+  g += `<rect x="${L - 46}" y="-28" width="4" height="20" fill="#546E7A"/><rect x="${L - 49}" y="-9" width="10" height="3" fill="#37474F"/>`;
+  g += `<rect x="0" y="-110" width="${L}" height="6" rx="1.5" fill="#CFD8DC" stroke="#90A4AE" stroke-width=".8"/>`
+    + `<rect x="0" y="-110" width="5" height="64" fill="#B0BEC5" stroke="#78909C" stroke-width=".8"/><rect x="${L - 6}" y="-110" width="6" height="64" fill="#ECEFF1" stroke="#90A4AE" stroke-width=".8"/>`;
+  if (o.open) {
+    g += [0.36, 0.68].map(k => `<rect x="${n(L * k)}" y="-104" width="3" height="58" fill="#B0BEC5"/>`).join('');
+    if (o.load) g += o.load;
+    let f = ''; for (let i = 0; i < 5; i++) f += `<path d="M${L - 30 + i * 4.8},-104 q3,29 0,58" stroke="#0A2A66" stroke-width="1" fill="none"/>`;
+    g += `<rect x="${L - 31}" y="-104" width="25" height="58" fill="${CORT}"/>${f}`;
+  } else {
+    g += `<rect x="5" y="-104" width="${L - 11}" height="58" fill="${CORT}"/><rect x="5" y="-104" width="${L - 11}" height="5" fill="#0A2A66" opacity=".5"/>`
+      + `<rect x="5" y="-66" width="${L - 11}" height="4" fill="${RO}"/>`;
+    for (let i = 1; i * 15 < L - 12; i++) g += `<line x1="${5 + i * 15}" y1="-99" x2="${5 + i * 15}" y2="-48" stroke="#2A5BB0" stroke-width="1.2"/><rect x="${3.5 + i * 15}" y="-52" width="3" height="5" fill="#CFD8DC"/>`;
+  }
+  g += `<rect x="-3" y="-45" width="4" height="9" fill="${o.brake ? '#FF1744' : '#C62828'}"/>`;
+  [0.13, 0.28, 0.43].forEach(k => g += rueda(Math.min(L * k, 22 + (k - 0.13) * 160), 11));
+  // --- tracto: chasis, ruedas, cabina alta y plana tipo Volvo FH
+  g += `<rect x="${L - 34}" y="-30" width="${c + 54 - (L - 34)}" height="8" fill="#263238"/><rect x="${L - 30}" y="-36" width="24" height="5" fill="#455A64"/>`;
+  g += `<path d="M${c},-24 V-100 q0,-6 6,-8 H${c + 40} q8,1 10,8 L${c + 54},-90 V-30 q0,-6 -4,-6 H${c} z" fill="${AZ}" stroke="#00246B" stroke-width="1.5"/>`
+    + `<path d="M${c + 6},-108 q2,-8 12,-9 H${c + 36} q6,1 8,9z" fill="#002E85" stroke="#00246B"/>`
+    + `<path d="M${c + 12},-94 H${c + 41} V-74 H${c + 30} l-6,6 H${c + 12}z" fill="#B3E5FC" stroke="#00246B"/><path d="M${c + 15},-91 h7 l-7,11z" fill="#fff" opacity=".6"/>`
+    + `<path d="M${c + 46},-96 L${c + 53},-89 V-70 H${c + 46}z" fill="#81D4FA" stroke="#00246B"/><rect x="${c + 42}" y="-99" width="13" height="3" rx="1" fill="#CFD8DC"/>`
+    + `<rect x="${c}" y="-62" width="54" height="2.5" fill="#fff"/><rect x="${c}" y="-59.5" width="54" height="8" fill="${RO}"/>`
+    + `<path d="M${c + 10},-98 V-34" stroke="#00246B" stroke-width="1"/><rect x="${c + 30}" y="-50" width="9" height="3" rx="1" fill="#CFD8DC"/>`
+    + `<path d="M${c + 52},-92 l6,-2 v14 h-3" stroke="#263238" stroke-width="2" fill="none"/><rect x="${c + 55}" y="-90" width="4" height="13" rx="1.5" fill="#263238"/>`
+    + `<rect x="${c + 47}" y="-46" width="7" height="6" rx="1" fill="#FFF59D" stroke="#F9A825"/><path d="M${c + 48},-43 h5 M${c + 50.5},-43 v-2" stroke="#fff" stroke-width="1"/>`
+    + `<rect x="${c + 36}" y="-34" width="20" height="8" rx="2" fill="#263238"/><rect x="${c + 12}" y="-36" width="16" height="10" rx="1.5" fill="#455A64"/>`
+    + `<rect x="${c + 4}" y="-30" width="9" height="3" fill="#90A4AE"/><rect x="${c + 4}" y="-23" width="9" height="3" fill="#90A4AE"/>`;
+  if (o.driver) g += `<circle cx="${c + 28}" cy="-82" r="6.5" fill="#F2C6A0" stroke="#22303A"/><path d="M${c + 21.5},-84 a6.5,6.5 0 0 1 13,0z" fill="#4E342E"/>`;
+  if (o.brake) g += `<g class="an-flash"><circle cx="-1" cy="-40" r="9" fill="#FF1744" opacity=".45"/></g>`;
+  if (o.rev) g += `<rect x="-3" y="-34" width="4" height="5" fill="#fff"/><g class="an-flash">${[1, 2, 3].map(i => `<path d="M${-6 - i * 7},${-52 - i * 4} a${i * 8},${i * 8} 0 0 0 0,${16 + i * 8}" stroke="${AM}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`).join('')}</g>`;
+  g += rueda(L - 14, 12) + rueda(c + 36, 12);
+  return g;
+}
+// Para los dibujos que usan coordenadas absolutas: x = parte trasera, y = suelo, D = altura del piso original, W = largo total original.
+function RAMPLA_ABS(x, y, D, W, o) {
+  o = o || {}; const k = D / 46, L = W / k - 58;
+  const load = o.load ? `<g transform="scale(${1 / k}) translate(${-x},${-y})">${o.load}</g>` : '';
+  return `<g transform="translate(${x},${y}) scale(${k})">${RAMPLA(L, Object.assign({}, o, { load }))}</g>`;
+}
 // cx1: ampliación de charlas — cargas, horquilla, ruido, maquinas, herramientas
 (function(){
 // ---------- helpers propios (encapsulados para no chocar con otros archivos) ----------
@@ -1160,7 +1211,7 @@ const shield = (x, y, s = 1, flip) => { const f = flip ? -1 : 1, X = x, Y = y - 
 const pregnantW = (x, y, o = {}) => W(x, y, Object.assign({ shirt: '#AD1457', hair: true }, o)) + `<ellipse cx="${x + 7 * (o.flip ? -1 : 1)}" cy="${y - 44}" rx="7" ry="8.5" fill="#AD1457" stroke="#22303A" stroke-width="1.2"/>`;
 const forbid = (x, y, r = 16) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#D7262B" stroke-width="${r * .22}"/><line x1="${x - r * .7}" y1="${y - r * .7}" x2="${x + r * .7}" y2="${y + r * .7}" stroke="#D7262B" stroke-width="${r * .2}"/>`;
 const obg = () => { const k = uid('sky'); return `<defs><linearGradient id="${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#81C3F5"/><stop offset="1" stop-color="#E3F2FD"/></linearGradient></defs><rect width="320" height="200" fill="url(#${k})"/><path d="M0,112 q50,-26 110,-6 q70,-24 130,0 q40,-12 80,-4 V150 H0z" fill="#9CCC65" opacity=".55"/><rect x="0" y="70" width="120" height="80" fill="#B0BEC5"/><path d="M0,70 l20,-14 v14 l20,-14 v14 l20,-14 v14 l20,-14 v14" fill="#90A4AE"/><rect x="40" y="96" width="44" height="54" fill="#78909C"/>${T(60, 88, 'PROSIP', 11, '#37474F')}<rect y="148" width="320" height="52" fill="#9E9E9E"/><rect y="148" width="320" height="3" fill="#757575"/>${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${i * 60 + 10}" y="182" width="30" height="4" fill="#FFF59D" opacity=".8"/>`).join('')}`; };
-const truck = (x, y) => `<rect x="${x}" y="${y - 44}" width="122" height="8" fill="#546E7A" stroke="#37474F"/><rect x="${x}" y="${y - 36}" width="168" height="10" fill="#263238"/><path d="M${x + 126},${y - 26} v-62 h28 l16,28 v34 z" fill="#1565C0" stroke="#0D47A1" stroke-width="1.5"/><path d="M${x + 132},${y - 82} h20 l11,20 h-31z" fill="#B3E5FC"/>` + [x + 22, x + 96, x + 148].map(c => `<circle cx="${c}" cy="${y - 13}" r="13" fill="#263238"/><circle cx="${c}" cy="${y - 13}" r="5" fill="#B0BEC5"/>`).join('') + `<rect x="${x + 2}" y="${y - 7}" width="10" height="5" fill="#8D6E63" transform="rotate(-20 ${x + 6} ${y - 4})"/>`;
+const truck = (x, y) => RAMPLA_ABS(x, y, 44, 170, {});
 function tsaw(x, y, o = {}) { // sierra escuadradora/circular de banco (ancho 140)
   const ty = y - 50, cx = x + 70, k = uid('ts');
   let s = `<rect x="${x + 12}" y="${ty + 6}" width="7" height="${y - ty - 6}" fill="#546E7A"/><rect x="${x + 121}" y="${ty + 6}" width="7" height="${y - ty - 6}" fill="#546E7A"/><rect x="${x + 22}" y="${ty + 6}" width="96" height="26" rx="2" fill="#607D8B" stroke="#455A64"/>`;
@@ -1930,7 +1981,7 @@ const palStack = (x, y, w, n) => pal(x, y, w) + pstack(x + 2, y - 11, w - 4, n);
 const rack = (x, y, w = 110, h = 120) => { let g = `<rect x="${x}" y="${y - h}" width="6" height="${h}" fill="#1565C0"/><rect x="${x + w - 6}" y="${y - h}" width="6" height="${h}" fill="#1565C0"/>`;
   [h * .5, h - 4].forEach(lv => { g += `<rect x="${x}" y="${f1(y - lv)}" width="${w}" height="5" fill="#EF6C00"/>`; g += palStack(x + 8, y - lv, w - 16, 3); });
   g += palStack(x + 8, y, w - 16, 3); return g; };
-const truck = (x, y, load = true) => `<rect x="${x}" y="${y - 30}" width="150" height="10" fill="#455A64"/><path d="M${x + 150},${y - 20} v-44 h28 l14,22 v22z" fill="#1E88E5" stroke="#0D47A1" stroke-width="1.5"/><path d="M${x + 158},${y - 58} h16 l10,16 h-26z" fill="#B3E5FC"/>${load ? pal(x + 6, y - 30, 136) + pstack(x + 8, y - 41, 132, 3) : ''}${[x + 22, x + 50, x + 168].map(cx => `<circle cx="${cx}" cy="${y - 12}" r="12" fill="#263238"/><circle cx="${cx}" cy="${y - 12}" r="4.5" fill="#90A4AE"/>`).join('')}`;
+const truck = (x, y, load = true) => RAMPLA_ABS(x, y, 30, 192, { open: load, load: load ? pal(x + 6, y - 30, 136) + pstack(x + 8, y - 41, 132, 3) : '' });
 const sky = () => `<defs><linearGradient id="c3sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#90CAF9"/><stop offset="1" stop-color="#E3F2FD"/></linearGradient></defs><rect width="320" height="200" fill="url(#c3sky)"/><path d="M180,150 L245,62 L310,150Z" fill="#B0BEC5"/><path d="M231,81 L245,62 L259,81 l-7,4 l-7,-5 l-7,5z" fill="#fff"/><rect y="148" width="320" height="52" fill="#9CA79A"/><rect y="148" width="320" height="3" fill="#7C8A78"/>`;
 const flashDot = (x, y, r = 9, d = '') => `<g class="an-flash ${d}"><circle cx="${x}" cy="${y}" r="${r}" fill="#D7262B" stroke="#fff" stroke-width="2"/><text x="${x}" y="${y + r * .45}" font-size="${r * 1.3}" font-weight="bold" text-anchor="middle" fill="#fff" font-family="Arial">!</text></g>`;
 const boss = (x, y, o = {}) => W(x, y, Object.assign({ helmet: '#fff', shirt: '#455A64', vest: true }, o));
@@ -2321,7 +2372,7 @@ const stepl = (x, y, h) => { const a = h * .26; let g = `<line x1="${f1(x + a)}"
   g += `<line x1="${f1(x - a)}" y1="${y}" x2="${x - 3}" y2="${y - h}" stroke="#546E7A" stroke-width="6" stroke-linecap="round"/><line x1="${f1(x - a)}" y1="${y}" x2="${x - 3}" y2="${y - h}" stroke="#CFD8DC" stroke-width="3" stroke-linecap="round"/><rect x="${x - 9}" y="${y - h - 4}" width="18" height="5" rx="2" fill="#455A64"/><line x1="${f1(x - a * .5)}" y1="${f1(y - h * .45)}" x2="${f1(x + a * .5)}" y2="${f1(y - h * .45)}" stroke="#455A64" stroke-width="1.5"/>`;
   return g; };
 // camión con plataforma alta (y = suelo; plataforma en y-50)
-const truck4 = (x, y, flip = false, load = true) => { let g = `<rect x="${x}" y="${y - 40}" width="170" height="10" fill="#455A64"/><rect x="${x}" y="${y - 50}" width="170" height="10" fill="#8D6E63" stroke="#5D4037"/>` + (load ? pal(x + 70, y - 50, 90) + pstack(x + 72, y - 61, 86, 3) : '') + `<path d="M${x + 172},${y - 30} v-58 h30 l16,26 v32z" fill="#1E88E5" stroke="#0D47A1" stroke-width="1.5"/><path d="M${x + 180},${y - 82} h18 l11,18 h-29z" fill="#B3E5FC"/>` + [x + 25, x + 55, x + 196].map(cx => `<circle cx="${cx}" cy="${y - 13}" r="13" fill="#263238"/><circle cx="${cx}" cy="${y - 13}" r="5" fill="#90A4AE"/>`).join('');
+const truck4 = (x, y, flip = false, load = true) => { const g = RAMPLA_ABS(x, y, 50, 218, { open: load, load: load ? pal(x + 70, y - 50, 90) + pstack(x + 72, y - 61, 86, 3) : '' });
   return flip ? `<g transform="translate(${2 * x + 218},0) scale(-1,1)">${g}</g>` : g; };
 // sierra con disco que gira
 const blade = (cx, cy, r) => { let p = ''; for (let i = 0; i < 18; i++) { const a = i / 18 * 2 * Math.PI, a2 = (i + .5) / 18 * 2 * Math.PI; p += `${f1(cx + r * .84 * Math.cos(a))},${f1(cy + r * .84 * Math.sin(a))} ${f1(cx + r * Math.cos(a2))},${f1(cy + r * Math.sin(a2))} `; }
@@ -2788,30 +2839,10 @@ const boxesLoad = (x, w) => pal(x, -47, w) + cbox(x + 2, -58, (w - 6) / 3, 20, '
 
 // ---------- camión lateral: cabina azul con franja roja ----------
 // x = extremo trasero, y = suelo, o.L largo plataforma, o.s escala, o.flip, o.load (svg en coord. locales), o.driver, o.rev, o.brake, o.squash
+let CERR = false;
 const truck = (x, y, o = {}) => {
-  const L = o.L || 150, s = o.s || 1, T = L + 58, c = L + 4;
-  let g = `<ellipse cx="${T / 2}" cy="1" rx="${T / 2 + 4}" ry="4" fill="#000" opacity=".2"/>`;
-  g += `<rect x="0" y="-34" width="${L + 50}" height="9" fill="#37474F"/>`;
-  if (o.head !== false) g += `<rect x="${L - 7}" y="-94" width="7" height="48" fill="#90A4AE" stroke="#455A64"/>${[0, 1, 2, 3].map(i => `<line x1="${L - 7}" y1="${-84 + i * 10}" x2="${L}" y2="${-84 + i * 10}" stroke="#455A64" stroke-width="1.5"/>`).join('')}`;
-  g += `<rect x="0" y="-46" width="${L}" height="12" fill="#B0BEC5" stroke="#78909C"/><rect x="0" y="-48" width="${L}" height="4" fill="#8D6E63"/>`;
-  for (let i = 0; i * 14 < L - 6; i++) g += `<rect x="${4 + i * 14}" y="-40" width="7" height="3" fill="${i % 2 ? '#fff' : RO}"/>`;
-  if (o.load) g += o.load;
-  g += `<path d="M${c},-28 V-100 H${c + 34} L${c + 52},-66 V-28z" fill="${AZ}" stroke="#00246B" stroke-width="1.5"/>`
-    + `<path d="M${c + 21},-94 H${c + 32} L${c + 45},-68 H${c + 21}z" fill="#B3E5FC" stroke="#00246B"/><path d="M${c + 23},-92 l6,0 l-6,12z" fill="#fff" opacity=".6"/>`
-    + `<rect x="${c}" y="-62" width="52" height="2.5" fill="#fff"/><rect x="${c}" y="-59.5" width="52" height="8" fill="${RO}"/>`
-    + `<path d="M${c + 18},-96 V-30" stroke="#00246B" stroke-width="1"/><rect x="${c + 26}" y="-48" width="9" height="3" rx="1" fill="#CFD8DC"/>`
-    + `<line x1="${c + 3}" y1="-90" x2="${c + 3}" y2="-64" stroke="#CFD8DC" stroke-width="3" stroke-linecap="round"/>`
-    + `<rect x="${c + 6}" y="-30" width="16" height="4" fill="#263238"/><rect x="${c + 6}" y="-20" width="16" height="3.5" fill="#263238"/><line x1="${c + 8}" y1="-26" x2="${c + 8}" y2="-17" stroke="#263238" stroke-width="2"/>`
-    + `<path d="M${c + 44},-80 l10,-4" stroke="#263238" stroke-width="2"/><rect x="${c + 53}" y="-94" width="5" height="16" rx="1.5" fill="#263238"/>`
-    + `<rect x="${c + 46}" y="-44" width="6" height="8" rx="1" fill="#FFF59D" stroke="#F9A825"/><rect x="${c + 38}" y="-32" width="18" height="7" rx="1.5" fill="#263238"/>`
-    + `<rect x="-3" y="-45" width="4" height="9" fill="${o.brake ? '#FF1744' : '#C62828'}"/>`;
-  if (o.driver) g += `<circle cx="${c + 30}" cy="-80" r="6.5" fill="${SK}" stroke="#22303A"/><path d="M${c + 23.5},-82 a6.5,6.5 0 0 1 13,0z" fill="#4E342E"/>`;
-  if (o.brake) g += `<g class="an-flash"><circle cx="-1" cy="-40" r="9" fill="#FF1744" opacity=".45"/></g>`;
-  if (o.rev) g += `<rect x="-3" y="-34" width="4" height="5" fill="#fff"/><g class="an-flash">${[1, 2, 3].map(i => `<path d="M${-6 - i * 7},${-52 - i * 4} a${i * 8},${i * 8} 0 0 0 0,${16 + i * 8}" stroke="${AM}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`).join('')}</g>`;
-  [26, 54, c + 32].forEach(cx => {
-    g += o.squash ? `<ellipse cx="${cx}" cy="-11" rx="15" ry="11" fill="#263238"/><circle cx="${cx}" cy="-11" r="5" fill="#B0BEC5"/>`
-      : `<circle cx="${cx}" cy="-13" r="13" fill="#263238"/><circle cx="${cx}" cy="-13" r="6" fill="#B0BEC5"/><circle cx="${cx}" cy="-13" r="2" fill="#455A64"/>`;
-  });
+  const L = o.L || 150, s = o.s || 1, T = L + 58;
+  const g = RAMPLA(L, Object.assign({}, o, { open: !!o.load && !o.closed && !CERR }));
   return `<g transform="translate(${x},${y}) scale(${o.flip ? -s : s},${s})${o.flip ? ` translate(${-T},0)` : ''}">${g}</g>`;
 };
 // persona vista desde arriba
@@ -3023,7 +3054,7 @@ nuevoTema({ id: 'camion_conduccion', title: 'Conducción segura de camiones', th
     { s: 'camion_conduccion_fatiga', t: 'Fatiga y sueño', x: 'El sueño al volante es traicionero: <b>cierras los ojos un segundo y el camión sigue avanzando</b>. Señales: bostezos, pestañeo seguido, no recordar los últimos kilómetros.<ul><li>Duerme bien antes de tu turno.</li><li>Respeta los descansos.</li><li>Si tienes sueño, <b>detente en un lugar seguro</b>.</li><li>Avisa si un medicamento te da sueño.</li></ul>', k: 'Si tienes sueño, detente en un lugar seguro.' },
     { s: 'camion_conduccion_cabina', t: 'Cinturón y celular', x: '<ul><li><b>Cinturón de seguridad</b> siempre, para ti y para tu <b>ayudante</b>, aunque el viaje sea corto.</li><li>El <b>celular</b> distrae: tus ojos y tu mente se van al teléfono y no al camino. Usarlo al conducir está <b>prohibido por la Ley de Tránsito</b>: ni llamar con la mano, ni chatear.</li><li>Si necesitas llamar o revisar una dirección, <b>detente en un lugar seguro</b>.</li></ul>', k: 'Cinturón puesto y celular guardado mientras conduces.' },
     { s: 'camion_conduccion_alcohol', t: 'Cero alcohol y cero drogas', x: 'La Ley 20.580 ("Tolerancia Cero") establece:<ul><li>desde <b>0,3 g/l</b>: <b>bajo la influencia</b> del alcohol;</li><li>desde <b>0,8 g/l</b>: <b>estado de ebriedad</b>.</li></ul>En el trabajo, la regla es <b>cero alcohol y cero drogas</b>. El alcohol de la noche anterior puede seguir en tu sangre. Si alguien llega bajo los efectos del alcohol, <b>no conduce</b>: se avisa a la jefatura.', k: 'Al trabajar: cero alcohol y cero drogas.' },
-    { s: 'camion_conduccion_obra', t: 'Al llegar a la obra', x: 'Antes de entrar, <b>mira el lugar</b>:<ul><li><b>Cables eléctricos</b> aéreos: la carga o la pluma del camión no deben acercarse.</li><li><b>Terreno blando</b>, zanjas o rellenos que pueden ceder.</li><li><b>Pendientes</b>: no descargues en desnivel.</li><li>Personas y niños alrededor.</li></ul>Si no es seguro, <b>no entres</b>: busca otro punto y coordina con el cliente.', k: 'Si el acceso no es seguro, no entres: coordina otro punto.' },
+    { s: 'camion_conduccion_obra', t: 'Al llegar a la obra', x: 'Antes de entrar, <b>mira el lugar</b>:<ul><li><b>Cables eléctricos</b> aéreos: el techo de la rampla no debe acercarse a ellos.</li><li><b>Terreno blando</b>, zanjas o rellenos que pueden ceder.</li><li><b>Pendientes</b>: no descargues en desnivel.</li><li>Personas y niños alrededor.</li></ul>Si no es seguro, <b>no entres</b>: busca otro punto y coordina con el cliente.', k: 'Si el acceso no es seguro, no entres: coordina otro punto.' },
     { s: 'camion_conduccion_auto', t: 'Autocuidado al volante', x: 'La mayoría de los accidentes se relacionan con <b>acciones inseguras</b>. En el camión, la típica es <b>el apuro</b>: retroceder sin mirar, saltarse la revisión, contestar el celular. La decisión segura: <b>revisar, mirar y, si dudas, bajarte a ver</b>. Avisa también las condiciones inseguras: frenos raros, un espejo roto, un acceso peligroso.', k: 'El apuro no vale un accidente: si dudas, bájate y mira.' }
   ],
   quiz: [
@@ -3114,6 +3145,7 @@ nuevoTema({ id: 'camion_carga', title: 'Carga y descarga del camión', thumb: 'c
     'DS 594/1999 MINSAL, art. 8: pasillos y vías de circulación; arts. 36 y 37: condiciones seguras; art. 53: EPP sin costo y adiestramiento.',
     'Ley 16.744, art. 68: medidas de prevención y EPP sin costo a cargo del empleador.',
     'DS 44/2023 MINTRAB, art. 15: informar los riesgos laborales; art. 16: capacitación en seguridad y salud en el trabajo.'] });
+Object.keys(S).filter(k => /^camion_conduccion_/.test(k)).forEach(k => { const f = S[k]; S[k] = function () { CERR = true; try { return f.apply(this, arguments); } finally { CERR = false; } }; });   // en ruta: cortina cerrada
 })();
 // cc2: Constructor Center — operador de grúa horquilla (sec: 'grua')
 //   horquilla (reescrito para el operador), horquilla_patio (nuevo), horquilla_checklist (nuevo)
@@ -3483,12 +3515,7 @@ const rackCC = (x, y, w, h, lv, fills = [], o = {}) => { const st = h / lv; let 
     g += o.sag === i ? `<path d="M${x},${f1(Y)} Q${x + w / 2},${f1(Y + 16)} ${x + w},${f1(Y)} v5 Q${x + w / 2},${f1(Y + 21)} ${x},${f1(Y + 5)}z" fill="#EF6C00" stroke="${RO}" stroke-width="1.5"/>` : `<rect x="${x}" y="${f1(Y)}" width="${w}" height="5" fill="#EF6C00" stroke="#BF5300" stroke-width=".6"/>`; }
   fills.forEach((fn, i) => { if (fn) g += fn(x + 8, y - i * st, w - 16); });
   return g; };
-const truckCC = (x, y, o = {}) => { let g = `<rect x="${x}" y="${y - 50}" width="140" height="8" fill="#90A4AE" stroke="#455A64"/><rect x="${x + 2}" y="${y - 42}" width="190" height="10" fill="#263238"/>`
-  + `<path d="M${x + 142},${y - 26} v-64 q0,-4 4,-4 h26 l18,30 v38 z" fill="${AZ}" stroke="#002A7A" stroke-width="1.5"/><path d="M${x + 150},${y - 85} h20 l13,22 h-33z" fill="#B3E5FC" stroke="#002A7A"/>`
-  + `<rect x="${x + 142}" y="${y - 52}" width="48" height="6" fill="${RO}"/><rect x="${x + 142}" y="${y - 45}" width="48" height="2" fill="#fff"/><rect x="${x + 186}" y="${y - 34}" width="8" height="8" fill="#455A64"/><circle cx="${x + 189}" cy="${y - 40}" r="2.6" fill="${AM}"/><rect x="${x - 2}" y="${y - 49}" width="4" height="7" fill="${RO}"/>`
-  + `<rect x="${x + 192}" y="${y - 76}" width="4" height="10" fill="#263238"/>`
-  + [x + 26, x + 56, x + 166].map(c => `<circle cx="${c}" cy="${y - 13}" r="13" fill="#263238"/><circle cx="${c}" cy="${y - 13}" r="5" fill="#B0BEC5"/>`).join('');
-  if (o.load) g += o.load(x, y - 50);
+const truckCC = (x, y, o = {}) => { const g = RAMPLA_ABS(x, y, 50, 196, { open: !!o.load, load: o.load ? o.load(x, y - 50) : '', driver: o.driver });
   return o.flip ? `<g transform="translate(${2 * x + 196},0) scale(-1,1)">${g}</g>` : g; };
 const pickup = (x, y, c = '#C62828') => `<path d="M${x},${y - 12} v-18 h46 l12,-16 h26 l10,16 h6 v18z" fill="${c}" stroke="#263238" stroke-width="1.2"/><path d="M${x + 60},${y - 44} h22 l8,13 h-38z" fill="#B3E5FC"/><rect x="${x + 96}" y="${y - 26}" width="5" height="4" fill="${AM}"/>` + [x + 20, x + 80].map(c2 => `<circle cx="${c2}" cy="${y - 10}" r="10" fill="#263238"/><circle cx="${c2}" cy="${y - 10}" r="4" fill="#B0BEC5"/>`).join('');
 const gondola = (x, y, w, h, fills) => { const st = (h - 8) / 4; let g = `<rect x="${x}" y="${y - h - 14}" width="${w}" height="14" fill="${AZ}"/><rect x="${x}" y="${y - h - 3}" width="${w}" height="3" fill="${RO}"/><rect x="${x}" y="${y - h}" width="${w}" height="${h}" fill="#F5F7FA" stroke="#B0BEC5"/><rect x="${x - 2}" y="${y - 8}" width="${w + 4}" height="8" fill="#90A4AE"/>`;
@@ -4461,17 +4488,13 @@ const bottle = (x, y, s = 1) => `<path d="M${x + 3 * s},${y} v${-22 * s} q0,${-6
 const glass = (x, y, s = 1) => `<path d="M${x},${y - 26 * s} h${16 * s} l${-2 * s},${26 * s} h${-12 * s}z" fill="#FFB300" stroke="#8D6E63" stroke-width="${s}"/><rect x="${x}" y="${y - 30 * s}" width="${16 * s}" height="${6 * s}" rx="${3 * s}" fill="#fff"/>`;
 // camión de despacho (cabina a la derecha). o: load 'sacos'|'fierro'|'planchas'|false, straps, rev (luces de retroceso)
 function truck(x, y, o = {}) {
-  let g = `<rect x="${x}" y="${y - 30}" width="140" height="10" fill="#455A64"/><rect x="${x}" y="${y - 34}" width="140" height="5" fill="#90A4AE" stroke="#607D8B" stroke-width=".6"/>`;
-  g += `<path d="M${x + 140},${y - 20} v-58 h30 l16,26 v32z" fill="${AZ}" stroke="#001F5C" stroke-width="1.5"/><rect x="${x + 140}" y="${y - 44}" width="46" height="5" fill="${RJ}"/><path d="M${x + 147},${y - 72} h20 l12,20 h-32z" fill="#B3E5FC" stroke="#001F5C"/><rect x="${x + 180}" y="${y - 32}" width="7" height="6" fill="#FFF59D"/>`;
+  let g = '';
   const L = o.load === undefined ? 'sacos' : o.load;
   if (L === 'sacos') g += pal(x + 8, y - 34, 56) + sacos(x + 10, y - 45, 54, 3) + pal(x + 72, y - 34, 56) + sacos(x + 74, y - 45, 54, 3);
   if (L === 'fierro') g += `<rect x="${x + 10}" y="${y - 40}" width="6" height="6" fill="#5D4037"/><rect x="${x + 116}" y="${y - 40}" width="6" height="6" fill="#5D4037"/>` + fierro(x - 6, y - 41, 150, 5);
   if (L === 'planchas') g += osb(x + 6, y - 34, 128, 6);
   if (o.straps) [x + 30, x + 100].forEach(sx => { g += `<line x1="${sx}" y1="${y - 64}" x2="${sx}" y2="${y - 24}" stroke="${AM}" stroke-width="3"/>`; });
-  g += [x + 22, x + 52, x + 160].map(cx => `<circle cx="${cx}" cy="${y - 11}" r="11" fill="#263238"/><circle cx="${cx}" cy="${y - 11}" r="4.5" fill="#B0BEC5"/>`).join('');
-  g += `<rect x="${x - 3}" y="${y - 30}" width="5" height="9" fill="#B71C1C"/>`;
-  if (o.rev) g += G('an-blink', `<rect x="${x - 4}" y="${y - 29}" width="6" height="6" fill="#FFF59D" stroke="#F57F17"/><path d="M${x - 10},${y - 34} a10,10 0 0 0 0,16 M${x - 17},${y - 38} a16,16 0 0 0 0,24" stroke="#FF6F00" stroke-width="2.5" fill="none" stroke-linecap="round"/>`);
-  return g;
+  return RAMPLA_ABS(x, y, 34, 186, { open: !!g, load: g, rev: o.rev });
 }
 const camioneta = (x, y, c = '#C62828') => `<path d="M${x},${y - 14} v-16 h58 v-14 h30 l14,14 h6 v16z" fill="${c}" stroke="#4E1010" stroke-width="1.2"/><path d="M${x + 62},${y - 42} h24 l10,12 h-34z" fill="#B3E5FC"/>${[x + 20, x + 92].map(cx => `<circle cx="${cx}" cy="${y - 10}" r="10" fill="#263238"/><circle cx="${cx}" cy="${y - 10}" r="4" fill="#B0BEC5"/>`).join('')}`;
 const casco = (x, y, r = 14, c = AM) => `<path d="M${x - r},${y} A${r},${r * 1.02} 0 0 1 ${x + r},${y} Z" fill="${c}" stroke="${OL}" stroke-width="1.2"/><rect x="${x - r * 1.2}" y="${y - 2}" width="${r * 2.4}" height="4" rx="2" fill="${c}" stroke="${OL}"/>`;
@@ -4592,10 +4615,7 @@ Object.assign(S, {
   c5pe_jer: () => { const B = [['ELIMINAR', '#1B5E20', '#fff'], ['SUSTITUIR', '#43A047', '#fff'], ['INGENIERÍA', AM, '#263238'], ['ADMINISTRATIVOS', '#FB8C00', '#fff'], ['EPP', RJ, '#fff']]; let g = plain('#E8F5E9', '#FFFFFF');
     B.forEach(([t, c, tc], i) => { const y = 34 + i * 31, w1 = 262 - i * 42, w2 = 262 - (i + 1) * 42 + 4, cx = 190; g += `<path d="M${cx - w1 / 2},${y} h${w1} l${-(w1 - w2) / 2},28 h${-w2} z" fill="${c}"/>` + txt(cx, y + 19, t, i === 3 ? 11 : 12, tc); });
     return sv(g + G('an-pulse', arrow(34, 170, 34, 40, VD, 6)) + T(34, 30, 'Más', 11, VD) + T(34, 186, 'Menos', 11, RJ) + T(190, 196, 'El EPP es la última barrera', 11, '#455A64')); },
-  c5pe_eslinga: () => sv(patio({ building: false }) + truck(-60, 176, { load: false }) + `<rect x="72" y="66" width="9" height="82" fill="${AM}" stroke="#C79200"/>` + `<line x1="76" y1="70" x2="232" y2="36" stroke="${AM}" stroke-width="8" stroke-linecap="round"/><line x1="76" y1="70" x2="232" y2="36" stroke="#C79200" stroke-width="1.5" stroke-dasharray="6 6"/>` +
-    `<ellipse cx="232" cy="186" rx="64" ry="9" fill="${RJ}" opacity=".25" stroke="${RJ}" stroke-dasharray="6 4"/>` +
-    swingG(232, 36, `<line x1="232" y1="36" x2="232" y2="94" stroke="#263238" stroke-width="2"/><path d="M228,94 h8 v6 q0,6 -6,6" stroke="#263238" stroke-width="3" fill="none"/><path d="M232,100 L204,128 M232,100 L262,128" stroke="#43A047" stroke-width="4"/>` + fierro(186, 132, 96, 5) + G('an-flash', `<path d="M198,120 l8,4 l-6,4 l8,4" stroke="${RJ}" stroke-width="3" fill="none"/>`), 4) +
-    pill(176, 160, 'Canto vivo', RJ, 11) + P(296, 196, { r: 'patio', pose: 'stop', flip: true }) + bub(170, 50, '¡Nadie bajo la carga!', 136, 'r') + pill(80, 30, 'Protege los cantos', VD, 11)),
+  c5pe_eslinga: () => S.camion_estiba_canto_ok(),   // cinta de amarre en la rampla (sin camión pluma)
   c5pe_irl: () => sv(bodega() + G('an-bob', `<rect x="34" y="62" width="74" height="96" rx="4" fill="#fff" stroke="#90A4AE" stroke-width="2"/><rect x="34" y="62" width="74" height="20" rx="4" fill="${AZ}"/>` + txt(71, 77, 'IRL', 13, '#fff') + [0, 1, 2, 3, 4].map(i => `<rect x="42" y="${92 + i * 12}" width="${54 - (i % 2) * 14}" height="4" fill="#B0BEC5"/><circle cx="${100}" cy="${94 + i * 12}" r="3" fill="${[RJ, AM, VD, RJ, AM][i]}"/>`).join('')) +
     P(170, 174, { r: 'bod', pose: 'point', flip: true }) + bub(84, 30, '¿Qué riesgos tiene y cómo me protejo?', 232, 'r')),
   c5pe_ignora: () => sv(sala() + P(150, 178, { r: 'vend', pose: 'walk' }) + `<rect x="161" y="134" width="8" height="13" rx="2" fill="#263238"/>` + spillC(244, 184, '#29B6F6', 36) + lata(270, 176, '#29B6F6') + flash(244, 160, 9)),
@@ -4612,7 +4632,7 @@ mejorar('peligros', { sec: 'todos', thumb: 'c5pe_vs',
     { s: 'c5pe_miper', t: 'La matriz MIPER', x: 'La <b>Matriz de Identificación de Peligros y Evaluación de Riesgos</b> ordena cada tarea con sus peligros, sus riesgos y las medidas de control. Por ejemplo: "mover sacos" tiene el peligro del peso, el riesgo de un lumbago y el control de usar la transpaleta. <b>La empresa debe identificar los peligros, evaluar los riesgos e informártelos.</b>', k: 'Cada tarea: peligro, riesgo y su medida de control.' },
     { s: 'c5pe_eval', t: '¿Cómo se evalúa un riesgo?', x: 'Se hacen dos preguntas: <b>¿qué tan seguido puede pasar?</b> (probabilidad) y <b>¿qué tan grave sería?</b> (consecuencia). Que caiga una carga desde lo alto del rack quizás no es frecuente, pero puede ser mortal: por eso se controla con prioridad.', k: 'Probabilidad por gravedad: así se ordenan las prioridades.' },
     { s: 'c5pe_jer', t: 'Jerarquía de controles', x: 'De más a menos efectivo:<ul><li><b>Eliminar</b> el peligro: retirar de uso un pallet roto.</li><li><b>Sustituir</b> por algo menos peligroso.</li><li><b>Ingeniería:</b> barandas, topes, separación física de peatones.</li><li><b>Administrativos:</b> procedimientos, demarcación, señalización, capacitación.</li><li><b>EPP:</b> la última barrera.</li></ul>', k: 'Lo mejor es eliminar el peligro; el EPP es lo último.' },
-    { s: 'c5pe_eslinga', t: 'Ejemplo: la eslinga y el canto vivo', x: 'Una eslinga puede cortarse con el <b>canto vivo</b> de la carga. El peligro: el filo del fierro, el zinc o los perfiles. El riesgo: que la eslinga se corte y la carga caiga. Controles:<ul><li><b>Proteger los cantos</b> (cantoneras).</li><li><b>Revisar la eslinga</b> antes de usarla.</li><li><b>Nadie bajo la carga</b> suspendida.</li></ul>', k: 'Canto protegido, eslinga revisada y nadie bajo la carga.' },
+    { s: 'c5pe_eslinga', t: 'Ejemplo: la cinta de amarre y el canto vivo', x: 'Una cinta de amarre puede cortarse con el <b>canto vivo</b> de la carga. El peligro: el filo del fierro, el zinc o los perfiles. El riesgo: que la cinta se corte y la carga caiga del camión. Controles:<ul><li><b>Proteger los cantos</b> (cantoneras).</li><li><b>Revisar la cinta</b> antes de usarla.</li><li><b>Nadie al lado de la carga</b> mientras se tensa o se suelta.</li></ul>', k: 'Canto protegido, cinta revisada y bien tensada.' },
     { s: 'c5pe_irl', t: 'Tu derecho a saber', x: 'El DS 44, art. 15, obliga a la empresa a <b>informarte los riesgos</b> de tu trabajo, las medidas preventivas y los métodos de trabajo correctos (IRL). Si cambias de cargo, de sucursal o llega un equipo nuevo, pregunta: <b>¿qué riesgos tiene y cómo me protejo?</b>', k: 'Tienes derecho a conocer los riesgos de tu puesto.' },
     { s: 'c5pe_auto', t: 'Autocuidado: no te acostumbres al peligro', x: 'La acción insegura típica es <b>acostumbrarse</b>: pasar bajo la carga "porque siempre pasa", bajar mercadería pesada sin escala o ignorar una viga golpeada. La mayoría de los accidentes se relacionan con una acción insegura. La decisión segura: <b>detente, mira y avisa</b> a tu jefatura, al Comité Paritario (si lo hay) o al asesor en prevención.', k: 'Tú decides: detente, mira y avisa.' }
   ],
@@ -4622,7 +4642,7 @@ mejorar('peligros', { sec: 'todos', thumb: 'c5pe_vs',
     { q: '¿Cuál es la medida de control más efectiva?', s: 'c5pe_jer', o: ['Eliminar el peligro', 'Usar EPP', 'Poner un letrero'], a: 0, w: 'Eliminar está en la cima de la jerarquía de controles.' },
     { q: 'El EPP es la primera medida que se debe aplicar.', s: 'c5pe_jer', vf: false, w: 'Falso. Es la última barrera, después de los demás controles.' },
     { q: 'Instalar una baranda que separe el paso peatonal de la zona de grúas es un control:', s: 'c5pe_patio', o: ['De ingeniería', 'De EPP', 'Que no sirve'], a: 0, w: 'Las barreras físicas, como barandas y topes, son controles de ingeniería.' },
-    { q: '¿Qué ayuda a evitar que una eslinga se corte con el canto vivo del fierro?', s: 'c5pe_eslinga', o: ['Proteger el canto y revisar la eslinga antes de usarla', 'Levantar más rápido', 'Usar la eslinga más vieja'], a: 0, w: 'Las cantoneras protegen la eslinga, y revisarla permite sacar de uso la que está dañada.' },
+    { q: '¿Qué ayuda a evitar que una cinta de amarre se corte con el canto vivo del fierro?', s: 'c5pe_eslinga', o: ['Proteger el canto y revisar la cinta antes de usarla', 'Tensarla más fuerte', 'Usar la cinta más vieja'], a: 0, w: 'Las cantoneras protegen la cinta, y revisarla permite sacar de uso la que está dañada.' },
     { q: 'Puedo pasar bajo una carga suspendida si lo hago rápido.', s: 'c5pe_auto', vf: false, w: 'Falso. Nadie pasa ni se queda bajo una carga suspendida, ni por un segundo.' },
     { q: 'La empresa debe informarte los riesgos de tu puesto y cómo protegerte.', s: 'c5pe_irl', vf: true, w: 'Verdadero. Es tu derecho a saber (DS 44, art. 15).' },
     { q: '¿Cuál vendedor actúa correctamente?', pick: ['c5pe_ignora', 'c5pe_avisa'], a: 1, w: 'Señalizar y avisar el derrame evita que un cliente o un compañero resbale.' },
@@ -4938,11 +4958,8 @@ const gasc = (x, y, s = 1, c = '#F57C00') => `<rect x="${x}" y="${f1(y - 44 * s)
 const meson = (x, y, w = 120) => `<rect x="${x}" y="${y - 50}" width="${w}" height="7" rx="2" fill="#ECEFF1" stroke="#90A4AE"/><rect x="${x + 3}" y="${y - 43}" width="${w - 6}" height="43" fill="${AZ}"/><rect x="${x + 3}" y="${y - 30}" width="${w - 6}" height="5" fill="${RO}"/>`;
 const caja = (x, y) => `<rect x="${x}" y="${y - 14}" width="28" height="14" rx="2" fill="#37474F"/><rect x="${x + 5}" y="${y - 30}" width="18" height="15" rx="1" fill="#263238"/><rect x="${x + 7}" y="${y - 28}" width="14" height="10" fill="#81D4FA"/>`;
 const truckCC = (x, y, o = {}) => {
-  let g = `<rect x="${x}" y="${y - 30}" width="186" height="8" fill="#37474F"/><rect x="${x}" y="${y - 42}" width="140" height="12" fill="#8D6E63" stroke="#5D4037"/>`;
-  if (o.load !== false) g += osb(x + 6, y - 42, 60, 5) + fierro(x + 72, y - 42, 62) + saco(x + 74, y - 57, 30, 13) + saco(x + 104, y - 57, 30, 13);
-  g += `<path d="M${x + 142},${y - 30} v-56 h28 l16,24 v32 z" fill="${AZ}" stroke="#002A7A" stroke-width="1.5"/><path d="M${x + 150},${y - 80} h18 l11,17 h-29z" fill="#B3E5FC"/><rect x="${x + 142}" y="${y - 50}" width="44" height="6" fill="${RO}"/><rect x="${x + 182}" y="${y - 40}" width="6" height="8" rx="2" fill="#FFF59D"/>`;
-  if (o.driver) g += `<circle cx="${x + 160}" cy="${y - 69}" r="6.5" fill="${SK}" stroke="#22303A"/>` + (o.arm ? `<rect x="${x + 150}" y="${y - 66}" width="22" height="6" rx="3" fill="${SK}" stroke="#22303A" stroke-width=".8"/><rect x="${x + 150}" y="${y - 66}" width="8" height="6" rx="2" fill="${AZ}"/>` : '');
-  g += [x + 24, x + 52, x + 164].map(cx => `<circle cx="${cx}" cy="${y - 12}" r="12" fill="#263238"/><circle cx="${cx}" cy="${y - 12}" r="4.5" fill="#90A4AE"/>`).join('');
+  const load = o.load !== false ? osb(x + 6, y - 42, 60, 5) + fierro(x + 72, y - 42, 62) + saco(x + 74, y - 57, 30, 13) + saco(x + 104, y - 57, 30, 13) : '';
+  const g = RAMPLA_ABS(x, y, 42, 188, { open: o.load === true, load, driver: o.driver });
   return o.flip ? `<g transform="translate(${2 * x + 188},0) scale(-1,1)">${g}</g>` : g; };
 const pickup = (x, y, c = '#9E9E9E') => `<rect x="${x}" y="${y - 34}" width="62" height="20" rx="3" fill="${c}" stroke="#616161"/><path d="M${x + 60},${y - 14} V${y - 48} h30 l18,18 v16 z" fill="${c}" stroke="#616161"/><path d="M${x + 66},${y - 44} h22 l13,14 h-35z" fill="#B3E5FC"/><circle cx="${x + 80}" cy="${y - 36}" r="5.5" fill="${SK}" stroke="#22303A"/><rect x="${x + 104}" y="${y - 26}" width="6" height="6" fill="#FFF59D"/>` + [x + 20, x + 90].map(cx => `<circle cx="${cx}" cy="${y - 11}" r="11" fill="#263238"/><circle cx="${cx}" cy="${y - 11}" r="4" fill="#90A4AE"/>`).join('');
 
