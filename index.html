@@ -5746,21 +5746,21 @@ function registroCanvas(D) {
   const t = D.topic, nm = NORMAS[t.id] || { obj:'', n:[] }, TM = textoModalidad(D);
   c.fillStyle = '#fff'; c.fillRect(0, 0, W, H * 2);
   // encabezado
-  c.fillStyle = '#1F2328'; c.fillRect(0, 0, W, 210);
-  c.fillStyle = '#FFC20E'; c.fillRect(0, 210, W, 10);
-  c.fillStyle = '#FFC20E'; c.font = `bold 26px ${sans}`; c.textAlign = 'left'; c.fillText('CONSTRUCTOR CENTER  ·  PROGRAMA DE CAPACITACIÓN EN SEGURIDAD ' + D.year, L, 72);
+  c.fillStyle = '#0039A6'; c.fillRect(0, 0, W, 210);
+  c.fillStyle = '#DC281D'; c.fillRect(0, 210, W, 10);
+  c.fillStyle = '#FFFFFF'; c.font = `bold 26px ${sans}`; c.textAlign = 'left'; c.fillText('CONSTRUCTOR CENTER  ·  PROGRAMA DE CAPACITACIÓN EN SEGURIDAD ' + D.year, L, 72);
   c.fillStyle = '#fff'; c.font = `bold 60px ${sans}`; c.fillText(D.titulo, L, 140);
-  c.fillStyle = '#C9CDD2'; c.font = `24px ${sans}`; c.fillText('Evidencia de actividad formativa en seguridad y salud en el trabajo (Ley 16.744 · DS 44/2023)', L, 182);
-  c.textAlign = 'right'; c.fillStyle = '#FFC20E'; c.font = `bold 26px "Courier New", monospace`; c.fillText(D.code, R, 72); c.textAlign = 'left';
+  c.fillStyle = '#D6E1F5'; c.font = `24px ${sans}`; c.fillText('Evidencia de actividad formativa en seguridad y salud en el trabajo (Ley 16.744 · DS 44/2023)', L, 182);
+  c.textAlign = 'right'; c.fillStyle = '#FFFFFF'; c.font = `bold 26px "Courier New", monospace`; c.fillText(D.code, R, 72); c.textAlign = 'left';
   let y = 270, pg = 0;
   const finPag = () => (pg + 1) * H - 130;
   const brk = need => { if (y + need <= finPag()) return; pg++; const top = pg * H;
-    c.fillStyle = '#1F2328'; c.fillRect(0, top, W, 80); c.fillStyle = '#FFC20E'; c.fillRect(0, top + 80, W, 6);
+    c.fillStyle = '#0039A6'; c.fillRect(0, top, W, 80); c.fillStyle = '#DC281D'; c.fillRect(0, top + 80, W, 6);
     c.fillStyle = '#fff'; c.font = `bold 26px ${sans}`; c.textAlign = 'left'; c.fillText(D.titulo + ' (continuación) · ' + t.title, L, top + 50);
-    c.textAlign = 'right'; c.fillStyle = '#FFC20E'; c.font = `bold 24px "Courier New", monospace`; c.fillText(D.code, R, top + 50); c.textAlign = 'left';
+    c.textAlign = 'right'; c.fillStyle = '#FFFFFF'; c.font = `bold 24px "Courier New", monospace`; c.fillText(D.code, R, top + 50); c.textAlign = 'left';
     y = top + 140; };
   const wrap = (txt, x, maxW, lh, font, color) => { c.font = font; c.fillStyle = color; const words = String(txt).split(' '); let line = ''; for (const w of words) { const test = line ? line + ' ' + w : w; if (c.measureText(test).width > maxW && line) { c.fillText(line, x, y); y += lh; line = w; } else line = test; } if (line) { c.fillText(line, x, y); y += lh; } };
-  const section = (num, title) => { brk(140); y += 10; c.fillStyle = '#FFC20E'; c.fillRect(L, y - 26, 7, 34); c.fillStyle = '#1F2328'; c.font = `bold 28px ${sans}`; c.fillText(num + '. ' + title, L + 20, y); y += 16; c.fillStyle = '#E5E7EB'; c.fillRect(L, y, Wt, 2); y += 32; };
+  const section = (num, title) => { brk(140); y += 10; c.fillStyle = '#DC281D'; c.fillRect(L, y - 26, 7, 34); c.fillStyle = '#14213D'; c.font = `bold 28px ${sans}`; c.fillText(num + '. ' + title, L + 20, y); y += 16; c.fillStyle = '#E5E7EB'; c.fillRect(L, y, Wt, 2); y += 32; };
   // 1. datos
   section(1, 'Identificación de la actividad');
   const rows = [
@@ -5772,13 +5772,13 @@ function registroCanvas(D) {
     ...(TM.modal === 'presencial' && !TM.conRelator ? [['Dirigida por', TM.dirige.nombre + (TM.dirige.cargo ? ' · ' + TM.dirige.cargo : '')]] : []),
     [TM.rolRelator, RELATOR.nombre + ' · ' + RELATOR.cargo + ' · ' + RELATOR.reg + ' · ' + RELATOR.emp]
   ];
-  rows.forEach(([k, v], i) => { if (i % 2 === 0) { c.fillStyle = '#F6F7F8'; c.fillRect(L, y - 27, Wt, 37); } c.fillStyle = '#5A5F66'; c.font = `bold 21px ${sans}`; c.fillText(k, L + 14, y); const yy = y; wrap(v, L + 360, Wt - 380, 27, `21px ${sans}`, '#1F2328'); y = Math.max(y, yy + 37); });
+  rows.forEach(([k, v], i) => { if (i % 2 === 0) { c.fillStyle = '#F6F7F8'; c.fillRect(L, y - 27, Wt, 37); } c.fillStyle = '#5A5F66'; c.font = `bold 21px ${sans}`; c.fillText(k, L + 14, y); const yy = y; wrap(v, L + 360, Wt - 380, 27, `21px ${sans}`, '#14213D'); y = Math.max(y, yy + 37); });
   // 2. objetivo
   section(2, 'Objetivo');
   wrap(nm.obj, L, Wt, 29, `22px ${sans}`, '#30363D');
   // 3. contenidos
   section(3, 'Contenidos tratados');
-  t.learn.forEach((l, i) => { brk(110 + Math.ceil(stripTags(l.x).length / 130) * 24); c.fillStyle = '#1565C0'; c.font = `bold 22px ${sans}`; c.fillText((i + 1) + '.', L, y); c.fillStyle = '#1F2328'; c.font = `bold 22px ${sans}`; c.fillText(l.t, L + 34, y); y += 27; wrap(stripTags(l.x), L + 34, Wt - 34, 24, `18px ${sans}`, '#30363D'); if (l.k) wrap('Idea clave: ' + l.k, L + 34, Wt - 34, 24, `italic 18px ${sans}`, '#8A6D00'); y += 6; });
+  t.learn.forEach((l, i) => { brk(110 + Math.ceil(stripTags(l.x).length / 130) * 24); c.fillStyle = '#1565C0'; c.font = `bold 22px ${sans}`; c.fillText((i + 1) + '.', L, y); c.fillStyle = '#14213D'; c.font = `bold 22px ${sans}`; c.fillText(l.t, L + 34, y); y += 27; wrap(stripTags(l.x), L + 34, Wt - 34, 24, `18px ${sans}`, '#30363D'); if (l.k) wrap('Idea clave: ' + l.k, L + 34, Wt - 34, 24, `italic 18px ${sans}`, '#8A6D00'); y += 6; });
   // 4. marco normativo
   section(4, 'Marco normativo aplicable');
   nm.n.concat(NORMA_GENERAL).forEach(n => { brk(60); c.fillStyle = '#2E7D32'; c.font = `bold 21px ${sans}`; c.fillText('§', L, y); wrap(n, L + 30, Wt - 30, 26, `19px ${sans}`, '#30363D'); y += 4; });
@@ -5786,7 +5786,7 @@ function registroCanvas(D) {
   section(5, 'Evaluación');
   const tot = D.tot;
   const ev = [['Resultado', 'APROBADO · Nota ' + fmtN(D.nota)], ['Logro', D.ok + ' de ' + tot + ' respuestas correctas (' + Math.round(D.ok / tot * 100) + '%)'], ['Intentos', String(D.attempts)], ['Criterio', 'Escala de 1,0 a 7,0 con exigencia de ' + Math.round(((t && t.exig) || 0.6) * 100) + '% (nota 4,0). Evaluación formativa: puede repetirse.']];
-  ev.forEach(([k, v]) => { brk(40); c.fillStyle = '#5A5F66'; c.font = `bold 21px ${sans}`; c.fillText(k, L + 14, y); const yy = y; wrap(v, L + 360, Wt - 380, 27, (k === 'Resultado' ? 'bold ' : '') + `21px ${sans}`, k === 'Resultado' ? '#2E7D32' : '#1F2328'); y = Math.max(y, yy + 33); });
+  ev.forEach(([k, v]) => { brk(40); c.fillStyle = '#5A5F66'; c.font = `bold 21px ${sans}`; c.fillText(k, L + 14, y); const yy = y; wrap(v, L + 360, Wt - 380, 27, (k === 'Resultado' ? 'bold ' : '') + `21px ${sans}`, k === 'Resultado' ? '#2E7D32' : '#14213D'); y = Math.max(y, yy + 33); });
   // 6. compromiso
   section(6, 'Compromiso del participante');
   ['Aplicaré lo aprendido en mi trabajo diario.', 'Si veo algo peligroso, avisaré de inmediato.'].forEach(s => { c.fillStyle = '#2E7D32'; c.font = `bold 22px ${sans}`; c.fillText('✔', L + 6, y); c.fillStyle = '#30363D'; c.font = `21px ${sans}`; c.fillText(s, L + 40, y); y += 31; });
@@ -5799,12 +5799,12 @@ function registroCanvas(D) {
   c.beginPath(); c.moveTo(sx1, ly); c.lineTo(sx1 + lw, ly); c.stroke(); c.beginPath(); c.moveTo(sx2, ly); c.lineTo(sx2 + lw, ly); c.stroke();
   if (D.sig) c.drawImage(D.sig, sx1 + 20, ly - 160, 420, 149);
   if (firmaRel.complete && firmaRel.naturalWidth) { const h = 240, w = firmaRel.naturalWidth * h / firmaRel.naturalHeight; c.drawImage(firmaRel, sx2 + lw / 2 - w / 2, ly - 230, w, h); }
-  c.textAlign = 'center'; c.fillStyle = '#1F2328'; c.font = `bold 24px ${sans}`; c.fillText(D.name, sx1 + lw / 2, ly + 36); c.fillText(RELATOR.nombre, sx2 + lw / 2, ly + 36);
+  c.textAlign = 'center'; c.fillStyle = '#14213D'; c.font = `bold 24px ${sans}`; c.fillText(D.name, sx1 + lw / 2, ly + 36); c.fillText(RELATOR.nombre, sx2 + lw / 2, ly + 36);
   c.fillStyle = '#5A5F66'; c.font = `20px ${sans}`; c.fillText('Participante · RUT ' + D.rut, sx1 + lw / 2, ly + 64); c.fillText(TM.rolRelator + ' · ' + RELATOR.reg, sx2 + lw / 2, ly + 64);
   // pie en cada página
   for (let p = 0; p <= pg; p++) { const b = (p + 1) * H;
-    c.fillStyle = '#1F2328'; c.fillRect(0, b - 90, W, 90);
-    c.textAlign = 'center'; c.fillStyle = '#C9CDD2'; c.font = `19px ${sans}`; c.fillText('Documento generado por el sistema de capacitaciones Constructor Center · Validación: ' + APP_URL.replace(/^https?:\/\//, '') + '?validar=' + D.code + (pg ? '  ·  Página ' + (p + 1) + ' de ' + (pg + 1) : ''), W / 2, b - 38); }
+    c.fillStyle = '#0039A6'; c.fillRect(0, b - 90, W, 90);
+    c.textAlign = 'center'; c.fillStyle = '#D6E1F5'; c.font = `19px ${sans}`; c.fillText('Documento generado por el sistema de capacitaciones Constructor Center · Validación: ' + APP_URL.replace(/^https?:\/\//, '') + '?validar=' + D.code + (pg ? '  ·  Página ' + (p + 1) + ' de ' + (pg + 1) : ''), W / 2, b - 38); }
   c.textAlign = 'left';
   let out = cv;
   if (pg === 0) { out = document.createElement('canvas'); out.width = W; out.height = H; out.getContext('2d').drawImage(cv, 0, 0); }
@@ -5870,6 +5870,7 @@ const DUR_DEF = 60; // minutos de la sesión presencial con el relator (se puede
 const durTema = t => t.dur || DUR_DEF;
 const APP_URL = location.origin + location.pathname;
 const firmaRel = new Image(); firmaRel.src = FIRMA_RELATOR;
+const logoCC = new Image(); logoCC.src = document.querySelector('.logoBar img').src;
 const $ = id => document.getElementById(id);
 const show = id => { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); window.scrollTo(0,0); document.body.classList.toggle('dentro', id!=='s-home'); try{ GUIA.hide(); VOZ.stop(); }catch(e){} };
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
@@ -6013,21 +6014,22 @@ function diplomaCanvas(o){
     linea:`realizada el ${st.date.getDate()} de ${MESES[st.date.getMonth()]} de ${st.date.getFullYear()}`+(st.topic.id==='induccion'?`  ·  vigente hasta el ${dmy(new Date(st.date.getFullYear(), st.date.getMonth()+IND_MESES, st.date.getDate()))}`:''), sello:['APROBADO',fmtN(st.nota),'NOTA'], foot:'Código de verificación '+st.code+'  ·  '+dmy(st.date)+'  ·  Duración '+durTema(st.topic)+' min · '+Math.max(1,Math.round((st.date-st.start)/60000))+' min en plataforma', rol: textoModalidad(st).rolRelator };
   const Wd=2000, Ht=1414, cv=document.createElement('canvas'); cv.width=Wd; cv.height=Ht; const c=cv.getContext('2d');
   const d=o.date, serif='Georgia, "Times New Roman", serif', sans='Arial, Helvetica, sans-serif';
-  c.fillStyle='#FFFDF6'; c.fillRect(0,0,Wd,Ht);
+  c.fillStyle='#FFFFFF'; c.fillRect(0,0,Wd,Ht);
   // marco
-  c.fillStyle='#1F2328'; c.fillRect(0,0,Wd,34); c.fillRect(0,Ht-34,Wd,34); c.fillRect(0,0,34,Ht); c.fillRect(Wd-34,0,34,Ht);
-  c.strokeStyle='#FFC20E'; c.lineWidth=6; c.strokeRect(62,62,Wd-124,Ht-124);
-  c.strokeStyle='#E7D9B0'; c.lineWidth=2; c.strokeRect(80,80,Wd-160,Ht-160);
-  [[34,34,1,1],[Wd-34,34,-1,1],[34,Ht-34,1,-1],[Wd-34,Ht-34,-1,-1]].forEach(([x,y,sx,sy])=>{ c.fillStyle='#FFC20E'; c.beginPath(); c.moveTo(x,y); c.lineTo(x+150*sx,y); c.lineTo(x,y+150*sy); c.closePath(); c.fill(); c.fillStyle='#1F2328'; c.beginPath(); c.moveTo(x,y); c.lineTo(x+90*sx,y); c.lineTo(x,y+90*sy); c.closePath(); c.fill(); });
+  c.fillStyle='#0039A6'; c.fillRect(0,0,Wd,34); c.fillRect(0,Ht-34,Wd,34); c.fillRect(0,0,34,Ht); c.fillRect(Wd-34,0,34,Ht);
+  c.strokeStyle='#DC281D'; c.lineWidth=6; c.strokeRect(62,62,Wd-124,Ht-124);
+  c.strokeStyle='#C9D6EE'; c.lineWidth=2; c.strokeRect(80,80,Wd-160,Ht-160);
+  [[34,34,1,1],[Wd-34,34,-1,1],[34,Ht-34,1,-1],[Wd-34,Ht-34,-1,-1]].forEach(([x,y,sx,sy])=>{ c.fillStyle='#DC281D'; c.beginPath(); c.moveTo(x,y); c.lineTo(x+150*sx,y); c.lineTo(x,y+150*sy); c.closePath(); c.fill(); c.fillStyle='#0039A6'; c.beginPath(); c.moveTo(x,y); c.lineTo(x+90*sx,y); c.lineTo(x,y+90*sy); c.closePath(); c.fill(); });
   // marca de agua casco
-  c.save(); c.globalAlpha=.05; c.fillStyle='#1F2328'; c.beginPath(); c.arc(Wd/2,820,330,Math.PI,0); c.fill(); c.fillRect(Wd/2-400,800,800,50); c.restore();
+  c.save(); c.globalAlpha=.05; c.fillStyle='#0039A6'; c.beginPath(); c.arc(Wd/2,820,330,Math.PI,0); c.fill(); c.fillRect(Wd/2-400,800,800,50); c.restore();
+  if (logoCC.complete && logoCC.naturalWidth) { const lh=104, lw=logoCC.naturalWidth*lh/logoCC.naturalHeight; c.drawImage(logoCC,Wd/2-lw/2,96,lw,lh); }
   const center=(t,y,font,color)=>{ c.font=font; c.fillStyle=color; c.textAlign='center'; c.fillText(t,Wd/2,y); };
-  c.save(); c.font=`bold 28px ${sans}`; c.fillStyle='#8A7A4A'; c.textAlign='center'; if('letterSpacing' in c) c.letterSpacing='8px'; c.fillText('CONSTRUCTOR CENTER  ·  PROGRAMA DE CAPACITACIÓN EN SEGURIDAD '+d.getFullYear(),Wd/2,190); c.restore();
-  center(o.titulo,330,`bold 150px ${serif}`,'#1F2328');
-  c.fillStyle='#FFC20E'; c.fillRect(Wd/2-170,365,340,8);
+  c.save(); c.font=`bold 28px ${sans}`; c.fillStyle='#0039A6'; c.textAlign='center'; if('letterSpacing' in c) c.letterSpacing='6px'; c.font=`bold 24px ${sans}`; c.fillText('PROGRAMA DE CAPACITACIÓN EN SEGURIDAD '+d.getFullYear(),Wd/2,236); c.restore();
+  center(o.titulo,350,`bold 120px ${serif}`,'#0039A6');
+  c.fillStyle='#DC281D'; c.fillRect(Wd/2-170,374,340,8);
   center(o.otorga,460,`italic 42px ${serif}`,'#5A5F66');
   let fs=96; c.font=`bold ${fs}px ${serif}`; while(c.measureText(o.name).width>1500 && fs>50){ fs-=4; c.font=`bold ${fs}px ${serif}`; }
-  center(o.name,580,`bold ${fs}px ${serif}`,'#0D2B6B');
+  center(o.name,580,`bold ${fs}px ${serif}`,'#0A2463');
   center('RUT '+o.rut,640,`36px ${sans}`,'#5A5F66');
   // frase con nota
   const p1=o.p1, p2=o.p2, p3=o.p3;
@@ -6035,8 +6037,8 @@ function diplomaCanvas(o){
   let x=Wd/2-(w1+w2+w3)/2; c.textAlign='left'; c.fillStyle='#30363D'; c.font=`40px ${serif}`; c.fillText(p1,x,735); x+=w1; c.font=`bold 48px ${serif}`; c.fillStyle='#2E7D32'; c.fillText(p2,x,735); x+=w2; c.font=`40px ${serif}`; c.fillStyle='#30363D'; c.fillText(p3,x,735);
   // tema
   let tf=70; c.font=`bold ${tf}px ${sans}`; const T='"'+o.tema+'"'; while(c.measureText(T).width>1600&&tf>40){ tf-=4; c.font=`bold ${tf}px ${sans}`; }
-  const tw=c.measureText(T).width; c.fillStyle='#FFF0B3'; c.fillRect(Wd/2-tw/2-24,790,tw+48,tf+30);
-  center(T,790+tf+2,`bold ${tf}px ${sans}`,'#1F2328');
+  const tw=c.measureText(T).width; c.fillStyle='#E8EFFB'; c.fillRect(Wd/2-tw/2-24,790,tw+48,tf+30);
+  center(T,790+tf+2,`bold ${tf}px ${sans}`,'#0039A6');
   center(o.linea,938,`italic 36px ${serif}`,'#5A5F66');
   // firmas + QR de validación
   c.strokeStyle='#30363D'; c.lineWidth=3;
@@ -6044,15 +6046,15 @@ function diplomaCanvas(o){
   c.beginPath(); c.moveTo(970,1150); c.lineTo(1530,1150); c.stroke();
   const sImg=o.sig; if(sImg) c.drawImage(sImg,340,975,500,177);
   if (firmaRel.complete && firmaRel.naturalWidth) { const h=240, w=firmaRel.naturalWidth*h/firmaRel.naturalHeight; c.drawImage(firmaRel,1250-w/2,950,w,h); }
-  c.textAlign='center'; c.fillStyle='#1F2328'; c.font=`bold 30px ${sans}`; c.fillText(o.name,590,1192); c.fillText(RELATOR.nombre,1250,1192);
+  c.textAlign='center'; c.fillStyle='#0039A6'; c.font=`bold 30px ${sans}`; c.fillText(o.name,590,1192); c.fillText(RELATOR.nombre,1250,1192);
   c.fillStyle='#5A5F66'; c.font=`24px ${sans}`; c.fillText('Participante · RUT '+o.rut,590,1228); c.fillText(RELATOR.cargo+' · '+RELATOR.reg,1250,1228); c.fillText((o.rol||'Relator')+' · '+RELATOR.emp,1250,1260);
   const q=qrCanvas(valUrl(o.code),170); c.fillStyle='#fff'; c.fillRect(105,975,190,190); c.drawImage(q,115,985,170,170);
   c.fillStyle='#5A5F66'; c.font=`bold 18px ${sans}`; c.fillText('Escanea para validar',200,1190);
   // sello
-  const sx=1760, sy=1110; c.fillStyle='#FFC20E'; c.beginPath(); for(let i=0;i<48;i++){ const a=i/48*Math.PI*2, r=i%2?118:132; c.lineTo(sx+r*Math.cos(a), sy+r*Math.sin(a)); } c.closePath(); c.fill();
-  c.fillStyle='#1F2328'; c.beginPath(); c.arc(sx,sy,100,0,Math.PI*2); c.fill();
-  c.strokeStyle='#FFC20E'; c.lineWidth=3; c.beginPath(); c.arc(sx,sy,88,0,Math.PI*2); c.stroke();
-  c.fillStyle='#FFC20E'; c.font=`bold 22px ${sans}`; c.fillText(o.sello[0],sx,sy-38); c.fillStyle='#fff'; c.font=`bold 66px ${serif}`; c.fillText(o.sello[1],sx,sy+30); c.font=`bold 20px ${sans}`; c.fillStyle='#FFC20E'; c.fillText(o.sello[2],sx,sy+62);
+  const sx=1760, sy=1110; c.fillStyle='#DC281D'; c.beginPath(); for(let i=0;i<48;i++){ const a=i/48*Math.PI*2, r=i%2?118:132; c.lineTo(sx+r*Math.cos(a), sy+r*Math.sin(a)); } c.closePath(); c.fill();
+  c.fillStyle='#0039A6'; c.beginPath(); c.arc(sx,sy,100,0,Math.PI*2); c.fill();
+  c.strokeStyle='#FFFFFF'; c.lineWidth=3; c.beginPath(); c.arc(sx,sy,88,0,Math.PI*2); c.stroke();
+  c.fillStyle='#FFFFFF'; c.font=`bold 22px ${sans}`; c.fillText(o.sello[0],sx,sy-38); c.fillStyle='#fff'; c.font=`bold 66px ${serif}`; c.fillText(o.sello[1],sx,sy+30); c.font=`bold 20px ${sans}`; c.fillStyle='#FFFFFF'; c.fillText(o.sello[2],sx,sy+62);
   c.font=`22px "Courier New", monospace`; c.fillStyle='#8A8F96'; c.fillText(o.foot,Wd/2,Ht-112);
   return cv;
 }
@@ -6229,35 +6231,35 @@ function ds44Detail(D) {
   const W = 1654, H = 2339, cv = document.createElement('canvas'); cv.width = W; cv.height = H; const c = cv.getContext('2d');
   const sans = 'Arial, Helvetica, sans-serif', L = 100, R = W - 100, Wt = R - L;
   c.fillStyle = '#fff'; c.fillRect(0, 0, W, H);
-  c.fillStyle = '#1F2328'; c.fillRect(0, 0, W, 200); c.fillStyle = '#FFC20E'; c.fillRect(0, 200, W, 10);
-  c.textAlign = 'left'; c.fillStyle = '#FFC20E'; c.font = `bold 25px ${sans}`; c.fillText('CONSTRUCTOR CENTER  ·  CAPACITACIÓN EN SEGURIDAD Y SALUD EN EL TRABAJO', L, 66);
+  c.fillStyle = '#0039A6'; c.fillRect(0, 0, W, 200); c.fillStyle = '#DC281D'; c.fillRect(0, 200, W, 10);
+  c.textAlign = 'left'; c.fillStyle = '#FFFFFF'; c.font = `bold 25px ${sans}`; c.fillText('CONSTRUCTOR CENTER  ·  CAPACITACIÓN EN SEGURIDAD Y SALUD EN EL TRABAJO', L, 66);
   c.fillStyle = '#fff'; c.font = `bold 54px ${sans}`; c.fillText(D.titulo, L, 132);
-  c.fillStyle = '#C9CDD2'; c.font = `23px ${sans}`; c.fillText('Curso de 8 horas · DS 44/2023 art. 16 · Guía Técnica Res. Ex. N° 1.117/2026', L, 174);
-  c.textAlign = 'right'; c.fillStyle = '#FFC20E'; c.font = `bold 25px "Courier New", monospace`; c.fillText(D.code, R, 66); c.textAlign = 'left';
+  c.fillStyle = '#D6E1F5'; c.font = `23px ${sans}`; c.fillText('Curso de 8 horas · DS 44/2023 art. 16 · Guía Técnica Res. Ex. N° 1.117/2026', L, 174);
+  c.textAlign = 'right'; c.fillStyle = '#FFFFFF'; c.font = `bold 25px "Courier New", monospace`; c.fillText(D.code, R, 66); c.textAlign = 'left';
   let y = 258;
   const wrap = (txt, x, maxW, lh, font, color) => { c.font = font; c.fillStyle = color; let line = ''; for (const w of String(txt).split(' ')) { const t = line ? line + ' ' + w : w; if (c.measureText(t).width > maxW && line) { c.fillText(line, x, y); y += lh; line = w; } else line = t; } if (line) { c.fillText(line, x, y); y += lh; } };
-  const section = (num, title) => { y += 6; c.fillStyle = '#FFC20E'; c.fillRect(L, y - 24, 7, 32); c.fillStyle = '#1F2328'; c.font = `bold 26px ${sans}`; c.fillText(num + '. ' + title, L + 20, y); y += 14; c.fillStyle = '#E5E7EB'; c.fillRect(L, y, Wt, 2); y += 30; };
+  const section = (num, title) => { y += 6; c.fillStyle = '#DC281D'; c.fillRect(L, y - 24, 7, 32); c.fillStyle = '#14213D'; c.font = `bold 26px ${sans}`; c.fillText(num + '. ' + title, L + 20, y); y += 14; c.fillStyle = '#E5E7EB'; c.fillRect(L, y, Wt, 2); y += 30; };
   section(1, 'Identificación');
   [['Participante', D.name], ['RUT', D.rut], ['Empresa', razonTxt(st.persona ? st.persona.empresa : '')], ['Período del curso', D.ini + ' al ' + D.fin + ' (dentro del plazo de 1 mes)'],
    ['Duración total', DS44_TOTAL + ' minutos (8 horas cronológicas) en 6 módulos'], ['Vigencia', 'Hasta el ' + D.vence + ' (2 años desde el término)'],
    ['Modalidad', (() => { const n = D.mods.filter(m => m.modalidad === 'distancia').length, dg = D.mods.filter(m => m.modalidad === 'digital').length; if (dg) return 'Con apoyo digital: tarjetas didácticas, lectura en voz alta y evaluación formativa en línea'; return n === 0 ? 'Presencial con apoyo digital (tarjetas didácticas y evaluación formativa en línea)' : n === D.mods.length ? 'A distancia: autoaprendizaje con tarjetas didácticas, lectura en voz alta y evaluación formativa en línea' : 'Mixta: ' + (D.mods.length - n) + ' módulos presenciales y ' + n + ' a distancia (autoaprendizaje), con evaluación formativa en línea'; })()],
    ['Relator', RELATOR.nombre + ' · ' + RELATOR.cargo + ' · ' + RELATOR.reg + ' · ' + RELATOR.emp]
-  ].forEach(([k, v], i) => { if (i % 2 === 0) { c.fillStyle = '#F6F7F8'; c.fillRect(L, y - 26, Wt, 35); } c.fillStyle = '#5A5F66'; c.font = `bold 20px ${sans}`; c.fillText(k, L + 12, y); const yy = y; wrap(v, L + 300, Wt - 315, 26, `20px ${sans}`, '#1F2328'); y = Math.max(y, yy + 35); });
+  ].forEach(([k, v], i) => { if (i % 2 === 0) { c.fillStyle = '#F6F7F8'; c.fillRect(L, y - 26, Wt, 35); } c.fillStyle = '#5A5F66'; c.font = `bold 20px ${sans}`; c.fillText(k, L + 12, y); const yy = y; wrap(v, L + 300, Wt - 315, 26, `20px ${sans}`, '#14213D'); y = Math.max(y, yy + 35); });
   section(2, 'Objetivo');
   wrap('Entregar a la persona trabajadora los conocimientos mínimos para desempeñarse de forma segura: el marco legal de la seguridad y salud en el trabajo, la identificación de peligros y evaluación de riesgos de su puesto, los efectos en la salud, las medidas preventivas y el uso del EPP, la respuesta ante emergencias y desastres, la señalización y la prevención de incendios.', L, Wt, 27, `20px ${sans}`, '#30363D');
   section(3, 'Módulos realizados');
   const cols = [L, L + 50, L + 520, L + 1020, L + 1140, L + 1300];
-  c.fillStyle = '#1F2328'; c.fillRect(L, y - 26, Wt, 38); c.fillStyle = '#FFC20E'; c.font = `bold 18px ${sans}`;
+  c.fillStyle = '#0039A6'; c.fillRect(L, y - 26, Wt, 38); c.fillStyle = '#FFFFFF'; c.font = `bold 18px ${sans}`;
   ['N°', 'Módulo', 'Contenido mínimo (Guía Técnica)', 'Duración', 'Fecha', 'Evaluación'].forEach((t, i) => c.fillText(t, cols[i] + 8, y)); y += 38;
   DS44.modulos.forEach((m, i) => { const r = D.mods.find(x => x.id === m.id) || {}; const y0 = y; if (i % 2 === 0) { c.fillStyle = '#F6F7F8'; c.fillRect(L, y - 24, Wt, 62); }
     c.fillStyle = '#1565C0'; c.font = `bold 20px ${sans}`; c.fillText(String(i + 1), cols[0] + 12, y);
-    wrap(m.title, cols[1] + 8, 450, 23, `bold 18px ${sans}`, '#1F2328'); const y1 = y; y = y0;
+    wrap(m.title, cols[1] + 8, 450, 23, `bold 18px ${sans}`, '#14213D'); const y1 = y; y = y0;
     wrap(m.cont, cols[2] + 8, 480, 23, `17px ${sans}`, '#30363D'); const y2 = y; y = y0;
-    c.fillStyle = '#1F2328'; c.font = `18px ${sans}`; c.fillText(m.dur + ' min', cols[3] + 8, y); c.fillText(r.fecha || '—', cols[4] + 8, y);
+    c.fillStyle = '#14213D'; c.font = `18px ${sans}`; c.fillText(m.dur + ' min', cols[3] + 8, y); c.fillText(r.fecha || '—', cols[4] + 8, y);
     c.fillStyle = '#2E7D32'; c.font = `bold 18px ${sans}`; c.fillText('Logrado', cols[5] + 8, y);
     c.fillStyle = '#5A5F66'; c.font = `15px ${sans}`; c.fillText((r.modalidad === 'distancia' ? 'A distancia · ' : r.modalidad === 'digital' ? '' : 'Presencial · ') + (r.errores ? r.errores + ' rep.' : 'sin rep.'), cols[5] + 8, y + 22);
     y = Math.max(y1, y2, y0 + 46) + 16; });
-  c.fillStyle = '#FFF4CC'; c.fillRect(L, y - 26, Wt, 38); c.fillStyle = '#1F2328'; c.font = `bold 19px ${sans}`; c.fillText('TOTAL', cols[1] + 8, y); c.fillText(DS44_TOTAL + ' min', cols[3] + 8, y); c.fillText(D.ini + ' a ' + D.fin, cols[4] + 8, y); y += 46;
+  c.fillStyle = '#E8EFFB'; c.fillRect(L, y - 26, Wt, 38); c.fillStyle = '#14213D'; c.font = `bold 19px ${sans}`; c.fillText('TOTAL', cols[1] + 8, y); c.fillText(DS44_TOTAL + ' min', cols[3] + 8, y); c.fillText(D.ini + ' a ' + D.fin, cols[4] + 8, y); y += 46;
   section(4, 'Contenidos tratados');
   DS44.modulos.forEach((m, i) => { const t = ds44Learn(m).map(l => l.t).join(' · '); c.fillStyle = '#1565C0'; c.font = `bold 18px ${sans}`; c.fillText('M' + (i + 1), L, y); wrap(t, L + 50, Wt - 50, 23, `17px ${sans}`, '#30363D'); y += 3; });
   section(5, 'Marco normativo');
@@ -6271,10 +6273,10 @@ function ds44Detail(D) {
   c.strokeStyle = '#30363D'; c.lineWidth = 2; c.beginPath(); c.moveTo(sx1, ly); c.lineTo(sx1 + lw, ly); c.stroke(); c.beginPath(); c.moveTo(sx2, ly); c.lineTo(sx2 + lw, ly); c.stroke();
   if (D.sig) c.drawImage(D.sig, sx1 + 20, ly - 155, 420, 149);
   if (firmaRel.complete && firmaRel.naturalWidth) { const h = 240, w = firmaRel.naturalWidth * h / firmaRel.naturalHeight; c.drawImage(firmaRel, sx2 + lw / 2 - w / 2, ly - 230, w, h); }
-  c.textAlign = 'center'; c.fillStyle = '#1F2328'; c.font = `bold 23px ${sans}`; c.fillText(D.name, sx1 + lw / 2, ly + 34); c.fillText(RELATOR.nombre, sx2 + lw / 2, ly + 34);
+  c.textAlign = 'center'; c.fillStyle = '#14213D'; c.font = `bold 23px ${sans}`; c.fillText(D.name, sx1 + lw / 2, ly + 34); c.fillText(RELATOR.nombre, sx2 + lw / 2, ly + 34);
   c.fillStyle = '#5A5F66'; c.font = `19px ${sans}`; c.fillText('Participante · RUT ' + D.rut, sx1 + lw / 2, ly + 62); c.fillText('Relator · ' + RELATOR.reg, sx2 + lw / 2, ly + 62);
-  c.fillStyle = '#1F2328'; c.fillRect(0, H - 86, W, 86);
-  c.fillStyle = '#C9CDD2'; c.font = `18px ${sans}`; c.fillText('Emitido el ' + D.emision + ' por el sistema de capacitaciones Constructor Center · Validación: ' + APP_URL.replace(/^https?:\/\//, '') + '?validar=' + D.code, W / 2, H - 36);
+  c.fillStyle = '#0039A6'; c.fillRect(0, H - 86, W, 86);
+  c.fillStyle = '#D6E1F5'; c.font = `18px ${sans}`; c.fillText('Emitido el ' + D.emision + ' por el sistema de capacitaciones Constructor Center · Validación: ' + APP_URL.replace(/^https?:\/\//, '') + '?validar=' + D.code, W / 2, H - 36);
   c.textAlign = 'left';
   return cv;
 }
